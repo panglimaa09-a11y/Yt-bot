@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>AutoSubs — YouTube Tools Platform</title>
+  <title>AutoSubs — YouTube Tools & AI Platform</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -46,7 +46,7 @@
   <nav class="w-full max-w-7xl mx-auto px-5 py-5 flex items-center justify-between border-b border-slate-800">
     <div class="flex items-center gap-2 font-extrabold text-xl text-white">
       <i class="ph-fill ph-youtube-logo text-brand-500 text-3xl"></i>
-      AutoSubs
+      AutoSubs AI
     </div>
     <button onclick="showPage('auth')" class="bg-brand-600 hover:bg-brand-500 px-5 py-2.5 rounded-xl font-bold">
       Login / Register
@@ -57,13 +57,13 @@
     <div class="max-w-4xl">
       <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-sm text-slate-400 mb-7">
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        YouTube Tools Platform
+        YouTube AI Tools & Event Harian
       </div>
       <h1 class="text-4xl md:text-6xl font-extrabold leading-tight text-white">
-        Tools YouTube dalam satu <span class="text-brand-500">dashboard.</span>
+        Optimasi Channel YouTube dengan <span class="text-brand-500">Kekuatan AI.</span>
       </h1>
       <p class="mt-6 text-slate-400 text-lg max-w-2xl mx-auto">
-        Kelola akun, trial, token, dan berbagai alat bantu YouTube dari satu tempat.
+        Buat judul, deskripsi, strategi konten instan dengan AI, absen harian, dan kelola channel dari satu dashboard.
       </p>
       <button onclick="showPage('auth')" class="mt-9 bg-brand-600 hover:bg-brand-500 px-7 py-3.5 rounded-xl font-bold">
         Mulai Sekarang <i class="ph ph-arrow-right ml-1"></i>
@@ -118,12 +118,15 @@
 <section id="app" class="page min-h-screen w-full">
   <aside id="sidebar" class="fixed lg:static z-40 inset-y-0 left-0 w-64 bg-slate-950 border-r border-slate-800 -translate-x-full lg:translate-x-0 transition-transform flex flex-col">
     <div class="h-16 px-5 border-b border-slate-800 flex items-center gap-2 font-extrabold text-white">
-      <i class="ph-fill ph-youtube-logo text-brand-500 text-3xl"></i> AutoSubs
+      <i class="ph-fill ph-youtube-logo text-brand-500 text-3xl"></i> AutoSubs AI
     </div>
 
-    <nav class="p-4 space-y-1 flex-1">
+    <nav class="p-4 space-y-1 flex-1 overflow-y-auto">
       <button onclick="openView('dashboard')" class="nav w-full text-left px-4 py-3 rounded-xl bg-slate-800 text-white">
         <i class="ph ph-squares-four mr-2"></i> Dashboard
+      </button>
+      <button onclick="openView('ai')" class="nav w-full text-left px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white">
+        <i class="ph ph-sparkle mr-2"></i> AI Assistant <span class="ml-1 text-[10px] bg-emerald-500 text-slate-950 font-bold px-1.5 py-0.5 rounded">NEW</span>
       </button>
       <button onclick="openView('tools')" class="nav w-full text-left px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white">
         <i class="ph ph-wrench mr-2"></i> Free Tools
@@ -132,7 +135,7 @@
         <i class="ph ph-robot mr-2"></i> Bot Services
       </button>
       <button onclick="openView('topup')" class="nav w-full text-left px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white">
-        <i class="ph ph-credit-card mr-2"></i> Top-up
+        <i class="ph ph-credit-card mr-2"></i> Top-up Token
       </button>
       <button id="admin-nav" onclick="openView('admin')" class="nav hidden w-full text-left px-4 py-3 rounded-xl text-brand-400 hover:bg-slate-800">
         <i class="ph ph-shield-star mr-2"></i> Admin Panel
@@ -164,14 +167,34 @@
 
     <main class="p-5 md:p-8 max-w-7xl mx-auto">
 
+      <!-- GOOGLE ADS / BANNER IKLAN SLOT -->
+      <div id="ads-container" class="mb-6 bg-slate-900/90 border border-slate-800 rounded-2xl p-4 text-center overflow-hidden">
+        <div class="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Advertisement / Google Ads</div>
+        <div class="py-3 px-4 bg-slate-950 border border-slate-800 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="text-left">
+            <span class="text-white font-bold text-sm">Butuh Layanan Monetisasi & Subscriber Cepat?</span>
+            <p class="text-xs text-slate-400">Dapatkan promosi eksklusif channel YouTube Anda sekarang juga.</p>
+          </div>
+          <a href="https://wa.me/6289681992892" target="_blank" class="bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold px-4 py-2 rounded-xl shrink-0">Hubungi Admin (WhatsApp)</a>
+        </div>
+      </div>
+
       <!-- DASHBOARD -->
       <div id="view-dashboard" class="appview active">
         <div class="glass rounded-2xl border border-slate-800 p-7">
-          <p class="text-brand-400 text-sm font-semibold">DASHBOARD</p>
-          <h1 id="welcome" class="text-3xl font-extrabold text-white mt-2">Selamat datang</h1>
-          <p id="user-email" class="text-slate-400 mt-2"></p>
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <p class="text-brand-400 text-sm font-semibold">DASHBOARD</p>
+              <h1 id="welcome" class="text-3xl font-extrabold text-white mt-2">Selamat datang</h1>
+              <p id="user-email" class="text-slate-400 mt-1"></p>
+            </div>
+            <!-- Event Check-in Button -->
+            <button onclick="claimDailyReward()" id="checkin-btn" class="bg-emerald-600 hover:bg-emerald-500 px-5 py-3 rounded-xl font-bold text-white text-sm flex items-center gap-2 shadow-lg shadow-emerald-900/50">
+              <i class="ph-fill ph-gift text-lg animate-bounce"></i> Klaim Hadiah Login Harian
+            </button>
+          </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-7">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-7">
             <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5">
               <p class="text-slate-500 text-sm">Trial Gratis</p>
               <p id="dash-trial" class="text-3xl font-extrabold text-white mt-2">0</p>
@@ -180,6 +203,64 @@
               <p class="text-slate-500 text-sm">Saldo Token</p>
               <p id="dash-tokens" class="text-3xl font-extrabold text-amber-400 mt-2">0</p>
             </div>
+            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5">
+              <p class="text-slate-500 text-sm">Status Akun</p>
+              <p id="dash-role" class="text-2xl font-extrabold text-brand-400 mt-2 uppercase">User</p>
+            </div>
+          </div>
+
+          <!-- Quick Access / Fitur Tambahan -->
+          <div class="mt-7 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5">
+              <h3 class="text-white font-bold text-sm flex items-center gap-2">
+                <i class="ph-fill ph-sparkle text-brand-400 text-lg"></i> AI Content Generator
+              </h3>
+              <p class="text-xs text-slate-400 mt-1">Buat ide video, judul, dan deskripsi SEO YouTube otomatis dengan bantuan AI.</p>
+              <button onclick="openView('ai')" class="mt-4 bg-slate-900 hover:bg-slate-800 text-white border border-slate-700 text-xs font-bold px-4 py-2 rounded-xl">Buka AI Assistant</button>
+            </div>
+
+            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5">
+              <h3 class="text-white font-bold text-sm flex items-center gap-2">
+                <i class="ph-fill ph-calendar-star text-amber-400 text-lg"></i> Event Login 7 Hari
+              </h3>
+              <p class="text-xs text-slate-400 mt-1">Absen tiap hari! Hari ke-7 dapat token acak 1-5 token secara otomatis.</p>
+              <div id="streak-info" class="mt-3 text-xs font-semibold text-emerald-400">Status Check-in: Memuat...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI ASSISTANT VIEW -->
+      <div id="view-ai" class="appview">
+        <h2 class="text-2xl font-extrabold text-white flex items-center gap-2">
+          <i class="ph-fill ph-sparkle text-brand-400"></i> YouTube AI Assistant
+        </h2>
+        <p class="text-slate-400 mt-1">Gunakan kecerdasan buatan Gemini untuk membuat ide konten dan optimasi SEO (Memotong 1 Token per generate).</p>
+
+        <div class="mt-6 bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-3xl">
+          <div class="space-y-4">
+            <div>
+              <label class="text-sm text-slate-300">Pilih Mode AI</label>
+              <select id="ai-mode" class="mt-1 w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-brand-500">
+                <option value="ideas">Buat 5 Ide Konten YouTube Viral</option>
+                <option value="title">Buat Judul & Deskripsi SEO</option>
+                <option value="tags">Buat Tags / Kata Kunci YouTube</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-sm text-slate-300">Topik atau Niche Channel Anda</label>
+              <input id="ai-prompt" type="text" class="mt-1 w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-brand-500" placeholder="Contoh: Tutorial Gaming Minecraft, Kuliner Pedas Indonesia...">
+            </div>
+
+            <button onclick="generateAIContent()" id="ai-btn" class="w-full bg-brand-600 hover:bg-brand-500 py-3 rounded-xl font-bold text-white text-sm transition shadow-lg shadow-brand-600/30">
+              Generate dengan AI <i class="ph ph-lightning ml-1"></i>
+            </button>
+          </div>
+
+          <div id="ai-result-box" class="hidden mt-6 bg-slate-950 border border-slate-800 rounded-xl p-5">
+            <h4 class="text-xs uppercase tracking-wider text-slate-500 font-bold mb-2">Hasil AI Generator:</h4>
+            <div id="ai-output" class="text-sm text-slate-200 whitespace-pre-line leading-relaxed"></div>
           </div>
         </div>
       </div>
@@ -204,7 +285,7 @@
       <!-- SERVICES -->
       <div id="view-service" class="appview">
         <h2 class="text-2xl font-extrabold text-white">Services</h2>
-        <p class="text-slate-400 mt-1">Buat permintaan layanan.</p>
+        <p class="text-slate-400 mt-1">Buat permintaan layanan otomatisasi channel.</p>
         <div class="mt-6 bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-2xl">
           <label class="text-sm text-slate-300">URL YouTube</label>
           <input id="service-url" type="url" class="mt-2 w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-brand-500" placeholder="https://www.youtube.com/...">
@@ -212,40 +293,65 @@
         </div>
       </div>
 
-      <!-- TOPUP (DENGAN UPLOAD BUKTI TRANSFER) -->
+      <!-- TOPUP (DANA: 082336939662 a/n Angga Bayu Setyawan) -->
       <div id="view-topup" class="appview">
-        <h2 class="text-2xl font-extrabold text-white">Top-up Token</h2>
-        <p class="text-slate-400 mt-1">Pilih paket token dan upload bukti pembayaran Anda.</p>
-
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-            <p class="text-slate-400">Starter</p><p class="text-3xl font-extrabold text-white mt-3">10</p><p class="text-slate-400">Token</p>
-            <p class="text-xl font-bold text-white mt-3">Rp10.000</p>
-            <button onclick="orderTopup(10,10000)" class="mt-5 w-full bg-slate-700 hover:bg-brand-600 py-2.5 rounded-xl font-bold">Pilih</button>
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-2xl font-extrabold text-white">Top-up Token</h2>
+            <p class="text-slate-400 mt-1">Pilih paket token dan lakukan pembayaran via transfer ke Admin.</p>
           </div>
-          <div class="bg-slate-900 border border-brand-600 rounded-2xl p-5">
-            <p class="text-brand-400">Popular</p><p class="text-3xl font-extrabold text-white mt-3">50</p><p class="text-slate-400">Token</p>
-            <p class="text-xl font-bold text-white mt-3">Rp50.000</p>
-            <button onclick="orderTopup(50,50000)" class="mt-5 w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold">Pilih</button>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-            <p class="text-slate-400">Pro</p><p class="text-3xl font-extrabold text-white mt-3">100</p><p class="text-slate-400">Token</p>
-            <p class="text-xl font-bold text-white mt-3">Rp100.000</p>
-            <button onclick="orderTopup(100,100000)" class="mt-5 w-full bg-slate-700 hover:bg-brand-600 py-2.5 rounded-xl font-bold">Pilih</button>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-            <p class="text-slate-400">Agency</p><p class="text-3xl font-extrabold text-white mt-3">500</p><p class="text-slate-400">Token</p>
-            <p class="text-xl font-bold text-white mt-3">Rp500.000</p>
-            <button onclick="orderTopup(500,500000)" class="mt-5 w-full bg-slate-700 hover:bg-brand-600 py-2.5 rounded-xl font-bold">Pilih</button>
+          <div class="bg-brand-500/10 border border-brand-500/30 px-4 py-2 rounded-2xl text-xs">
+            <span class="text-brand-400 font-bold block">Nomor Pembayaran DANA Resmi:</span>
+            <span class="text-white font-extrabold text-sm select-all">082336939662</span> (a/n Angga Bayu Setyawan)
+            <div class="mt-1">
+              <a href="https://wa.me/6289681992892?text=Halo%20Admin,%20saya%20ingin%20konfirmasi%20pembayaran%20top-up%20token." target="_blank" class="text-emerald-400 underline font-semibold flex items-center gap-1">
+                <i class="ph-fill ph-whatsapp-logo"></i> Konfirmasi ke WA Admin
+              </a>
+            </div>
           </div>
         </div>
 
-        <!-- Form Modal Upload Bukti -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative">
+            <p class="text-slate-400 text-sm font-semibold">Starter</p>
+            <p class="text-3xl font-extrabold text-white mt-3">10</p><p class="text-slate-400 text-xs">Token</p>
+            <p class="text-xl font-bold text-white mt-3">Rp10.000</p>
+            <button onclick="orderTopup(10,10000)" class="mt-5 w-full bg-slate-800 hover:bg-brand-600 py-2.5 rounded-xl font-bold transition">Pilih Paket</button>
+          </div>
+
+          <div class="bg-gradient-to-b from-brand-950/60 to-slate-900 border-2 border-brand-500 rounded-2xl p-5 relative shadow-xl shadow-brand-950/50">
+            <div class="absolute -top-3 right-4 bg-brand-600 text-white text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">
+              ⭐ Paling Populer
+            </div>
+            <p class="text-brand-400 text-sm font-semibold">Popular</p>
+            <p class="text-3xl font-extrabold text-white mt-3">50</p><p class="text-slate-400 text-xs">Token</p>
+            <p class="text-xl font-bold text-brand-400 mt-3">Rp50.000</p>
+            <button onclick="orderTopup(50,50000)" class="mt-5 w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold transition shadow-lg shadow-brand-600/30">Pilih Paket</button>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative">
+            <p class="text-slate-400 text-sm font-semibold">Pro</p>
+            <p class="text-3xl font-extrabold text-white mt-3">100</p><p class="text-slate-400 text-xs">Token</p>
+            <p class="text-xl font-bold text-white mt-3">Rp100.000</p>
+            <button onclick="orderTopup(100,100000)" class="mt-5 w-full bg-slate-800 hover:bg-brand-600 py-2.5 rounded-xl font-bold transition">Pilih Paket</button>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative">
+            <p class="text-slate-400 text-sm font-semibold">Agency</p>
+            <p class="text-3xl font-extrabold text-white mt-3">500</p><p class="text-slate-400 text-xs">Token</p>
+            <p class="text-xl font-bold text-white mt-3">Rp500.000</p>
+            <button onclick="orderTopup(500,500000)" class="mt-5 w-full bg-slate-800 hover:bg-brand-600 py-2.5 rounded-xl font-bold transition">Pilih Paket</button>
+          </div>
+        </div>
+
         <div id="topup-modal" class="hidden mt-6 bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-xl">
-          <h3 class="font-bold text-white text-lg">Konfirmasi Pembayaran</h3>
+          <h3 class="font-bold text-white text-lg">Konfirmasi Pembayaran DANA</h3>
           <p id="selected-package-text" class="text-sm text-slate-400 mt-1"></p>
+          <div class="mt-3 bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs text-slate-300">
+            Transfer ke DANA: <b class="text-white">082336939662</b> (a/n Angga Bayu Setyawan). Setelah transfer, upload bukti screenshot di bawah atau hubungi WhatsApp Admin di <a href="https://wa.me/6289681992892" target="_blank" class="text-emerald-400 underline">089681992892</a>.
+          </div>
           <div class="mt-4">
-            <label class="text-sm text-slate-300">Upload Bukti Transfer (Screenshot)</label>
+            <label class="text-sm text-slate-300">Upload Bukti Transfer</label>
             <input id="proof-file" type="file" accept="image/*" class="mt-2 w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm">
           </div>
           <div class="flex gap-3 mt-5">
@@ -255,10 +361,28 @@
         </div>
       </div>
 
-      <!-- ADMIN PANEL (DENGAN TABEL PERSETUJUAN TOP-UP) -->
+      <!-- ADMIN PANEL -->
       <div id="view-admin" class="appview">
         <h2 class="text-2xl font-extrabold text-white">Admin Panel</h2>
-        <p class="text-slate-400 mt-1">Pusat persetujuan pesanan top-up pengguna.</p>
+        <p class="text-slate-400 mt-1">Pusat persetujuan pesanan top-up & kirim token gratis.</p>
+
+        <div class="mt-6 bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-xl">
+          <h3 class="font-bold text-white text-lg mb-2 flex items-center gap-2">
+            <i class="ph-fill ph-paper-plane-tilt text-brand-400"></i> Kirim Token Gratis ke User
+          </h3>
+          <p class="text-xs text-slate-400 mb-4">Berikan hadiah atau bonus token langsung ke akun pengguna berdasarkan email.</p>
+          <div class="space-y-3">
+            <div>
+              <label class="text-xs text-slate-300">Email User Tujuan</label>
+              <input id="admin-target-email" type="email" class="mt-1 w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm outline-none focus:border-brand-500" placeholder="user@email.com">
+            </div>
+            <div>
+              <label class="text-xs text-slate-300">Jumlah Token</label>
+              <input id="admin-token-amount" type="number" min="1" class="mt-1 w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm outline-none focus:border-brand-500" placeholder="10">
+            </div>
+            <button onclick="adminSendFreeTokens()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-sm transition">Kirim Token Sekarang</button>
+          </div>
+        </div>
 
         <div class="mt-6 bg-slate-900 border border-slate-800 rounded-2xl p-6">
           <h3 class="font-bold text-white text-lg mb-4">Persetujuan Top-up Pending</h3>
@@ -281,7 +405,7 @@
       </div>
 
       <footer class="mt-12 pt-6 border-t border-slate-900 text-center text-xs text-slate-600">
-        AutoSubs is an independent third-party tool.
+        AutoSubs AI is an independent third-party tool. | <a href="https://wa.me/6289681992892" target="_blank" class="text-brand-400 hover:underline">Kontak WhatsApp Admin</a>
       </footer>
     </main>
   </div>
@@ -290,6 +414,7 @@
 <script>
 const SUPABASE_URL = "https://jswskglpsvhnffonxbkp.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ccq1Re-OykljPEIJn3FI6g_oGNPHkWQ";
+const apiKey = ""; // Disediakan otomatis oleh environment
 
 let supabaseClient = null;
 let currentUser = null;
@@ -323,6 +448,7 @@ function openView(id) {
 
   const titles={
     dashboard:"Dashboard",
+    ai:"AI Assistant Generator",
     tools:"Free YouTube Tools",
     service:"Services",
     topup:"Top-up Token",
@@ -332,6 +458,8 @@ function openView(id) {
 
   if(id === 'admin') {
     loadAdminTopups();
+  } else if(id === 'dashboard') {
+    checkUserCheckinStatus();
   }
 
   if(window.innerWidth<1024) document.getElementById("sidebar").classList.add("-translate-x-full");
@@ -413,10 +541,13 @@ function renderDashboard() {
   document.getElementById("tokens").textContent=isAdm?"∞":currentProfile.tokens;
   document.getElementById("dash-trial").textContent=isAdm?"Unlimited":currentProfile.trial;
   document.getElementById("dash-tokens").textContent=isAdm?"Unlimited":currentProfile.tokens;
+  document.getElementById("dash-role").textContent=currentProfile.role || "user";
 
   const adminNav=document.getElementById("admin-nav");
   if(isAdm) adminNav.classList.remove("hidden");
   else adminNav.classList.add("hidden");
+
+  checkUserCheckinStatus();
 }
 
 async function logout() {
@@ -425,6 +556,69 @@ async function logout() {
   currentProfile=null;
   showPage("landing");
   showToast("Berhasil logout.","success");
+}
+
+// ================= AI GENERATOR (GEMINI API) =================
+async function generateAIContent() {
+  if(!currentProfile) return;
+  const mode = document.getElementById("ai-mode").value;
+  const promptText = document.getElementById("ai-prompt").value.trim();
+
+  if(!promptText) return showToast("Masukkan topik atau niche channel terlebih dahulu.", "error");
+  if(currentProfile.tokens < 1 && currentProfile.role !== 'admin') {
+    return showToast("Token Anda tidak cukup! Silakan melakukan top-up terlebih dahulu.", "error");
+  }
+
+  const btn = document.getElementById("ai-btn");
+  btn.disabled = true;
+  btn.textContent = "AI sedang berpikir...";
+
+  let systemPrompt = "Anda adalah YouTube AI Assistant yang ahli dalam optimasi SEO YouTube, pembuatan ide konten viral, dan penulisan deskripsi yang menarik dalam bahasa Indonesia.";
+  let userQuery = `Buatkan ${mode === 'ideas' ? '5 ide konten video YouTube viral' : mode === 'title' ? 'pilihan judul menarik dan deskripsi SEO lengkap' : 'tags / kata kunci YouTube'} untuk topik: ${promptText}`;
+
+  try {
+    let responseText = "";
+    let retries = 5;
+    let delay = 1000;
+
+    for(let i=0; i<retries; i++) {
+      try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: userQuery }] }],
+            systemInstruction: { parts: [{ text: systemPrompt }] }
+          })
+        });
+        const result = await res.json();
+        responseText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+        if(responseText) break;
+      } catch(e) {
+        if(i === retries - 1) throw e;
+        await new Promise(r => setTimeout(r, delay));
+        delay *= 2;
+      }
+    }
+
+    if(!responseText) throw new Error("Gagal mendapatkan respons AI.");
+
+    if(currentProfile.role !== 'admin') {
+      const newTokens = currentProfile.tokens - 1;
+      await supabaseClient.from("profiles").update({ tokens: newTokens }).eq("id", currentUser.id);
+      currentProfile.tokens = newTokens;
+      renderDashboard();
+    }
+
+    document.getElementById("ai-output").textContent = responseText;
+    document.getElementById("ai-result-box").classList.remove("hidden");
+    showToast("Konten AI berhasil dibuat! (-1 Token)");
+  } catch(err) {
+    showToast(err.message || "Terjadi kesalahan saat memproses AI.", "error");
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `Generate dengan AI <i class="ph ph-lightning ml-1"></i>`;
+  }
 }
 
 function generateLink() {
@@ -454,11 +648,137 @@ function createServiceRequest() {
   showToast("Permintaan layanan dicatat.");
 }
 
-// Fitur Top-up & Upload Bukti
+// ================= EVENT LOGIN HARIAN =================
+async function checkUserCheckinStatus() {
+  if(!currentUser) return;
+  const todayStr = new Date().toISOString().split('T')[0];
+
+  const { data } = await supabaseClient
+    .from("user_checkins")
+    .select("*")
+    .eq("user_id", currentUser.id)
+    .single();
+
+  const btn = document.getElementById("checkin-btn");
+  const info = document.getElementById("streak-info");
+
+  if(!data) {
+    info.textContent = `Status: Belum pernah absen. Streak: Hari ke-0`;
+    btn.disabled = false;
+    btn.innerHTML = `<i class="ph-fill ph-gift text-lg animate-bounce"></i> Klaim Hadiah Login Harian`;
+    return;
+  }
+
+  if(data.last_checkin_date === todayStr) {
+    info.textContent = `Status: Sudah klaim hari ini! Streak beruntun: Hari ke-${data.streak_day}`;
+    btn.disabled = true;
+    btn.innerHTML = `<i class="ph-fill ph-check-circle text-lg"></i> Sudah Klaim Hari Ini`;
+    btn.className = "bg-slate-800 text-slate-500 px-5 py-3 rounded-xl font-bold text-sm flex items-center gap-2 cursor-not-allowed";
+  } else {
+    info.textContent = `Status: Belum klaim hari ini. Streak saat ini: Hari ke-${data.streak_day}`;
+    btn.disabled = false;
+    btn.innerHTML = `<i class="ph-fill ph-gift text-lg animate-bounce"></i> Klaim Hadiah Login Harian`;
+    btn.className = "bg-emerald-600 hover:bg-emerald-500 px-5 py-3 rounded-xl font-bold text-white text-sm flex items-center gap-2 shadow-lg shadow-emerald-900/50";
+  }
+}
+
+async function claimDailyReward() {
+  if(!currentUser) return;
+  const todayStr = new Date().toISOString().split('T')[0];
+
+  let { data: checkinData } = await supabaseClient
+    .from("user_checkins")
+    .select("*")
+    .eq("user_id", currentUser.id)
+    .single();
+
+  let newStreak = 1;
+  let rewardTokens = 1;
+
+  if(checkinData) {
+    const lastDate = new Date(checkinData.last_checkin_date);
+    const currentDate = new Date(todayStr);
+    const diffTime = Math.abs(currentDate - lastDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if(diffDays === 1) {
+      newStreak = (checkinData.streak_day % 7) + 1;
+    } else if(diffDays === 0) {
+      showToast("Anda sudah klaim hadiah hari ini!", "error");
+      return;
+    } else {
+      newStreak = 1;
+    }
+  }
+
+  if(newStreak === 7) {
+    rewardTokens = Math.floor(Math.random() * 5) + 1;
+  } else {
+    rewardTokens = 1;
+  }
+
+  try {
+    await supabaseClient
+      .from("user_checkins")
+      .upsert({ user_id: currentUser.id, last_checkin_date: todayStr, streak_day: newStreak });
+
+    const newTokenTotal = (currentProfile.tokens || 0) + rewardTokens;
+    await supabaseClient
+      .from("profiles")
+      .update({ tokens: newTokenTotal })
+      .eq("id", currentUser.id);
+
+    currentProfile.tokens = newTokenTotal;
+    renderDashboard();
+    showToast(`Berhasil klaim! Selamat, Anda mendapat ${rewardTokens} Token (Streak Hari ke-${newStreak})`);
+    checkUserCheckinStatus();
+  } catch(err) {
+    showToast(err.message || "Gagal melakukan klaim hadiah.", "error");
+  }
+}
+
+// ================= ADMIN KIRIM TOKEN =================
+async function adminSendFreeTokens() {
+  if(!currentProfile || currentProfile.role !== 'admin') return;
+  const targetEmail = document.getElementById("admin-target-email").value.trim().toLowerCase();
+  const amount = parseInt(document.getElementById("admin-token-amount").value);
+
+  if(!targetEmail || isNaN(amount) || amount <= 0) {
+    return showToast("Masukkan email dan jumlah token yang valid.", "error");
+  }
+
+  showToast("Mengirim token gratis...");
+
+  try {
+    const { data: targetUser, error: findErr } = await supabaseClient
+      .from("profiles")
+      .select("id, tokens, email")
+      .eq("email", targetEmail)
+      .single();
+
+    if(findErr || !targetUser) throw new Error("Email pengguna tidak ditemukan di database.");
+
+    const updatedTokens = (targetUser.tokens || 0) + amount;
+    const { error: updateErr } = await supabaseClient
+      .from("profiles")
+      .update({ tokens: updatedTokens })
+      .eq("id", targetUser.id);
+
+    if(updateErr) throw updateErr;
+
+    showToast(`Sukses! ${amount} token berhasil dikirim ke ${targetEmail}`);
+    document.getElementById("admin-target-email").value = "";
+    document.getElementById("admin-token-amount").value = "";
+  } catch(err) {
+    showToast(err.message || "Gagal mengirim token.", "error");
+  }
+}
+
+// ================= TOP-UP & APPROVAL =================
 function orderTopup(tokens, amount) {
   selectedTokenPackage = tokens;
   selectedAmountPackage = amount;
-  document.getElementById("selected-package-text").textContent = `Paket: ${tokens} Token (Rp${amount.toLocaleString()}). Silakan upload buktinya di bawah.`;
+  document.getElementById("selected-package-text").textContent = `Paket: ${tokens} Token (Rp${amount.toLocaleString()}). Silakan transfer ke DANA: 082336939662 a/n Angga Bayu Setyawan.`;
   document.getElementById("topup-modal").classList.remove("hidden");
 }
 
@@ -506,7 +826,6 @@ async function submitTopupOrder() {
   }
 }
 
-// Fungsi Panel Admin untuk Memantau & Approve Topup
 async function loadAdminTopups() {
   if(!currentProfile || currentProfile.role !== 'admin') return;
 
@@ -539,28 +858,24 @@ async function loadAdminTopups() {
 async function approveTopup(orderId, targetUserId, tokenAmount) {
   try {
     const { data: targetUser, error: fetchErr } = await supabaseClient
-      .from('profiles')
-      .select('tokens')
-      .eq('id', targetUserId)
+      .from("profiles")
+      .select("tokens")
+      .eq("id", targetUserId)
       .single();
 
     if(fetchErr) throw fetchErr;
 
     const newTokenCount = (targetUser.tokens || 0) + tokenAmount;
 
-    const { error: updateProfileErr } = await supabaseClient
-      .from('profiles')
+    await supabaseClient
+      .from("profiles")
       .update({ tokens: newTokenCount })
-      .eq('id', targetUserId);
+      .eq("id", targetUserId);
 
-    if(updateProfileErr) throw updateProfileErr;
-
-    const { error: updateOrderErr } = await supabaseClient
-      .from('topup_orders')
+    await supabaseClient
+      .from("topup_orders")
       .update({ status: 'approved' })
       .eq('id', orderId);
-
-    if(updateOrderErr) throw updateOrderErr;
 
     showToast("Top-up berhasil disetujui, token ditambahkan ke user.");
     loadAdminTopups();
@@ -588,3 +903,4 @@ boot();
 </script>
 </body>
 </html>
+
