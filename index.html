@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>AutoSubs — YouTube Tools & AI Platform</title>
+  <title>AutoSubs — YouTube Tools & Community Platform</title>
   
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -28,7 +28,7 @@
 <section id="landing" class="page active min-h-screen flex-col">
   <nav class="w-full max-w-7xl mx-auto px-5 py-5 flex items-center justify-between border-b border-slate-800">
     <div class="flex items-center gap-2 font-extrabold text-xl text-white">
-      <i class="ph-fill ph-youtube-logo text-red-500 text-3xl"></i> AutoSubs AI
+      <i class="ph-fill ph-youtube-logo text-red-500 text-3xl"></i> AutoSubs
     </div>
     <button onclick="showPage('auth')" class="bg-red-600 hover:bg-red-500 px-5 py-2.5 rounded-xl font-bold cursor-pointer text-white">Masuk / Daftar</button>
   </nav>
@@ -36,9 +36,9 @@
   <main class="flex-1 flex items-center justify-center text-center px-5 py-10">
     <div class="max-w-2xl">
       <h1 class="text-3xl md:text-5xl font-extrabold leading-tight text-white">
-        Optimasi Channel YouTube dengan <span class="text-red-500">Kekuatan AI.</span>
+        Optimasi Channel YouTube dengan <span class="text-red-500">Komunitas & Bot.</span>
       </h1>
-      <p class="mt-4 text-slate-400 text-base">Platform generator ide, promosi komunitas, dan layanan optimasi interaksi.</p>
+      <p class="mt-4 text-slate-400 text-base">Platform pembuat tautan otomatis, promosi komunitas, dan optimasi interaksi channel.</p>
       <button onclick="showPage('auth')" class="mt-8 bg-red-600 hover:bg-red-500 px-7 py-3.5 rounded-xl font-bold cursor-pointer text-white shadow-lg shadow-red-600/30">
         Mulai Sekarang <i class="ph ph-arrow-right ml-1"></i>
       </button>
@@ -90,9 +90,9 @@
 
   <div class="flex-1 max-w-4xl w-full mx-auto p-4 space-y-5">
     
+    <!-- Menu Navigasi (AI Dihilangkan) -->
     <div class="flex overflow-x-auto no-scrollbar gap-2 bg-slate-900 p-1.5 rounded-xl border border-slate-800 text-[10px] font-bold">
       <button onclick="switchTab('dash', this)" class="tab-btn min-w-[70px] flex-1 py-2 rounded-lg bg-slate-800 text-white cursor-pointer flex flex-col items-center"><i class="ph ph-house text-lg mb-0.5"></i> Home</button>
-      <button onclick="switchTab('ai', this)" class="tab-btn min-w-[70px] flex-1 py-2 rounded-lg text-slate-400 hover:text-white cursor-pointer flex flex-col items-center"><i class="ph ph-sparkle text-lg mb-0.5"></i> AI</button>
       <button onclick="switchTab('bot', this)" class="tab-btn min-w-[70px] flex-1 py-2 rounded-lg text-slate-400 hover:text-white cursor-pointer flex flex-col items-center"><i class="ph ph-robot text-lg mb-0.5"></i> Bot</button>
       <button onclick="switchTab('promo', this)" class="tab-btn min-w-[70px] flex-1 py-2 rounded-lg text-slate-400 hover:text-white cursor-pointer flex flex-col items-center"><i class="ph ph-megaphone text-lg mb-0.5"></i> Promosi</button>
       <button onclick="switchTab('topup', this)" class="tab-btn min-w-[70px] flex-1 py-2 rounded-lg text-slate-400 hover:text-white cursor-pointer flex flex-col items-center"><i class="ph ph-wallet text-lg mb-0.5"></i> Topup</button>
@@ -122,20 +122,6 @@
         <input id="input-yt-url" type="url" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-xs outline-none" placeholder="Masukkan URL YouTube...">
         <button onclick="generateSubLink()" class="w-full bg-slate-800 hover:bg-slate-700 py-2.5 rounded-xl font-bold text-white text-xs cursor-pointer">Buat Tautan Berlangganan</button>
         <input id="output-url" readonly class="hidden w-full bg-slate-950 border border-emerald-800 rounded-xl px-4 py-2.5 text-emerald-400 text-xs mt-2">
-      </div>
-    </div>
-
-    <!-- TAB AI -->
-    <div id="view-ai" class="appview space-y-4">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-        <h3 class="font-bold text-white text-base"><i class="ph-fill ph-sparkle text-red-400 mr-1"></i> YouTube AI (Gemini)</h3>
-        <select id="ai-mode" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-xs outline-none">
-          <option value="Buatkan 5 Ide Konten YouTube Viral tentang">Buat 5 Ide Konten Viral</option>
-          <option value="Buatkan Judul clickbait & Deskripsi SEO YouTube tentang">Judul & Deskripsi SEO</option>
-        </select>
-        <textarea id="ai-prompt" rows="2" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-xs outline-none" placeholder="Topik video..."></textarea>
-        <button onclick="runGeminiAI()" class="w-full bg-red-600 hover:bg-red-500 py-3 rounded-xl font-bold text-white text-xs cursor-pointer">Generate via AI</button>
-        <div id="ai-output" class="hidden bg-slate-950 border border-slate-800 p-4 rounded-xl text-xs text-slate-300 whitespace-pre-wrap"></div>
       </div>
     </div>
 
@@ -209,8 +195,6 @@
   const SUPABASE_URL = "https://glpsvhnffonxbkp.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_Ccq1Re-OykljPEIJn3FI6g_oGNPHkWQ";
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  
-  const GEMINI_API_KEY = "AQ.Ab8RN6Lt6duba1juQY_RnVrZXxYXzvrJ-XRw-6Mmg9mJGVjwmQ";
 
   let isLoginMode = true;
   let currentUser = null;
@@ -364,32 +348,6 @@
     out.value = finalLink;
     out.classList.remove('hidden');
     showToast('Tautan berhasil dibuat!');
-  }
-
-  async function runGeminiAI() {
-    const prompt = document.getElementById('ai-prompt').value.trim();
-    const mode = document.getElementById('ai-mode').value;
-    if(!prompt) return showToast('Masukkan topik!', true);
-    if(!(await chargeToken())) return;
-
-    const outputBox = document.getElementById('ai-output');
-    outputBox.classList.remove('hidden');
-    outputBox.innerText = '🤖 AI sedang berpikir...';
-    
-    try {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: `${mode} ${prompt}. Gunakan bahasa Indonesia.` }] }] })
-      });
-      const data = await res.json();
-      if(data.candidates) {
-        outputBox.innerText = data.candidates[0].content.parts[0].text;
-        showToast('AI selesai!');
-      } else throw new Error();
-    } catch (err) {
-      outputBox.innerText = 'Gagal memproses AI.';
-    }
   }
 
   async function requestBot() {
