@@ -4,8 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>AutoSubs — YouTube Tools & AI Platform</title>
+  
+  <!-- Supabase & Phosphor Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  
   <style>
     .page { display: none; }
     .page.active { display: flex; }
@@ -13,14 +17,12 @@
     .appview.active { display: block; }
     .toast { transform: translateY(100px); opacity: 0; pointer-events: none; transition: all 0.3s ease; }
     .toast.show { transform: translateY(0); opacity: 1; }
-    /* Loading Bar Animation */
-    @keyframes loadBar { 0% { width: 0%; } 100% { width: 100%; } }
-    .animate-load { animation: loadBar 3s ease-in-out forwards; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-200 min-h-screen font-sans overflow-x-hidden">
 
-<!-- Notifikasi -->
 <div id="toast" class="toast fixed z-50 bottom-5 right-5 left-5 md:left-auto md:max-w-sm px-5 py-3 rounded-xl shadow-2xl text-white font-medium text-center"></div>
 
 <!-- HALAMAN DEPAN -->
@@ -37,7 +39,7 @@
       <h1 class="text-3xl md:text-5xl font-extrabold leading-tight text-white">
         Optimasi Channel YouTube dengan <span class="text-red-500">Kekuatan AI.</span>
       </h1>
-      <p class="mt-4 text-slate-400 text-base">Platform generator ide, deskripsi SEO, dan layanan bot automasi interaksi.</p>
+      <p class="mt-4 text-slate-400 text-base">Platform generator ide, promosi komunitas, dan layanan optimasi interaksi.</p>
       <button onclick="showPage('auth')" class="mt-8 bg-red-600 hover:bg-red-500 px-7 py-3.5 rounded-xl font-bold cursor-pointer text-white shadow-lg shadow-red-600/30">
         Mulai Sekarang <i class="ph ph-arrow-right ml-1"></i>
       </button>
@@ -89,16 +91,17 @@
 
   <div class="flex-1 max-w-4xl w-full mx-auto p-4 space-y-5">
     
-    <!-- Navigasi Menu -->
-    <div class="grid grid-cols-5 gap-1 bg-slate-900 p-1.5 rounded-xl border border-slate-800 text-[10px] font-bold text-center">
-      <button onclick="switchTab('dash', this)" class="tab-btn py-2 rounded-lg bg-slate-800 text-white cursor-pointer flex flex-col items-center"><i class="ph ph-house text-lg mb-0.5"></i> Home</button>
-      <button onclick="switchTab('ai', this)" class="tab-btn py-2 rounded-lg text-slate-400 hover:text-white cursor-pointer flex flex-col items-center"><i class="ph ph-sparkle text-lg mb-0.5"></i> AI</button>
-      <button onclick="switchTab('bot', this)" class="tab-btn py-2 rounded-lg text-slate-400 hover:text-white cursor-pointer flex flex-col items-center"><i class="ph ph-robot text-lg mb-0.5"></i> Bot</button>
-      <button onclick="switchTab('topup', this)" class="tab-btn py-2 rounded-lg text-slate-400 hover:text-white cursor-pointer flex flex-col items-center"><i class="ph ph-wallet text-lg mb-0.5"></i> Topup</button>
-      <button id="menu-admin" onclick="switchTab('admin', this)" class="tab-btn hidden py-2 rounded-lg text-amber-400 hover:text-white cursor-pointer flex flex-col items-center"><i class="ph ph-shield text-lg mb-0.5"></i> Admin</button>
+    <!-- Navigasi Menu Horizontal -->
+    <div class="flex overflow-x-auto no-scrollbar gap-2 bg-slate-900 p-1.5 rounded-xl border border-slate-800 text-[10px] font-bold">
+      <button onclick="switchTab('dash', this)" class="tab-btn min-w-[70px] flex-1 py-2 rounded-lg bg-slate-800 text-white cursor-pointer flex flex-col items-center"><i class="ph ph-house text-lg mb-0.5"></i> Home</button>
+      <button onclick="switchTab('ai', this)" class="tab-btn min-w-[70px] flex-1 py-2 rounded-lg text-slate-400 hover:text-white cursor-pointer flex flex-col items-center"><i class="ph ph-sparkle text-lg mb-0.5"></i> AI</button>
+      <button onclick="switchTab('bot', this)" class="tab-btn min-w-[70px] flex-1 py-2 rounded-lg text-slate-400 hover:text-white cursor-pointer flex flex-col items-center"><i class="ph ph-robot text-lg mb-0.5"></i> Bot</button>
+      <button onclick="switchTab('promo', this)" class="tab-btn min-w-[70px] flex-1 py-2 rounded-lg text-slate-400 hover:text-white cursor-pointer flex flex-col items-center"><i class="ph ph-megaphone text-lg mb-0.5"></i> Promosi</button>
+      <button onclick="switchTab('topup', this)" class="tab-btn min-w-[70px] flex-1 py-2 rounded-lg text-slate-400 hover:text-white cursor-pointer flex flex-col items-center"><i class="ph ph-wallet text-lg mb-0.5"></i> Topup</button>
+      <button id="menu-admin" onclick="switchTab('admin', this)" class="tab-btn hidden min-w-[70px] flex-1 py-2 rounded-lg text-amber-400 hover:text-white cursor-pointer flex flex-col items-center"><i class="ph ph-shield text-lg mb-0.5"></i> Admin</button>
     </div>
 
-    <!-- TAB DASHBOARD & TOOLS -->
+    <!-- TAB DASHBOARD -->
     <div id="view-dash" class="appview active space-y-4">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
         <h2 class="text-xl font-bold text-white" id="greeting">Halo!</h2>
@@ -135,7 +138,7 @@
           <option value="Buatkan Judul clickbait & Deskripsi SEO YouTube tentang">Judul & Deskripsi SEO</option>
         </select>
         
-        <textarea id="ai-prompt" rows="2" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-xs outline-none" placeholder="Topik video Anda... (Contoh: Tutorial Masak Rendang)"></textarea>
+        <textarea id="ai-prompt" rows="2" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-xs outline-none" placeholder="Topik video Anda..."></textarea>
         
         <button onclick="runGeminiAI()" class="w-full bg-red-600 hover:bg-red-500 py-3 rounded-xl font-bold text-white text-xs cursor-pointer">Generate via AI</button>
         
@@ -143,28 +146,37 @@
       </div>
     </div>
 
-    <!-- TAB BOT SERVICES -->
+    <!-- TAB BOT SERVICES (ANTREAN) -->
     <div id="view-bot" class="appview space-y-4">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
         <h3 class="font-bold text-white text-base"><i class="ph-fill ph-robot text-emerald-400 mr-1"></i> Bot Layanan Interaksi</h3>
-        <p class="text-xs text-slate-400">Jalankan bot penambah tayangan atau subscriber (Memotong 1 Token).</p>
+        <p class="text-xs text-slate-400">Pesanan akan diproses oleh Admin (Memotong 1 Token).</p>
         
         <input id="bot-url" type="url" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-xs outline-none" placeholder="Tautan Channel / Video...">
-        
         <select id="bot-type" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-xs outline-none">
-          <option value="subs">Auto Subscribe Target</option>
-          <option value="views">Auto Views Target</option>
+          <option value="Auto Subscribe">Auto Subscribe Target</option>
+          <option value="Auto Views">Auto Views Target</option>
         </select>
 
-        <button onclick="runBotSim()" id="bot-btn" class="w-full bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold text-white text-xs cursor-pointer">Jalankan Bot Server</button>
+        <button onclick="requestBot()" class="w-full bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold text-white text-xs cursor-pointer">Kirim Pesanan Layanan</button>
+      </div>
+    </div>
 
-        <!-- Loading Simulasi -->
-        <div id="bot-progress-container" class="hidden mt-4">
-          <div class="text-[10px] text-slate-400 mb-1 flex justify-between"><span id="bot-status-txt">Menghubungkan server...</span></div>
-          <div class="w-full bg-slate-950 rounded-full h-1.5 overflow-hidden">
-            <div id="bot-bar" class="bg-emerald-500 h-1.5 w-0"></div>
-          </div>
-        </div>
+    <!-- TAB PROMOSI -->
+    <div id="view-promo" class="appview space-y-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+        <h3 class="font-bold text-white text-base"><i class="ph-fill ph-megaphone text-blue-400 mr-1"></i> Pasang Promosi</h3>
+        <p class="text-xs text-slate-400">Tampilkan channel/video Anda ke pengguna lain (Biaya: 5 Token untuk 50 Klik Asli).</p>
+        
+        <input id="promo-title" type="text" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-xs outline-none" placeholder="Judul (Contoh: Bantu tembus 1k Subs!)">
+        <input id="promo-url" type="url" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-xs outline-none" placeholder="URL Video/Channel YouTube">
+        
+        <button onclick="addPromo()" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-white text-xs cursor-pointer">Pasang Promosi Sekarang</button>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+        <h3 class="font-bold text-white text-base">Papan Promosi Komunitas</h3>
+        <div id="promo-board" class="space-y-3"></div>
       </div>
     </div>
 
@@ -188,7 +200,7 @@
 
         <div id="topup-form" class="hidden mt-4 space-y-3 pt-4 border-t border-slate-800">
           <p class="text-xs text-slate-300" id="topup-desc"></p>
-          <button onclick="submitTopup()" class="w-full bg-red-600 hover:bg-red-500 py-2.5 rounded-xl font-bold text-white text-xs cursor-pointer">Kirim Bukti Pembayaran</button>
+          <button onclick="submitTopup()" class="w-full bg-red-600 hover:bg-red-500 py-2.5 rounded-xl font-bold text-white text-xs cursor-pointer">Konfirmasi Pesanan Topup</button>
         </div>
       </div>
     </div>
@@ -206,10 +218,13 @@
         </div>
 
         <div class="pt-2">
-          <span class="text-xs font-bold text-white block mb-2">Antrean Top-up Pending</span>
-          <div id="admin-queue" class="space-y-2">
-            <!-- List antrean topup akan dimuat di sini -->
-          </div>
+          <span class="text-xs font-bold text-emerald-400 block mb-2">Antrean Pesanan Layanan Bot</span>
+          <div id="admin-bot-queue" class="space-y-2"></div>
+        </div>
+
+        <div class="pt-2">
+          <span class="text-xs font-bold text-yellow-400 block mb-2">Antrean Top-up Pending</span>
+          <div id="admin-queue" class="space-y-2"></div>
         </div>
       </div>
     </div>
@@ -218,24 +233,17 @@
 </section>
 
 <script>
-  // Kunci API Asli Anda (Digunakan untuk fungsi AI)
+  // Kunci API Konfigurasi
+  const SUPABASE_URL = "https://glpsvhnffonxbkp.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_Ccq1Re-OykljPEIJn3FI6g_oGNPHkWQ"; // Pastikan key valid
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  
   const GEMINI_API_KEY = "AQ.Ab8RN6Lt6duba1juQY_RnVrZXxYXzvrJ-XRw-6Mmg9mJGVjwmQ";
 
-  // State & Database Lokal
   let isLoginMode = true;
   let currentUser = null;
+  let currentProfile = null;
 
-  // Inisialisasi Database Mocking di LocalStorage
-  function initDB() {
-    if(!localStorage.getItem('db_users')) localStorage.setItem('db_users', JSON.stringify({}));
-    if(!localStorage.getItem('db_topups')) localStorage.setItem('db_topups', JSON.stringify([]));
-  }
-  initDB();
-
-  function getDB(key) { return JSON.parse(localStorage.getItem(key)); }
-  function saveDB(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
-
-  // Fungsi Notifikasi
   function showToast(msg, isError = false) {
     const t = document.getElementById('toast');
     t.innerText = msg;
@@ -259,7 +267,13 @@
       btn.classList.remove('text-slate-400');
       btn.classList.add('bg-slate-800', 'text-white');
     }
-    if(tabId === 'admin') renderAdminQueue();
+    if(tabId === 'admin') {
+      renderAdminTopups();
+      renderAdminBotOrders();
+    }
+    if(tabId === 'promo') {
+      renderPromos();
+    }
   }
 
   function toggleAuthMode() {
@@ -269,269 +283,79 @@
     document.getElementById('auth-switch').innerHTML = isLoginMode ? 'Belum punya akun? <b class="text-red-400">Daftar</b>' : 'Sudah punya akun? <b class="text-red-400">Login</b>';
   }
 
-  // AUTENTIKASI REAL MENGGUNAKAN LOCAL STORAGE
-  function handleAuth(e) {
+  // --- SUPABASE AUTH & PROFILES ---
+  async function handleAuth(e) {
     e.preventDefault();
     const email = document.getElementById('auth-email').value.trim().toLowerCase();
-    const pass = document.getElementById('auth-password').value;
-    const users = getDB('db_users');
+    const password = document.getElementById('auth-password').value;
+    showToast('Memproses...');
 
     if(!isLoginMode) {
-      // Daftar
-      if(users[email]) {
-        return showToast('Email sudah terdaftar!', true);
-      }
-      users[email] = {
-        password: pass,
-        trial: (email === "panglimaa09@gmail.com") ? 9999 : 3,
-        tokens: (email === "panglimaa09@gmail.com") ? 9999 : 0,
-        role: (email === "panglimaa09@gmail.com") ? 'admin' : 'user'
-      };
-      saveDB('db_users', users);
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if(error) return showToast(error.message, true);
       showToast('Pendaftaran berhasil! Silakan login.');
       toggleAuthMode();
     } else {
-      // Login
-      if(!users[email] || users[email].password !== pass) {
-        return showToast('Email atau password salah!', true);
-      }
-      currentUser = email;
-      localStorage.setItem('currentUser', currentUser);
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if(error) return showToast(error.message, true);
       showToast('Login berhasil!');
-      loadApp();
+      await loadApp(data.user);
     }
   }
 
-  function loadApp() {
-    const users = getDB('db_users');
-    const userData = users[currentUser];
-    if(!userData) return logout();
+  async function loadApp(user) {
+    currentUser = user;
+    const email = user.email.toLowerCase();
+    const isAdmin = (email === "panglimaa09@gmail.com");
 
-    document.getElementById('profile-email-txt').innerText = currentUser;
-    document.getElementById('greeting').innerText = 'Halo, ' + currentUser.split('@')[0] + '!';
-    document.getElementById('profile-role').innerText = userData.role;
+    // Fetch or create profile
+    let { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
     
-    document.getElementById('ui-trial').innerText = userData.role === 'admin' ? '∞' : userData.trial;
-    document.getElementById('ui-tokens').innerText = userData.role === 'admin' ? '∞' : userData.tokens;
-
-    if(userData.role === 'admin') {
-      document.getElementById('menu-admin').classList.remove('hidden');
-    } else {
-      document.getElementById('menu-admin').classList.add('hidden');
+    if(!profile) {
+      const newProfile = { 
+        id: user.id, 
+        email: email, 
+        trial: isAdmin ? 9999 : 3, 
+        tokens: isAdmin ? 9999 : 0, 
+        role: isAdmin ? 'admin' : 'user' 
+      };
+      await supabase.from('profiles').insert([newProfile]);
+      profile = newProfile;
+    } else if (isAdmin && profile.role !== 'admin') {
+      await supabase.from('profiles').update({ role: 'admin', tokens: 9999, trial: 9999 }).eq('id', user.id);
+      profile.role = 'admin';
     }
-    
+
+    currentProfile = profile;
+    updateDashboardUI();
     showPage('app');
   }
 
-  // PENGURANGAN TOKEN & TRIAL
-  function chargeToken() {
-    const users = getDB('db_users');
-    const user = users[currentUser];
-    if(user.role === 'admin') return true; // Admin gratis
+  function updateDashboardUI() {
+    document.getElementById('profile-email-txt').innerText = currentProfile.email;
+    document.getElementById('greeting').innerText = 'Halo, ' + currentProfile.email.split('@')[0] + '!';
+    document.getElementById('profile-role').innerText = currentProfile.role;
+    
+    document.getElementById('ui-trial').innerText = currentProfile.role === 'admin' ? '∞' : currentProfile.trial;
+    document.getElementById('ui-tokens').innerText = currentProfile.role === 'admin' ? '∞' : currentProfile.tokens;
 
-    if(user.trial > 0) {
-      user.trial--;
-    } else if (user.tokens > 0) {
-      user.tokens--;
+    if(currentProfile.role === 'admin') document.getElementById('menu-admin').classList.remove('hidden');
+    else document.getElementById('menu-admin').classList.add('hidden');
+  }
+
+  async function chargeToken(amount = 1) {
+    if(currentProfile.role === 'admin') return true; 
+
+    let newTrial = currentProfile.trial;
+    let newTokens = currentProfile.tokens;
+
+    if(amount === 1 && newTrial > 0) {
+      newTrial -= 1;
+    } else if (newTokens >= amount) {
+      newTokens -= amount;
     } else {
-      showToast('Trial dan Token habis! Silakan Top-up.', true);
+      showToast(`Token tidak cukup! Butuh ${amount} Token.`, true);
       return false;
     }
-    saveDB('db_users', users);
-    loadApp(); // Update UI
-    return true;
-  }
 
-  // FITUR: KLAIM BONUS
-  function claimBonus() {
-    const users = getDB('db_users');
-    if(users[currentUser].role === 'admin') return showToast('Admin unlimited!');
-    users[currentUser].tokens += 2;
-    saveDB('db_users', users);
-    loadApp();
-    showToast('Berhasil klaim 2 Token harian!');
-  }
-
-  // FITUR: GENERATOR LINK (GRATIS)
-  function generateSubLink() {
-    const url = document.getElementById('input-yt-url').value.trim();
-    if(!url) return showToast('Masukkan URL!', true);
-    const finalLink = url.includes('?sub_confirmation=1') ? url : url + (url.endsWith('/') ? '' : '/') + '?sub_confirmation=1';
-    const out = document.getElementById('output-url');
-    out.value = finalLink;
-    out.classList.remove('hidden');
-    showToast('Tautan berhasil dibuat!');
-  }
-
-  // FITUR: REAL GEMINI API CALL
-  async function runGeminiAI() {
-    const prompt = document.getElementById('ai-prompt').value.trim();
-    const mode = document.getElementById('ai-mode').value;
-    if(!prompt) return showToast('Masukkan topik video!', true);
-
-    if(!chargeToken()) return; // Potong token
-
-    const outputBox = document.getElementById('ai-output');
-    outputBox.classList.remove('hidden');
-    outputBox.innerText = '🤖 AI sedang berpikir... (Mohon tunggu)';
-
-    const fullPrompt = `${mode} ${prompt}. Gunakan bahasa Indonesia yang menarik dan SEO friendly.`;
-
-    try {
-      // Menggunakan model standar flash terbaru agar lebih stabil
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: fullPrompt }] }] })
-      });
-      
-      const data = await res.json();
-      if(data.candidates && data.candidates[0].content) {
-        outputBox.innerText = data.candidates[0].content.parts[0].text;
-        showToast('Konten AI berhasil digenerate!');
-      } else {
-        throw new Error('API Error');
-      }
-    } catch (err) {
-      outputBox.innerText = 'Gagal memproses permintaan AI. Pastikan perangkat memiliki koneksi internet aktif.';
-    }
-  }
-
-  // FITUR: SIMULASI BOT
-  function runBotSim() {
-    const url = document.getElementById('bot-url').value.trim();
-    if(!url) return showToast('Masukkan URL Channel/Video!', true);
-    
-    if(!chargeToken()) return;
-
-    const btn = document.getElementById('bot-btn');
-    const container = document.getElementById('bot-progress-container');
-    const statusTxt = document.getElementById('bot-status-txt');
-    const bar = document.getElementById('bot-bar');
-
-    btn.disabled = true;
-    container.classList.remove('hidden');
-    
-    // Reset animasi
-    bar.classList.remove('animate-load');
-    void bar.offsetWidth; 
-    bar.classList.add('animate-load');
-
-    statusTxt.innerText = 'Menyambungkan ke server YouTube...';
-    
-    setTimeout(() => { statusTxt.innerText = 'Menyuntikkan lalu lintas / interaksi...'; }, 1000);
-    setTimeout(() => { statusTxt.innerText = 'Memverifikasi keberhasilan...'; }, 2000);
-    setTimeout(() => { 
-      statusTxt.innerText = 'Sukses! Bot selesai dijalankan.';
-      showToast('Bot berhasil mengirim interaksi!');
-      btn.disabled = false;
-    }, 3000);
-  }
-
-  // FITUR: TOPUP SYSTEM (MASUK ANTREAN)
-  let selectedPackage = { token: 0, price: 0 };
-  function selectTopup(token, price) {
-    selectedPackage = { token, price };
-    document.getElementById('topup-desc').innerText = `Paket: ${token} Token (Rp ${price.toLocaleString()}). \nSilakan transfer ke DANA 082336939662.`;
-    document.getElementById('topup-form').classList.remove('hidden');
-  }
-
-  function submitTopup() {
-    const topups = getDB('db_topups');
-    const newOrder = {
-      id: Date.now(),
-      email: currentUser,
-      token: selectedPackage.token,
-      price: selectedPackage.price,
-      status: 'pending'
-    };
-    topups.push(newOrder);
-    saveDB('db_topups', topups);
-    
-    document.getElementById('topup-form').classList.add('hidden');
-    showToast('Bukti terkirim! Menunggu persetujuan Admin.');
-  }
-
-  // FITUR: ADMIN PANEL (BACA & SETUJUI ANTREAN)
-  function renderAdminQueue() {
-    const topups = getDB('db_topups');
-    const queueDiv = document.getElementById('admin-queue');
-    queueDiv.innerHTML = '';
-
-    const pendings = topups.filter(t => t.status === 'pending');
-    if(pendings.length === 0) {
-      queueDiv.innerHTML = '<div class="text-[10px] text-slate-500 italic">Tidak ada antrean topup.</div>';
-      return;
-    }
-
-    pendings.forEach(t => {
-      queueDiv.innerHTML += `
-        <div class="bg-slate-950 p-3 rounded-xl border border-slate-700 flex justify-between items-center">
-          <div>
-            <div class="text-xs font-bold text-white">${t.email}</div>
-            <div class="text-[10px] text-slate-400">${t.token} Token (Rp ${t.price.toLocaleString()})</div>
-          </div>
-          <button onclick="approveTopup(${t.id})" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-lg text-xs font-bold text-white">Setujui</button>
-        </div>
-      `;
-    });
-  }
-
-  function approveTopup(orderId) {
-    const topups = getDB('db_topups');
-    const users = getDB('db_users');
-    
-    // Cari order
-    const orderIndex = topups.findIndex(t => t.id === orderId);
-    if(orderIndex === -1) return;
-    
-    const order = topups[orderIndex];
-    
-    // Tambah token user
-    if(users[order.email]) {
-      users[order.email].tokens += order.token;
-      saveDB('db_users', users);
-    }
-    
-    // Ubah status
-    topups[orderIndex].status = 'approved';
-    saveDB('db_topups', topups);
-    
-    showToast(`Topup untuk ${order.email} disetujui!`);
-    renderAdminQueue(); // Refresh list admin
-    
-    if(currentUser === order.email) loadApp(); // Refresh jika akun sendiri disetujui
-  }
-
-  function sendAdminToken() {
-    const target = document.getElementById('admin-target').value.trim().toLowerCase();
-    const amount = parseInt(document.getElementById('admin-amount').value);
-    
-    if(!target || isNaN(amount) || amount <= 0) return showToast('Input tidak valid!', true);
-    
-    const users = getDB('db_users');
-    if(!users[target]) return showToast('Email pengguna tidak ditemukan di database.', true);
-
-    users[target].tokens += amount;
-    saveDB('db_users', users);
-    
-    document.getElementById('admin-target').value = '';
-    document.getElementById('admin-amount').value = '';
-    showToast(`Berhasil mengirim ${amount} Token ke ${target}!`);
-  }
-
-  function logout() {
-    localStorage.removeItem('currentUser');
-    currentUser = null;
-    showPage('landing');
-    showToast('Berhasil keluar.');
-  }
-
-  // AUTO BOOT
-  currentUser = localStorage.getItem('currentUser');
-  if(currentUser && getDB('db_users')[currentUser]) {
-    loadApp();
-  }
-</script>
-</body>
-</html>
+    const { error 
