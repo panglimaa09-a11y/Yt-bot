@@ -146,7 +146,7 @@
       </div>
     </div>
 
-    <!-- TAB BOT SERVICES (ANTREAN) -->
+    <!-- TAB BOT SERVICES -->
     <div id="view-bot" class="appview space-y-4">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
         <h3 class="font-bold text-white text-base"><i class="ph-fill ph-robot text-emerald-400 mr-1"></i> Bot Layanan Interaksi</h3>
@@ -233,9 +233,8 @@
 </section>
 
 <script>
-  // Kunci API Konfigurasi
   const SUPABASE_URL = "https://glpsvhnffonxbkp.supabase.co";
-  const SUPABASE_ANON_KEY = "sb_publishable_Ccq1Re-OykljPEIJn3FI6g_oGNPHkWQ"; // Pastikan key valid
+  const SUPABASE_ANON_KEY = "sb_publishable_Ccq1Re-OykljPEIJn3FI6g_oGNPHkWQ";
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   
   const GEMINI_API_KEY = "AQ.Ab8RN6Lt6duba1juQY_RnVrZXxYXzvrJ-XRw-6Mmg9mJGVjwmQ";
@@ -246,19 +245,25 @@
 
   function showToast(msg, isError = false) {
     const t = document.getElementById('toast');
+    if(!t) return;
     t.innerText = msg;
     t.className = `toast fixed z-50 bottom-5 right-5 left-5 md:left-auto md:max-w-sm px-5 py-3 rounded-xl shadow-2xl text-white font-medium text-center show bg-${isError ? 'red' : 'emerald'}-600`;
-    setTimeout(() => { t.className = 'toast fixed z-50 bottom-5 right-5 left-5 md:left-auto md:max-w-sm px-5 py-3 rounded-xl shadow-2xl text-white font-medium text-center'; }, 3000);
+    setTimeout(() => { 
+      if(t) t.className = 'toast fixed z-50 bottom-5 right-5 left-5 md:left-auto md:max-w-sm px-5 py-3 rounded-xl shadow-2xl text-white font-medium text-center'; 
+    }, 3000);
   }
 
   function showPage(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(pageId).classList.add('active');
+    const target = document.getElementById(pageId);
+    if(target) target.classList.add('active');
   }
 
   function switchTab(tabId, btn) {
     document.querySelectorAll('.appview').forEach(v => v.classList.remove('active'));
-    document.getElementById('view-' + tabId).classList.add('active');
+    const targetView = document.getElementById('view-' + tabId);
+    if(targetView) targetView.classList.add('active');
+    
     document.querySelectorAll('.tab-btn').forEach(b => {
       b.classList.remove('bg-slate-800', 'text-white');
       b.classList.add('text-slate-400');
@@ -278,60 +283,80 @@
 
   function toggleAuthMode() {
     isLoginMode = !isLoginMode;
-    document.getElementById('auth-title').innerText = isLoginMode ? 'Login' : 'Daftar';
-    document.getElementById('auth-submit').innerText = isLoginMode ? 'Login' : 'Daftar';
-    document.getElementById('auth-switch').innerHTML = isLoginMode ? 'Belum punya akun? <b class="text-red-400">Daftar</b>' : 'Sudah punya akun? <b class="text-red-400">Login</b>';
+    const titleEl = document.getElementById('auth-title');
+    const submitEl = document.getElementById('auth-submit');
+    const switchEl = document.getElementById('auth-switch');
+
+    if(titleEl) titleEl.innerText = isLoginMode ? 'Login' : 'Daftar';
+    if(submitEl) submitEl.innerText = isLoginMode ? 'Login' : 'Daftar';
+    if(switchEl) switchEl.innerHTML = isLoginMode ? 'Belum punya akun? <b class="text-red-400">Daftar</b>' : 'Sudah punya akun? <b class="text-red-400">Login</b>';
   }
 
-  // --- SUPABASE AUTH & PROFILES ---
+  // --- SUPABASE AUTH & PROFILES DENGAN PENANGANAN ERROR ---
   async function handleAuth(e) {
     e.preventDefault();
-    const email = document.getElementById('auth-email').value.trim().toLowerCase();
-    const password = document.getElementById('auth-password').value;
+    const emailEl = document.getElementById('auth-email');
+    const passwordEl = document.getElementById('auth-password');
+    if(!emailEl || !passwordEl) return;
+
+    const email = emailEl.value.trim().toLowerCase();
+    const password = passwordEl.value;
     showToast('Memproses...');
 
-    if(!isLoginMode) {
-      const { data, error } = await supabase.auth.signUp({ email, password });
-      if(error) return showToast(error.message, true);
-      showToast('Pendaftaran berhasil! Silakan login.');
-      toggleAuthMode();
-    } else {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if(error) return showToast(error.message, true);
-      showToast('Login berhasil!');
-      await loadApp(data.user);
+    try {
+      if(!isLoginMode) {
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if(error) throw error;
+        showToast('Pendaftaran berhasil! Silakan login.');
+        toggleAuthMode();
+      } else {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if(error) throw error;
+        if(!data.user) throw new Error("Sesi pengguna gagal dibuat.");
+        showToast('Login berhasil!');
+        await loadApp(data.user);
+      }
+    } catch(err) {
+      showToast(err.message || 'Terjadi kesalahan autentikasi.', true);
+      console.error(err);
     }
   }
 
   async function loadApp(user) {
-    currentUser = user;
-    const email = user.email.toLowerCase();
-    const isAdmin = (email === "panglimaa09@gmail.com");
+    try {
+      currentUser = user;
+      const email = user.email.toLowerCase();
+      const isAdmin = (email === "panglimaa09@gmail.com");
 
-    // Fetch or create profile
-    let { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-    
-    if(!profile) {
-      const newProfile = { 
-        id: user.id, 
-        email: email, 
-        trial: isAdmin ? 9999 : 3, 
-        tokens: isAdmin ? 9999 : 0, 
-        role: isAdmin ? 'admin' : 'user' 
-      };
-      await supabase.from('profiles').insert([newProfile]);
-      profile = newProfile;
-    } else if (isAdmin && profile.role !== 'admin') {
-      await supabase.from('profiles').update({ role: 'admin', tokens: 9999, trial: 9999 }).eq('id', user.id);
-      profile.role = 'admin';
+      let { data: profile, error: fetchError } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+      
+      if(!profile) {
+        const newProfile = { 
+          id: user.id, 
+          email: email, 
+          trial: isAdmin ? 9999 : 3, 
+          tokens: isAdmin ? 9999 : 0, 
+          role: isAdmin ? 'admin' : 'user' 
+        };
+        const { error: insertError } = await supabase.from('profiles').insert([newProfile]);
+        if(insertError) throw insertError;
+        profile = newProfile;
+      } else if (isAdmin && profile.role !== 'admin') {
+        await supabase.from('profiles').update({ role: 'admin', tokens: 9999, trial: 9999 }).eq('id', user.id);
+        profile.role = 'admin';
+      }
+
+      currentProfile = profile;
+      updateDashboardUI();
+      showPage('app');
+    } catch (err) {
+      showToast('Gagal memuat profil: ' + (err.message || 'Cek tabel database Supabase'), true);
+      console.error(err);
     }
-
-    currentProfile = profile;
-    updateDashboardUI();
-    showPage('app');
   }
 
   function updateDashboardUI() {
+    if(!currentProfile) return;
     document.getElementById('profile-email-txt').innerText = currentProfile.email;
     document.getElementById('greeting').innerText = 'Halo, ' + currentProfile.email.split('@')[0] + '!';
     document.getElementById('profile-role').innerText = currentProfile.role;
@@ -339,8 +364,11 @@
     document.getElementById('ui-trial').innerText = currentProfile.role === 'admin' ? '∞' : currentProfile.trial;
     document.getElementById('ui-tokens').innerText = currentProfile.role === 'admin' ? '∞' : currentProfile.tokens;
 
-    if(currentProfile.role === 'admin') document.getElementById('menu-admin').classList.remove('hidden');
-    else document.getElementById('menu-admin').classList.add('hidden');
+    const adminMenu = document.getElementById('menu-admin');
+    if(adminMenu) {
+      if(currentProfile.role === 'admin') adminMenu.classList.remove('hidden');
+      else adminMenu.classList.add('hidden');
+    }
   }
 
   async function chargeToken(amount = 1) {
@@ -358,4 +386,277 @@
       return false;
     }
 
-    const { error 
+    const { error } = await supabase.from('profiles').update({ trial: newTrial, tokens: newTokens }).eq('id', currentProfile.id);
+    if(error) { showToast('Gagal memotong token database', true); return false; }
+    
+    currentProfile.trial = newTrial;
+    currentProfile.tokens = newTokens;
+    updateDashboardUI();
+    return true;
+  }
+
+  async function claimBonus() {
+    if(currentProfile.role === 'admin') return showToast('Admin unlimited!');
+    const newTokens = currentProfile.tokens + 2;
+    await supabase.from('profiles').update({ tokens: newTokens }).eq('id', currentProfile.id);
+    currentProfile.tokens = newTokens;
+    updateDashboardUI();
+    showToast('Berhasil klaim 2 Token harian!');
+  }
+
+  function generateSubLink() {
+    const urlEl = document.getElementById('input-yt-url');
+    if(!urlEl) return;
+    const url = urlEl.value.trim();
+    if(!url) return showToast('Masukkan URL!', true);
+    const finalLink = url.includes('?sub_confirmation=1') ? url : url + (url.endsWith('/') ? '' : '/') + '?sub_confirmation=1';
+    const out = document.getElementById('output-url');
+    if(out) {
+      out.value = finalLink;
+      out.classList.remove('hidden');
+    }
+    showToast('Tautan berhasil dibuat!');
+  }
+
+  // --- GEMINI AI ---
+  async function runGeminiAI() {
+    const promptEl = document.getElementById('ai-prompt');
+    const modeEl = document.getElementById('ai-mode');
+    if(!promptEl || !modeEl) return;
+
+    const prompt = promptEl.value.trim();
+    const mode = modeEl.value;
+    if(!prompt) return showToast('Masukkan topik video!', true);
+    
+    const canCharge = await chargeToken();
+    if(!canCharge) return;
+
+    const outputBox = document.getElementById('ai-output');
+    if(outputBox) {
+      outputBox.classList.remove('hidden');
+      outputBox.innerText = '🤖 AI sedang berpikir...';
+    }
+    
+    try {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: [{ text: `${mode} ${prompt}. Gunakan bahasa Indonesia.` }] }] })
+      });
+      const data = await res.json();
+      if(data.candidates && outputBox) {
+        outputBox.innerText = data.candidates[0].content.parts[0].text;
+        showToast('Konten AI berhasil digenerate!');
+      } else throw new Error();
+    } catch (err) {
+      if(outputBox) outputBox.innerText = 'Gagal memproses AI. Periksa koneksi internet.';
+    }
+  }
+
+  // --- BOT ORDERS TO SUPABASE ---
+  async function requestBot() {
+    const urlEl = document.getElementById('bot-url');
+    const typeEl = document.getElementById('bot-type');
+    if(!urlEl || !typeEl) return;
+
+    const url = urlEl.value.trim();
+    const type = typeEl.value;
+    if(!url) return showToast('Masukkan URL!', true);
+    
+    const canCharge = await chargeToken();
+    if(!canCharge) return;
+
+    showToast('Mengirim ke server...');
+    const { error } = await supabase.from('bot_orders').insert([{
+      user_id: currentProfile.id,
+      email: currentProfile.email,
+      url: url,
+      type: type,
+      status: 'pending'
+    }]);
+
+    if(error) return showToast('Gagal mengirim pesanan.', true);
+    urlEl.value = '';
+    showToast('Pesanan bot berhasil masuk antrean server!');
+  }
+
+  // --- PROMOS TO SUPABASE ---
+  async function addPromo() {
+    const titleEl = document.getElementById('promo-title');
+    const urlEl = document.getElementById('promo-url');
+    if(!titleEl || !urlEl) return;
+
+    const title = titleEl.value.trim();
+    let url = urlEl.value.trim();
+    if(!title || !url) return showToast('Lengkapi form!', true);
+    
+    const canCharge = await chargeToken(5);
+    if(!canCharge) return;
+
+    const { error } = await supabase.from('promos').insert([{
+      user_id: currentProfile.id,
+      email: currentProfile.email,
+      title: title,
+      url: url.includes('?sub_confirmation=1') ? url : url + '?sub_confirmation=1',
+      clicks: 0,
+      max_clicks: 50
+    }]);
+
+    if(error) return showToast('Gagal memasang promosi', true);
+    titleEl.value = '';
+    urlEl.value = '';
+    showToast('Promosi berhasil ditayangkan!');
+    renderPromos();
+  }
+
+  async function renderPromos() {
+    const board = document.getElementById('promo-board');
+    if(!board) return;
+    board.innerHTML = '<div class="text-xs text-slate-500 text-center">Memuat...</div>';
+    
+    const { data, error } = await supabase.from('promos').select('*').lt('clicks', 50).order('id', { ascending: false });
+    
+    if(error || !data || data.length === 0) {
+      board.innerHTML = '<div class="text-[10px] text-slate-500 italic text-center">Belum ada promosi aktif.</div>';
+      return;
+    }
+
+    board.innerHTML = '';
+    data.forEach(p => {
+      board.innerHTML += `
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-700 flex justify-between items-center cursor-pointer hover:border-blue-500 transition" onclick="clickPromo(${p.id}, '${p.url}', ${p.clicks})">
+          <div class="flex-1 overflow-hidden">
+            <div class="text-xs font-bold text-white truncate">${p.title}</div>
+            <div class="text-[10px] text-slate-400 mt-0.5">Dilihat: ${p.clicks}/${p.max_clicks} x</div>
+          </div>
+          <div class="bg-blue-600/20 text-blue-400 px-3 py-1.5 rounded-lg text-[10px] font-bold ml-2 shrink-0">Kunjungi</div>
+        </div>
+      `;
+    });
+  }
+
+  async function clickPromo(id, url, currentClicks) {
+    await supabase.from('promos').update({ clicks: currentClicks + 1 }).eq('id', id);
+    window.open(url, '_blank');
+    renderPromos();
+  }
+
+  // --- TOPUP TO SUPABASE ---
+  let selectedPackage = { token: 0, price: 0 };
+  function selectTopup(token, price) {
+    selectedPackage = { token, price };
+    const desc = document.getElementById('topup-desc');
+    const form = document.getElementById('topup-form');
+    if(desc) desc.innerText = `Paket: ${token} Token (Rp ${price.toLocaleString()}). \nSilakan transfer ke DANA 082336939662.`;
+    if(form) form.classList.remove('hidden');
+  }
+
+  async function submitTopup() {
+    showToast('Mengirim pesanan...');
+    const { error } = await supabase.from('topups').insert([{
+      user_id: currentProfile.id,
+      email: currentProfile.email,
+      token: selectedPackage.token,
+      price: selectedPackage.price,
+      status: 'pending'
+    }]);
+
+    if(error) return showToast('Gagal mengirim pesanan.', true);
+    const form = document.getElementById('topup-form');
+    if(form) form.classList.add('hidden');
+    showToast('Berhasil! Menunggu persetujuan Admin.');
+  }
+
+  // --- ADMIN PANEL SUPABASE ---
+  async function renderAdminBotOrders() {
+    const queueDiv = document.getElementById('admin-bot-queue');
+    if(!queueDiv) return;
+    const { data } = await supabase.from('bot_orders').select('*').eq('status', 'pending');
+    
+    if(!data || data.length === 0) {
+      queueDiv.innerHTML = '<div class="text-[10px] text-slate-500 italic">Tidak ada pesanan bot.</div>';
+      return;
+    }
+
+    queueDiv.innerHTML = '';
+    data.forEach(t => {
+      queueDiv.innerHTML += `
+        <div class="bg-slate-950 p-3 rounded-xl border border-emerald-900 flex flex-col gap-2">
+          <div><div class="text-xs font-bold text-white">${t.email} - <span class="text-emerald-400">${t.type}</span></div>
+          <a href="${t.url}" target="_blank" class="text-[10px] text-blue-400 underline break-all">${t.url}</a></div>
+          <button onclick="finishBotOrder(${t.id})" class="bg-emerald-600 hover:bg-emerald-500 py-1.5 rounded-lg text-xs font-bold text-white">Tandai Selesai</button>
+        </div>
+      `;
+    });
+  }
+
+  async function finishBotOrder(id) {
+    await supabase.from('bot_orders').update({ status: 'completed' }).eq('id', id);
+    showToast('Pesanan bot ditandai selesai!');
+    renderAdminBotOrders();
+  }
+
+  async function renderAdminTopups() {
+    const queueDiv = document.getElementById('admin-queue');
+    if(!queueDiv) return;
+    const { data } = await supabase.from('topups').select('*').eq('status', 'pending');
+    
+    if(!data || data.length === 0) {
+      queueDiv.innerHTML = '<div class="text-[10px] text-slate-500 italic">Tidak ada antrean topup.</div>';
+      return;
+    }
+
+    queueDiv.innerHTML = '';
+    data.forEach(t => {
+      queueDiv.innerHTML += `
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-700 flex justify-between items-center">
+          <div><div class="text-xs font-bold text-white">${t.email}</div><div class="text-[10px] text-slate-400">${t.token} Token</div></div>
+          <button onclick="approveTopup(${t.id}, '${t.user_id}', ${t.token})" class="bg-yellow-600 hover:bg-yellow-500 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-950">Setujui</button>
+        </div>
+      `;
+    });
+  }
+
+  async function approveTopup(orderId, userId, tokenAmount) {
+    const { data: targetUser } = await supabase.from('profiles').select('tokens').eq('id', userId).single();
+    if(targetUser) {
+      await supabase.from('profiles').update({ tokens: targetUser.tokens + tokenAmount }).eq('id', userId);
+    }
+    await supabase.from('topups').update({ status: 'approved' }).eq('id', orderId);
+    showToast('Topup disetujui!');
+    renderAdminTopups();
+  }
+
+  async function sendAdminToken() {
+    const targetEl = document.getElementById('admin-target');
+    const amountEl = document.getElementById('admin-amount');
+    if(!targetEl || !amountEl) return;
+
+    const emailTarget = targetEl.value.trim().toLowerCase();
+    const amount = parseInt(amountEl.value);
+    if(!emailTarget || isNaN(amount) || amount <= 0) return showToast('Input tidak valid!', true);
+
+    const { data: targetUser } = await supabase.from('profiles').select('id, tokens').eq('email', emailTarget).single();
+    if(!targetUser) return showToast('Email tidak ditemukan!', true);
+
+    await supabase.from('profiles').update({ tokens: targetUser.tokens + amount }).eq('id', targetUser.id);
+    targetEl.value = '';
+    amountEl.value = '';
+    showToast(`Berhasil mengirim ${amount} Token ke ${emailTarget}!`);
+  }
+
+  async function logout() {
+    await supabase.auth.signOut();
+    currentUser = null;
+    currentProfile = null;
+    showPage('landing');
+    showToast('Berhasil keluar.');
+  }
+
+  // AUTO BOOT SUPABASE SESSION
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    if(session && session.user) loadApp(session.user);
+  });
+</script>
+</body>
+</html>
