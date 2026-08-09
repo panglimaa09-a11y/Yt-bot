@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>AutoSubs — YouTube Tools & AI Platform</title>
+  <title>AutoSubs — Debug Mode</title>
   
-  <!-- Supabase & Phosphor Icons -->
+  <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -15,50 +15,16 @@
     .page.active { display: flex; }
     .appview { display: none; }
     .appview.active { display: block; }
-    .toast { transform: translateY(100px); opacity: 0; pointer-events: none; transition: all 0.3s ease; }
-    .toast.show { transform: translateY(0); opacity: 1; }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-200 min-h-screen font-sans overflow-x-hidden">
-
-<div id="toast" class="toast fixed z-50 bottom-5 right-5 left-5 md:left-auto md:max-w-sm px-5 py-3 rounded-xl shadow-2xl text-white font-medium text-center"></div>
-
-<!-- HALAMAN DEPAN -->
-<section id="landing" class="page active min-h-screen flex-col">
-  <nav class="w-full max-w-7xl mx-auto px-5 py-5 flex items-center justify-between border-b border-slate-800">
-    <div class="flex items-center gap-2 font-extrabold text-xl text-white">
-      <i class="ph-fill ph-youtube-logo text-red-500 text-3xl"></i> AutoSubs AI
-    </div>
-    <button onclick="showPage('auth')" class="bg-red-600 hover:bg-red-500 px-5 py-2.5 rounded-xl font-bold cursor-pointer text-white">Masuk / Daftar</button>
-  </nav>
-
-  <main class="flex-1 flex items-center justify-center text-center px-5 py-10">
-    <div class="max-w-2xl">
-      <h1 class="text-3xl md:text-5xl font-extrabold leading-tight text-white">
-        Optimasi Channel YouTube dengan <span class="text-red-500">Kekuatan AI.</span>
-      </h1>
-      <p class="mt-4 text-slate-400 text-base">Platform generator ide, promosi komunitas, dan layanan optimasi interaksi.</p>
-      <button onclick="showPage('auth')" class="mt-8 bg-red-600 hover:bg-red-500 px-7 py-3.5 rounded-xl font-bold cursor-pointer text-white shadow-lg shadow-red-600/30">
-        Mulai Sekarang <i class="ph ph-arrow-right ml-1"></i>
-      </button>
-    </div>
-  </main>
-</section>
+<body class="bg-slate-950 text-slate-200 min-h-screen font-sans">
 
 <!-- HALAMAN LOGIN/DAFTAR -->
-<section id="auth" class="page min-h-screen items-center justify-center p-5 relative">
-  <button onclick="showPage('landing')" class="absolute top-5 left-5 text-slate-400 hover:text-white cursor-pointer flex items-center gap-1">
-    <i class="ph ph-arrow-left"></i> Beranda
-  </button>
-
+<section id="auth" class="page active min-h-screen items-center justify-center p-5">
   <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl">
     <div class="text-center mb-6">
-      <div class="mx-auto w-12 h-12 rounded-2xl bg-red-600 flex items-center justify-center">
-        <i class="ph-fill ph-youtube-logo text-2xl text-white"></i>
-      </div>
-      <h2 id="auth-title" class="text-2xl font-extrabold text-white mt-4">Login</h2>
+      <h2 id="auth-title" class="text-2xl font-extrabold text-white">Login / Debug</h2>
+      <p class="text-xs text-slate-400 mt-1">Uji Coba Koneksi Supabase</p>
     </div>
 
     <form onsubmit="handleAuth(event)" class="space-y-4">
@@ -70,593 +36,75 @@
         <label class="text-xs text-slate-300">Password</label>
         <input id="auth-password" type="password" required class="mt-1 w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-red-500" placeholder="Minimal 6 karakter">
       </div>
-      <button id="auth-submit" type="submit" class="w-full bg-red-600 hover:bg-red-500 py-3 rounded-xl font-bold text-white text-sm cursor-pointer">Login</button>
+      <button type="submit" class="w-full bg-red-600 hover:bg-red-500 py-3 rounded-xl font-bold text-white text-sm cursor-pointer">Proses Masuk</button>
     </form>
-    <button onclick="toggleAuthMode()" id="auth-switch" class="w-full mt-4 text-xs text-slate-400 hover:text-white cursor-pointer">Belum punya akun? <b class="text-red-400">Daftar</b></button>
+    <button onclick="toggleMode()" id="auth-switch" class="w-full mt-4 text-xs text-slate-400 text-center cursor-pointer">Belum punya akun? <b>Daftar</b></button>
   </div>
 </section>
 
-<!-- DASHBOARD APLIKASI -->
-<section id="app" class="page min-h-screen w-full flex-col pb-20">
-  <header class="h-16 border-b border-slate-800 bg-slate-900 px-4 flex items-center justify-between sticky top-0 z-30">
-    <div class="font-extrabold text-white flex items-center gap-2">
-      <i class="ph-fill ph-youtube-logo text-red-500 text-xl"></i> AutoSubs
-    </div>
-    <div class="flex items-center gap-2 text-[10px] md:text-xs">
-      <div class="bg-slate-800 px-2 py-1.5 rounded border border-slate-700">Trial: <b id="ui-trial" class="text-amber-400">0</b></div>
-      <div class="bg-slate-800 px-2 py-1.5 rounded border border-slate-700">Token: <b id="ui-tokens" class="text-yellow-400">0</b></div>
-      <button onclick="logout()" class="text-red-400 hover:text-red-300 ml-1"><i class="ph ph-sign-out text-lg"></i></button>
-    </div>
-  </header>
-
-  <div class="flex-1 max-w-4xl w-full mx-auto p-4 space-y-5">
-    
-    <!-- Navigasi Menu Horizontal -->
-    <div class="flex overflow-x-auto no-scrollbar gap-2 bg-slate-900 p-1.5 rounded-xl border border-slate-800 text-[10px] font-bold">
-      <button onclick="switchTab('dash', this)" class="tab-btn min-w-[70px] flex-1 py-2 rounded-lg bg-slate-800 text-white cursor-pointer flex flex-col items-center"><i class="ph ph-house text-lg mb-0.5"></i> Home</button>
-      <button onclick="switchTab('ai', this)" class="tab-btn min-w-[70px] flex-1 py-2 rounded-lg text-slate-400 hover:text-white cursor-pointer flex flex-col items-center"><i class="ph ph-sparkle text-lg mb-0.5"></i> AI</button>
-      <button onclick="switchTab('bot', this)" class="tab-btn min-w-[70px] flex-1 py-2 rounded-lg text-slate-400 hover:text-white cursor-pointer flex flex-col items-center"><i class="ph ph-robot text-lg mb-0.5"></i> Bot</button>
-      <button onclick="switchTab('promo', this)" class="tab-btn min-w-[70px] flex-1 py-2 rounded-lg text-slate-400 hover:text-white cursor-pointer flex flex-col items-center"><i class="ph ph-megaphone text-lg mb-0.5"></i> Promosi</button>
-      <button onclick="switchTab('topup', this)" class="tab-btn min-w-[70px] flex-1 py-2 rounded-lg text-slate-400 hover:text-white cursor-pointer flex flex-col items-center"><i class="ph ph-wallet text-lg mb-0.5"></i> Topup</button>
-      <button id="menu-admin" onclick="switchTab('admin', this)" class="tab-btn hidden min-w-[70px] flex-1 py-2 rounded-lg text-amber-400 hover:text-white cursor-pointer flex flex-col items-center"><i class="ph ph-shield text-lg mb-0.5"></i> Admin</button>
-    </div>
-
-    <!-- TAB DASHBOARD -->
-    <div id="view-dash" class="appview active space-y-4">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-        <h2 class="text-xl font-bold text-white" id="greeting">Halo!</h2>
-        <p class="text-xs text-slate-400 mt-1" id="profile-email-txt"></p>
-        
-        <div class="grid grid-cols-2 gap-3 mt-4 text-center">
-          <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-            <span class="text-[10px] text-slate-500">Status Akun</span>
-            <p id="profile-role" class="text-sm font-extrabold text-red-400 uppercase mt-1">User</p>
-          </div>
-          <button onclick="claimBonus()" class="bg-emerald-900/40 border border-emerald-800 hover:bg-emerald-800 p-3 rounded-xl cursor-pointer transition">
-            <span class="text-[10px] text-emerald-400">Hadiah Harian</span>
-            <p class="text-sm font-extrabold text-emerald-300 mt-1">Klaim 2 Token</p>
-          </button>
-        </div>
-      </div>
-
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
-        <h3 class="font-bold text-white text-sm">Subscribe Link Generator (Gratis)</h3>
-        <input id="input-yt-url" type="url" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-xs outline-none" placeholder="Masukkan URL YouTube...">
-        <button onclick="generateSubLink()" class="w-full bg-slate-800 hover:bg-slate-700 py-2.5 rounded-xl font-bold text-white text-xs cursor-pointer">Buat Tautan Berlangganan</button>
-        <input id="output-url" readonly class="hidden w-full bg-slate-950 border border-emerald-800 rounded-xl px-4 py-2.5 text-emerald-400 text-xs mt-2">
-      </div>
-    </div>
-
-    <!-- TAB AI ASSISTANT -->
-    <div id="view-ai" class="appview space-y-4">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-        <h3 class="font-bold text-white text-base"><i class="ph-fill ph-sparkle text-red-400 mr-1"></i> YouTube AI (Gemini)</h3>
-        <p class="text-xs text-slate-400">Buat ide konten atau deskripsi. Memotong 1 Token/Trial.</p>
-        
-        <select id="ai-mode" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-xs outline-none">
-          <option value="Buatkan 5 Ide Konten YouTube Viral tentang">Buat 5 Ide Konten Viral</option>
-          <option value="Buatkan Judul clickbait & Deskripsi SEO YouTube tentang">Judul & Deskripsi SEO</option>
-        </select>
-        
-        <textarea id="ai-prompt" rows="2" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white text-xs outline-none" placeholder="Topik video Anda..."></textarea>
-        
-        <button onclick="runGeminiAI()" class="w-full bg-red-600 hover:bg-red-500 py-3 rounded-xl font-bold text-white text-xs cursor-pointer">Generate via AI</button>
-        
-        <div id="ai-output" class="hidden bg-slate-950 border border-slate-800 p-4 rounded-xl text-xs text-slate-300 whitespace-pre-wrap leading-relaxed"></div>
-      </div>
-    </div>
-
-    <!-- TAB BOT SERVICES -->
-    <div id="view-bot" class="appview space-y-4">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-        <h3 class="font-bold text-white text-base"><i class="ph-fill ph-robot text-emerald-400 mr-1"></i> Bot Layanan Interaksi</h3>
-        <p class="text-xs text-slate-400">Pesanan akan diproses oleh Admin (Memotong 1 Token).</p>
-        
-        <input id="bot-url" type="url" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-xs outline-none" placeholder="Tautan Channel / Video...">
-        <select id="bot-type" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-xs outline-none">
-          <option value="Auto Subscribe">Auto Subscribe Target</option>
-          <option value="Auto Views">Auto Views Target</option>
-        </select>
-
-        <button onclick="requestBot()" class="w-full bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold text-white text-xs cursor-pointer">Kirim Pesanan Layanan</button>
-      </div>
-    </div>
-
-    <!-- TAB PROMOSI -->
-    <div id="view-promo" class="appview space-y-4">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-        <h3 class="font-bold text-white text-base"><i class="ph-fill ph-megaphone text-blue-400 mr-1"></i> Pasang Promosi</h3>
-        <p class="text-xs text-slate-400">Tampilkan channel/video Anda ke pengguna lain (Biaya: 5 Token untuk 50 Klik Asli).</p>
-        
-        <input id="promo-title" type="text" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-xs outline-none" placeholder="Judul (Contoh: Bantu tembus 1k Subs!)">
-        <input id="promo-url" type="url" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-xs outline-none" placeholder="URL Video/Channel YouTube">
-        
-        <button onclick="addPromo()" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-white text-xs cursor-pointer">Pasang Promosi Sekarang</button>
-      </div>
-
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-        <h3 class="font-bold text-white text-base">Papan Promosi Komunitas</h3>
-        <div id="promo-board" class="space-y-3"></div>
-      </div>
-    </div>
-
-    <!-- TAB TOPUP -->
-    <div id="view-topup" class="appview space-y-4">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-        <h3 class="font-bold text-white text-base">Beli Token</h3>
-        <p class="text-xs text-slate-400 mt-1">1 Token = Rp 1.000. Transfer ke DANA: <b>082336939662</b></p>
-        
-        <div class="grid grid-cols-2 gap-3 mt-4">
-          <div onclick="selectTopup(20, 20000)" class="bg-slate-950 border border-slate-700 hover:border-red-500 rounded-xl p-4 cursor-pointer text-center">
-            <div class="text-lg font-bold text-yellow-400">20 Token</div>
-            <div class="text-[10px] text-slate-400 mt-1">Rp 20.000</div>
-          </div>
-          <div onclick="selectTopup(50, 50000)" class="bg-slate-950 border border-red-500 rounded-xl p-4 cursor-pointer text-center relative overflow-hidden">
-            <div class="absolute top-0 right-0 bg-red-600 text-[8px] font-bold px-1.5 py-0.5 rounded-bl">PROMO</div>
-            <div class="text-lg font-bold text-yellow-400">50 Token</div>
-            <div class="text-[10px] text-slate-400 mt-1">Rp 50.000</div>
-          </div>
-        </div>
-
-        <div id="topup-form" class="hidden mt-4 space-y-3 pt-4 border-t border-slate-800">
-          <p class="text-xs text-slate-300" id="topup-desc"></p>
-          <button onclick="submitTopup()" class="w-full bg-red-600 hover:bg-red-500 py-2.5 rounded-xl font-bold text-white text-xs cursor-pointer">Konfirmasi Pesanan Topup</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB ADMIN -->
-    <div id="view-admin" class="appview space-y-4">
-      <div class="bg-slate-900 border border-amber-500/30 rounded-2xl p-5 space-y-4">
-        <h3 class="font-bold text-amber-400 text-base">Panel Admin</h3>
-        
-        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
-          <span class="text-xs font-bold text-white">Kirim Token Manual</span>
-          <input id="admin-target" type="email" placeholder="Email tujuan" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-          <input id="admin-amount" type="number" placeholder="Jumlah token" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-          <button onclick="sendAdminToken()" class="w-full bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold py-2 rounded-xl text-xs cursor-pointer">Kirim Token</button>
-        </div>
-
-        <div class="pt-2">
-          <span class="text-xs font-bold text-emerald-400 block mb-2">Antrean Pesanan Layanan Bot</span>
-          <div id="admin-bot-queue" class="space-y-2"></div>
-        </div>
-
-        <div class="pt-2">
-          <span class="text-xs font-bold text-yellow-400 block mb-2">Antrean Top-up Pending</span>
-          <div id="admin-queue" class="space-y-2"></div>
-        </div>
-      </div>
-    </div>
-
-  </div>
+<!-- DASHBOARD SEDERHANA -->
+<section id="app" class="page min-h-screen w-full flex-col p-6">
+  <h1 class="text-2xl font-bold text-white">Berhasil Masuk!</h1>
+  <p id="logged-email" class="text-sm text-slate-400 mt-2"></p>
+  <button onclick="logout()" class="mt-5 bg-red-600 px-4 py-2 rounded-xl text-white font-bold w-32">Logout</button>
 </section>
 
 <script>
+  // Pastikan Supabase dimuat dengan aman
   const SUPABASE_URL = "https://glpsvhnffonxbkp.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_Ccq1Re-OykljPEIJn3FI6g_oGNPHkWQ";
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   
-  const GEMINI_API_KEY = "AQ.Ab8RN6Lt6duba1juQY_RnVrZXxYXzvrJ-XRw-6Mmg9mJGVjwmQ";
-
-  let isLoginMode = true;
-  let currentUser = null;
-  let currentProfile = null;
-
-  function showToast(msg, isError = false) {
-    const t = document.getElementById('toast');
-    if(!t) return;
-    t.innerText = msg;
-    t.className = `toast fixed z-50 bottom-5 right-5 left-5 md:left-auto md:max-w-sm px-5 py-3 rounded-xl shadow-2xl text-white font-medium text-center show bg-${isError ? 'red' : 'emerald'}-600`;
-    setTimeout(() => { 
-      if(t) t.className = 'toast fixed z-50 bottom-5 right-5 left-5 md:left-auto md:max-w-sm px-5 py-3 rounded-xl shadow-2xl text-white font-medium text-center'; 
-    }, 3000);
+  let supabase = null;
+  try {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  } catch (err) {
+    alert("Gagal memuat modul Supabase: " + err.message);
   }
 
-  function showPage(pageId) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    const target = document.getElementById(pageId);
-    if(target) target.classList.add('active');
+  let isLogin = true;
+
+  function toggleMode() {
+    isLogin = !isLogin;
+    document.getElementById('auth-title').innerText = isLogin ? "Login" : "Daftar";
   }
 
-  function switchTab(tabId, btn) {
-    document.querySelectorAll('.appview').forEach(v => v.classList.remove('active'));
-    const targetView = document.getElementById('view-' + tabId);
-    if(targetView) targetView.classList.add('active');
-    
-    document.querySelectorAll('.tab-btn').forEach(b => {
-      b.classList.remove('bg-slate-800', 'text-white');
-      b.classList.add('text-slate-400');
-    });
-    if(btn) {
-      btn.classList.remove('text-slate-400');
-      btn.classList.add('bg-slate-800', 'text-white');
-    }
-    if(tabId === 'admin') {
-      renderAdminTopups();
-      renderAdminBotOrders();
-    }
-    if(tabId === 'promo') {
-      renderPromos();
-    }
-  }
-
-  function toggleAuthMode() {
-    isLoginMode = !isLoginMode;
-    const titleEl = document.getElementById('auth-title');
-    const submitEl = document.getElementById('auth-submit');
-    const switchEl = document.getElementById('auth-switch');
-
-    if(titleEl) titleEl.innerText = isLoginMode ? 'Login' : 'Daftar';
-    if(submitEl) submitEl.innerText = isLoginMode ? 'Login' : 'Daftar';
-    if(switchEl) switchEl.innerHTML = isLoginMode ? 'Belum punya akun? <b class="text-red-400">Daftar</b>' : 'Sudah punya akun? <b class="text-red-400">Login</b>';
-  }
-
-  // --- SUPABASE AUTH & PROFILES DENGAN PENANGANAN ERROR ---
   async function handleAuth(e) {
     e.preventDefault();
-    const emailEl = document.getElementById('auth-email');
-    const passwordEl = document.getElementById('auth-password');
-    if(!emailEl || !passwordEl) return;
+    const email = document.getElementById('auth-email').value.trim().toLowerCase();
+    const password = document.getElementById('auth-password').value;
 
-    const email = emailEl.value.trim().toLowerCase();
-    const password = passwordEl.value;
-    showToast('Memproses...');
+    if (!supabase) {
+      alert("Klien Supabase belum siap!");
+      return;
+    }
 
     try {
-      if(!isLoginMode) {
+      if (!isLogin) {
+        alert("Mengirim data pendaftaran...");
         const { data, error } = await supabase.auth.signUp({ email, password });
-        if(error) throw error;
-        showToast('Pendaftaran berhasil! Silakan login.');
-        toggleAuthMode();
+        if (error) throw error;
+        alert("Pendaftaran Berhasil! Silakan klik tombol switch ke Login lalu masuk.");
+        toggleMode();
       } else {
+        alert("Menghubungkan ke server untuk login...");
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        if(error) throw error;
-        if(!data.user) throw new Error("Sesi pengguna gagal dibuat.");
-        showToast('Login berhasil!');
-        await loadApp(data.user);
+        if (error) throw error;
+        
+        alert("Login sukses! Membuka aplikasi...");
+        document.getElementById('logged-email').innerText = "Email: " + data.user.email;
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('app').classList.add('active');
       }
-    } catch(err) {
-      showToast(err.message || 'Terjadi kesalahan autentikasi.', true);
-      console.error(err);
-    }
-  }
-
-  async function loadApp(user) {
-    try {
-      currentUser = user;
-      const email = user.email.toLowerCase();
-      const isAdmin = (email === "panglimaa09@gmail.com");
-
-      let { data: profile, error: fetchError } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-      
-      if(!profile) {
-        const newProfile = { 
-          id: user.id, 
-          email: email, 
-          trial: isAdmin ? 9999 : 3, 
-          tokens: isAdmin ? 9999 : 0, 
-          role: isAdmin ? 'admin' : 'user' 
-        };
-        const { error: insertError } = await supabase.from('profiles').insert([newProfile]);
-        if(insertError) throw insertError;
-        profile = newProfile;
-      } else if (isAdmin && profile.role !== 'admin') {
-        await supabase.from('profiles').update({ role: 'admin', tokens: 9999, trial: 9999 }).eq('id', user.id);
-        profile.role = 'admin';
-      }
-
-      currentProfile = profile;
-      updateDashboardUI();
-      showPage('app');
     } catch (err) {
-      showToast('Gagal memuat profil: ' + (err.message || 'Cek tabel database Supabase'), true);
-      console.error(err);
+      // Menampilkan pesan error asli dari Supabase agar terlihat di HP
+      alert("ERROR SUPABASE: " + (err.message || JSON.stringify(err)));
     }
-  }
-
-  function updateDashboardUI() {
-    if(!currentProfile) return;
-    document.getElementById('profile-email-txt').innerText = currentProfile.email;
-    document.getElementById('greeting').innerText = 'Halo, ' + currentProfile.email.split('@')[0] + '!';
-    document.getElementById('profile-role').innerText = currentProfile.role;
-    
-    document.getElementById('ui-trial').innerText = currentProfile.role === 'admin' ? '∞' : currentProfile.trial;
-    document.getElementById('ui-tokens').innerText = currentProfile.role === 'admin' ? '∞' : currentProfile.tokens;
-
-    const adminMenu = document.getElementById('menu-admin');
-    if(adminMenu) {
-      if(currentProfile.role === 'admin') adminMenu.classList.remove('hidden');
-      else adminMenu.classList.add('hidden');
-    }
-  }
-
-  async function chargeToken(amount = 1) {
-    if(currentProfile.role === 'admin') return true; 
-
-    let newTrial = currentProfile.trial;
-    let newTokens = currentProfile.tokens;
-
-    if(amount === 1 && newTrial > 0) {
-      newTrial -= 1;
-    } else if (newTokens >= amount) {
-      newTokens -= amount;
-    } else {
-      showToast(`Token tidak cukup! Butuh ${amount} Token.`, true);
-      return false;
-    }
-
-    const { error } = await supabase.from('profiles').update({ trial: newTrial, tokens: newTokens }).eq('id', currentProfile.id);
-    if(error) { showToast('Gagal memotong token database', true); return false; }
-    
-    currentProfile.trial = newTrial;
-    currentProfile.tokens = newTokens;
-    updateDashboardUI();
-    return true;
-  }
-
-  async function claimBonus() {
-    if(currentProfile.role === 'admin') return showToast('Admin unlimited!');
-    const newTokens = currentProfile.tokens + 2;
-    await supabase.from('profiles').update({ tokens: newTokens }).eq('id', currentProfile.id);
-    currentProfile.tokens = newTokens;
-    updateDashboardUI();
-    showToast('Berhasil klaim 2 Token harian!');
-  }
-
-  function generateSubLink() {
-    const urlEl = document.getElementById('input-yt-url');
-    if(!urlEl) return;
-    const url = urlEl.value.trim();
-    if(!url) return showToast('Masukkan URL!', true);
-    const finalLink = url.includes('?sub_confirmation=1') ? url : url + (url.endsWith('/') ? '' : '/') + '?sub_confirmation=1';
-    const out = document.getElementById('output-url');
-    if(out) {
-      out.value = finalLink;
-      out.classList.remove('hidden');
-    }
-    showToast('Tautan berhasil dibuat!');
-  }
-
-  // --- GEMINI AI ---
-  async function runGeminiAI() {
-    const promptEl = document.getElementById('ai-prompt');
-    const modeEl = document.getElementById('ai-mode');
-    if(!promptEl || !modeEl) return;
-
-    const prompt = promptEl.value.trim();
-    const mode = modeEl.value;
-    if(!prompt) return showToast('Masukkan topik video!', true);
-    
-    const canCharge = await chargeToken();
-    if(!canCharge) return;
-
-    const outputBox = document.getElementById('ai-output');
-    if(outputBox) {
-      outputBox.classList.remove('hidden');
-      outputBox.innerText = '🤖 AI sedang berpikir...';
-    }
-    
-    try {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: `${mode} ${prompt}. Gunakan bahasa Indonesia.` }] }] })
-      });
-      const data = await res.json();
-      if(data.candidates && outputBox) {
-        outputBox.innerText = data.candidates[0].content.parts[0].text;
-        showToast('Konten AI berhasil digenerate!');
-      } else throw new Error();
-    } catch (err) {
-      if(outputBox) outputBox.innerText = 'Gagal memproses AI. Periksa koneksi internet.';
-    }
-  }
-
-  // --- BOT ORDERS TO SUPABASE ---
-  async function requestBot() {
-    const urlEl = document.getElementById('bot-url');
-    const typeEl = document.getElementById('bot-type');
-    if(!urlEl || !typeEl) return;
-
-    const url = urlEl.value.trim();
-    const type = typeEl.value;
-    if(!url) return showToast('Masukkan URL!', true);
-    
-    const canCharge = await chargeToken();
-    if(!canCharge) return;
-
-    showToast('Mengirim ke server...');
-    const { error } = await supabase.from('bot_orders').insert([{
-      user_id: currentProfile.id,
-      email: currentProfile.email,
-      url: url,
-      type: type,
-      status: 'pending'
-    }]);
-
-    if(error) return showToast('Gagal mengirim pesanan.', true);
-    urlEl.value = '';
-    showToast('Pesanan bot berhasil masuk antrean server!');
-  }
-
-  // --- PROMOS TO SUPABASE ---
-  async function addPromo() {
-    const titleEl = document.getElementById('promo-title');
-    const urlEl = document.getElementById('promo-url');
-    if(!titleEl || !urlEl) return;
-
-    const title = titleEl.value.trim();
-    let url = urlEl.value.trim();
-    if(!title || !url) return showToast('Lengkapi form!', true);
-    
-    const canCharge = await chargeToken(5);
-    if(!canCharge) return;
-
-    const { error } = await supabase.from('promos').insert([{
-      user_id: currentProfile.id,
-      email: currentProfile.email,
-      title: title,
-      url: url.includes('?sub_confirmation=1') ? url : url + '?sub_confirmation=1',
-      clicks: 0,
-      max_clicks: 50
-    }]);
-
-    if(error) return showToast('Gagal memasang promosi', true);
-    titleEl.value = '';
-    urlEl.value = '';
-    showToast('Promosi berhasil ditayangkan!');
-    renderPromos();
-  }
-
-  async function renderPromos() {
-    const board = document.getElementById('promo-board');
-    if(!board) return;
-    board.innerHTML = '<div class="text-xs text-slate-500 text-center">Memuat...</div>';
-    
-    const { data, error } = await supabase.from('promos').select('*').lt('clicks', 50).order('id', { ascending: false });
-    
-    if(error || !data || data.length === 0) {
-      board.innerHTML = '<div class="text-[10px] text-slate-500 italic text-center">Belum ada promosi aktif.</div>';
-      return;
-    }
-
-    board.innerHTML = '';
-    data.forEach(p => {
-      board.innerHTML += `
-        <div class="bg-slate-950 p-3 rounded-xl border border-slate-700 flex justify-between items-center cursor-pointer hover:border-blue-500 transition" onclick="clickPromo(${p.id}, '${p.url}', ${p.clicks})">
-          <div class="flex-1 overflow-hidden">
-            <div class="text-xs font-bold text-white truncate">${p.title}</div>
-            <div class="text-[10px] text-slate-400 mt-0.5">Dilihat: ${p.clicks}/${p.max_clicks} x</div>
-          </div>
-          <div class="bg-blue-600/20 text-blue-400 px-3 py-1.5 rounded-lg text-[10px] font-bold ml-2 shrink-0">Kunjungi</div>
-        </div>
-      `;
-    });
-  }
-
-  async function clickPromo(id, url, currentClicks) {
-    await supabase.from('promos').update({ clicks: currentClicks + 1 }).eq('id', id);
-    window.open(url, '_blank');
-    renderPromos();
-  }
-
-  // --- TOPUP TO SUPABASE ---
-  let selectedPackage = { token: 0, price: 0 };
-  function selectTopup(token, price) {
-    selectedPackage = { token, price };
-    const desc = document.getElementById('topup-desc');
-    const form = document.getElementById('topup-form');
-    if(desc) desc.innerText = `Paket: ${token} Token (Rp ${price.toLocaleString()}). \nSilakan transfer ke DANA 082336939662.`;
-    if(form) form.classList.remove('hidden');
-  }
-
-  async function submitTopup() {
-    showToast('Mengirim pesanan...');
-    const { error } = await supabase.from('topups').insert([{
-      user_id: currentProfile.id,
-      email: currentProfile.email,
-      token: selectedPackage.token,
-      price: selectedPackage.price,
-      status: 'pending'
-    }]);
-
-    if(error) return showToast('Gagal mengirim pesanan.', true);
-    const form = document.getElementById('topup-form');
-    if(form) form.classList.add('hidden');
-    showToast('Berhasil! Menunggu persetujuan Admin.');
-  }
-
-  // --- ADMIN PANEL SUPABASE ---
-  async function renderAdminBotOrders() {
-    const queueDiv = document.getElementById('admin-bot-queue');
-    if(!queueDiv) return;
-    const { data } = await supabase.from('bot_orders').select('*').eq('status', 'pending');
-    
-    if(!data || data.length === 0) {
-      queueDiv.innerHTML = '<div class="text-[10px] text-slate-500 italic">Tidak ada pesanan bot.</div>';
-      return;
-    }
-
-    queueDiv.innerHTML = '';
-    data.forEach(t => {
-      queueDiv.innerHTML += `
-        <div class="bg-slate-950 p-3 rounded-xl border border-emerald-900 flex flex-col gap-2">
-          <div><div class="text-xs font-bold text-white">${t.email} - <span class="text-emerald-400">${t.type}</span></div>
-          <a href="${t.url}" target="_blank" class="text-[10px] text-blue-400 underline break-all">${t.url}</a></div>
-          <button onclick="finishBotOrder(${t.id})" class="bg-emerald-600 hover:bg-emerald-500 py-1.5 rounded-lg text-xs font-bold text-white">Tandai Selesai</button>
-        </div>
-      `;
-    });
-  }
-
-  async function finishBotOrder(id) {
-    await supabase.from('bot_orders').update({ status: 'completed' }).eq('id', id);
-    showToast('Pesanan bot ditandai selesai!');
-    renderAdminBotOrders();
-  }
-
-  async function renderAdminTopups() {
-    const queueDiv = document.getElementById('admin-queue');
-    if(!queueDiv) return;
-    const { data } = await supabase.from('topups').select('*').eq('status', 'pending');
-    
-    if(!data || data.length === 0) {
-      queueDiv.innerHTML = '<div class="text-[10px] text-slate-500 italic">Tidak ada antrean topup.</div>';
-      return;
-    }
-
-    queueDiv.innerHTML = '';
-    data.forEach(t => {
-      queueDiv.innerHTML += `
-        <div class="bg-slate-950 p-3 rounded-xl border border-slate-700 flex justify-between items-center">
-          <div><div class="text-xs font-bold text-white">${t.email}</div><div class="text-[10px] text-slate-400">${t.token} Token</div></div>
-          <button onclick="approveTopup(${t.id}, '${t.user_id}', ${t.token})" class="bg-yellow-600 hover:bg-yellow-500 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-950">Setujui</button>
-        </div>
-      `;
-    });
-  }
-
-  async function approveTopup(orderId, userId, tokenAmount) {
-    const { data: targetUser } = await supabase.from('profiles').select('tokens').eq('id', userId).single();
-    if(targetUser) {
-      await supabase.from('profiles').update({ tokens: targetUser.tokens + tokenAmount }).eq('id', userId);
-    }
-    await supabase.from('topups').update({ status: 'approved' }).eq('id', orderId);
-    showToast('Topup disetujui!');
-    renderAdminTopups();
-  }
-
-  async function sendAdminToken() {
-    const targetEl = document.getElementById('admin-target');
-    const amountEl = document.getElementById('admin-amount');
-    if(!targetEl || !amountEl) return;
-
-    const emailTarget = targetEl.value.trim().toLowerCase();
-    const amount = parseInt(amountEl.value);
-    if(!emailTarget || isNaN(amount) || amount <= 0) return showToast('Input tidak valid!', true);
-
-    const { data: targetUser } = await supabase.from('profiles').select('id, tokens').eq('email', emailTarget).single();
-    if(!targetUser) return showToast('Email tidak ditemukan!', true);
-
-    await supabase.from('profiles').update({ tokens: targetUser.tokens + amount }).eq('id', targetUser.id);
-    targetEl.value = '';
-    amountEl.value = '';
-    showToast(`Berhasil mengirim ${amount} Token ke ${emailTarget}!`);
   }
 
   async function logout() {
     await supabase.auth.signOut();
-    currentUser = null;
-    currentProfile = null;
-    showPage('landing');
-    showToast('Berhasil keluar.');
+    location.reload();
   }
-
-  // AUTO BOOT SUPABASE SESSION
-  supabase.auth.getSession().then(({ data: { session } }) => {
-    if(session && session.user) loadApp(session.user);
-  });
 </script>
 </body>
 </html>
