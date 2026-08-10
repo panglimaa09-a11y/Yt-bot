@@ -173,9 +173,11 @@
             <span class="text-xs">Tiket Spin Tersedia</span>
             <p id="profile-spin-tickets" style="font-weight: 900; color: var(--accent-gold); margin-top: 4px; font-size: 16px;">0 Tiket</p>
           </div>
-          <button onclick="claimBonus()" style="flex: 1; background: rgba(16, 185, 129, 0.15); border: 1px solid var(--accent-emerald); border-radius: 14px; color: #34d399; cursor: pointer; font-weight: bold; font-size: 12px; padding: 10px;">
-            Aktivitas Harian<br><span style="font-size: 13px;">Klaim +2 Token</span>
-          </button>
+          <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+            <button id="btn-claim-bonus" onclick="claimBonus()" style="background: rgba(16, 185, 129, 0.15); border: 1px solid var(--accent-emerald); border-radius: 14px; color: #34d399; cursor: pointer; font-weight: bold; font-size: 12px; padding: 10px; width: 100%;">
+              Aktivitas Harian<br><span id="bonus-timer-txt" style="font-size: 11px;">Klaim +2 Token</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -213,13 +215,12 @@
       </div>
     </div>
 
-    <!-- TAB LUCKY SPIN (Fitur 2) -->
+    <!-- TAB LUCKY SPIN -->
     <div id="view-spin" class="appview">
       <div class="wheel-box">
         <h2 style="font-size: 20px; font-weight: bold; color: var(--accent-gold); margin-bottom: 8px;">🎰 Roda Keberuntungan VIP AutoSubs</h2>
         <p class="text-sm" style="margin-bottom: 18px;">Putar roda menggunakan tiket gratis 24 jam atau ekstra tiket dari top-up untuk memenangkan berbagai nominal token!</p>
         
-        <!-- Showcase Gambar / Variasi Token Spin -->
         <div class="token-grid">
           <div class="token-badge"><b style="color: var(--accent-gold); font-size: 14px;">+5 Token</b><br><span class="text-xs">Hadiah Standar</span></div>
           <div class="token-badge"><b style="color: #38bdf8; font-size: 14px;">+20 Token</b><br><span class="text-xs">Hadiah Silver</span></div>
@@ -340,22 +341,18 @@
       </div>
     </div>
 
-    <!-- TAB ADMIN (Fitur 2: Pengaturan Lucky Spin oleh Admin) -->
+    <!-- TAB ADMIN -->
     <div id="view-admin" class="appview">
       <div class="card card-gold">
         <h3 style="font-size: 18px; font-weight: bold; color: var(--accent-gold); margin-bottom: 14px;">👑 Panel Kontrol Eksklusif Admin</h3>
         
-        <!-- PENGATURAN LUCKY SPIN OLEH ADMIN -->
+        <!-- PENGATURAN LUCKY SPIN -->
         <div style="background: var(--bg-primary); padding: 16px; border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 20px;">
           <span style="font-size: 14px; font-weight: bold; color: var(--accent-gold); display: block; margin-bottom: 8px;">⚙️ Atur Hadiah & Konfigurasi Lucky Spin</span>
-          <p class="text-sm" style="margin-bottom: 10px;">Sesuaikan kisaran hadiah token minimum dan maksimum yang didapatkan user saat memutar roda:</p>
-          
-          <label>Hadiah Minimum Token (Default: 5)</label>
+          <label>Hadiah Minimum Token</label>
           <input id="admin-spin-min" type="number" class="input" placeholder="5">
-          
-          <label>Hadiah Maksimum Token (Default: 100)</label>
+          <label>Hadiah Maksimum Token</label>
           <input id="admin-spin-max" type="number" class="input" placeholder="100">
-          
           <button onclick="saveAdminSpinConfig()" class="btn btn-gold" style="font-size: 13px; padding: 10px;">Simpan Konfigurasi Spin</button>
         </div>
 
@@ -471,7 +468,7 @@
         }
       }
       if(tabId === 'promo') { renderPromos(); }
-      if(tabId === 'dash') { renderHistory(); }
+      if(tabId === 'dash') { renderHistory(); checkDailyBonusStatus(); }
       if(tabId === 'topup') { renderUserTopupHistory(); }
       if(tabId === 'spin') { checkSpinStatus(); }
     } catch(e){}
@@ -487,7 +484,6 @@
     if(t3) t3.innerHTML = isLoginMode ? 'Belum punya akun? <b style="color: var(--accent-gold);">Daftar Sekarang</b>' : 'Sudah punya akun? <b style="color: var(--accent-gold);">Masuk</b>';
   }
 
-  // Simulasi Login Sosial (Fitur 4)
   function socialLogin(provider) {
     const dummyEmail = `user_${provider.toLowerCase()}_${Math.floor(Math.random()*1000)}@gmail.com`;
     const users = getDB('db_users') || {};
@@ -496,9 +492,10 @@
       users[dummyEmail] = {
         password: "social_login_secure",
         saldo: 0,
-        tokens: 10, // Bonus sambutan
+        tokens: 10,
         spinTickets: 1,
         lastSpinTime: 0,
+        lastBonusTime: 0,
         role: 'user'
       };
       saveDB('db_users', users);
@@ -528,6 +525,7 @@
         tokens: (email === "panglimaa09@gmail.com") ? 9999 : 5,
         spinTickets: 1,
         lastSpinTime: 0,
+        lastBonusTime: 0,
         role: (email === "panglimaa09@gmail.com") ? 'admin' : 'user'
       };
       saveDB('db_users', users);
@@ -560,6 +558,7 @@
       userData.tokens = parseInt(userData.tokens) || 0;
       userData.spinTickets = parseInt(userData.spinTickets) || 0;
       userData.lastSpinTime = parseInt(userData.lastSpinTime) || 0;
+      userData.lastBonusTime = parseInt(userData.lastBonusTime) || 0;
       saveDB('db_users', users);
 
       setText('profile-email-txt', currentUser);
@@ -577,12 +576,66 @@
       try { renderHistory(); } catch(e){}
       try { renderUserTopupHistory(); } catch(e){}
       try { checkSpinStatus(); } catch(e){}
+      try { checkDailyBonusStatus(); } catch(e){}
       
       showPage('app');
     } catch(err) {
       console.error(err);
       showPage('app'); 
     }
+  }
+
+  // VALIDASI BATAS WAKTU 1X24 JAM AKTIVITAS HARIAN
+  function checkDailyBonusStatus() {
+    const users = getDB('db_users');
+    const user = users[currentUser];
+    if(!user) return;
+
+    const now = Date.now();
+    const cooldown = 24 * 60 * 60 * 1000; // 24 jam
+    const timeDiff = now - (user.lastBonusTime || 0);
+    const btn = document.getElementById('btn-claim-bonus');
+    const timerTxt = document.getElementById('bonus-timer-txt');
+
+    if(!btn || !timerTxt) return;
+
+    if (timeDiff >= cooldown) {
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      btn.style.cursor = 'pointer';
+      timerTxt.innerText = "Klaim +2 Token";
+      timerTxt.style.color = "#34d399";
+    } else {
+      btn.disabled = true;
+      btn.style.opacity = '0.6';
+      btn.style.cursor = 'not-allowed';
+      let remainingTime = cooldown - timeDiff;
+      const hours = Math.floor(remainingTime / (1000 * 60 * 60));
+      const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+      timerTxt.innerText = `Tersedia dalam ${hours}j ${minutes}m`;
+      timerTxt.style.color = "var(--accent-gold)";
+    }
+  }
+
+  function claimBonus() {
+    const users = getDB('db_users');
+    const user = users[currentUser];
+    if(!user) return;
+
+    if(user.role !== 'admin') {
+      const now = Date.now();
+      const cooldown = 24 * 60 * 60 * 1000;
+      if (now - (user.lastBonusTime || 0) < cooldown) {
+        return showToast('Anda sudah mengklaim bonus hari ini! Silakan coba lagi setelah 24 jam.', true);
+      }
+      user.lastBonusTime = now;
+    }
+
+    user.tokens += 2;
+    saveDB('db_users', users);
+    addHistory('Klaim +2 Token Harian.');
+    loadApp();
+    showToast('Sukses klaim 2 Token harian!');
   }
 
   function checkSpinStatus() {
@@ -629,7 +682,6 @@
     user.spinTickets -= 1;
     user.lastSpinTime = Date.now();
 
-    // Mengambil konfigurasi hadiah yang diatur oleh Admin
     const spinConfig = getDB('db_spin_config') || { min: 5, max: 100 };
     const prize = Math.floor(Math.random() * (spinConfig.max - spinConfig.min + 1)) + spinConfig.min;
     
@@ -651,7 +703,6 @@
     }
   }
 
-  // Pengaturan Spin oleh Admin (Fitur 2)
   function saveAdminSpinConfig() {
     const min = parseInt(document.getElementById('admin-spin-min').value);
     const max = parseInt(document.getElementById('admin-spin-max').value);
@@ -679,7 +730,7 @@
     }
 
     const grossRupiah = (inputToken / 100) * 1000;
-    const tax = grossRupiah * 0.10; // Pajak wajar 10%
+    const tax = grossRupiah * 0.10;
     const netRupiah = grossRupiah - tax;
 
     user.tokens -= inputToken;
@@ -729,16 +780,6 @@
     saveDB('db_users', users);
     loadApp(); 
     return true;
-  }
-
-  function claimBonus() {
-    const users = getDB('db_users');
-    if(users[currentUser].role === 'admin') return showToast('Akses Admin Unlimited!');
-    users[currentUser].tokens += 2;
-    saveDB('db_users', users);
-    addHistory('Klaim +2 Token Harian.');
-    loadApp();
-    showToast('Sukses klaim 2 Token harian!');
   }
 
   function generateSubLink() {
@@ -1030,7 +1071,7 @@
     const order = topups[orderIndex];
     if(users[order.email]) {
       users[order.email].tokens += order.token;
-      users[order.email].spinTickets += 1; // Otomatis bonus 1 tiket spin
+      users[order.email].spinTickets += 1;
       saveDB('db_users', users);
     }
     
@@ -1067,7 +1108,6 @@
     showToast('Berhasil keluar sesi.');
   }
 
-  // INISIALISASI SAAT HALAMAN DIMUAT
   if(currentUser && getDB('db_users') && getDB('db_users')[currentUser]) {
     setTimeout(() => { loadApp(); }, 100);
   } else {
