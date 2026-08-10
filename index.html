@@ -46,7 +46,6 @@
     .text-sm { font-size: 12px; color: #94a3b8; }
     .text-xs { font-size: 10px; color: #64748b; }
     
-    /* Styling Roda Undian */
     .wheel-box { text-align: center; background: radial-gradient(circle, #1e293b 0%, #0f172a 100%); border: 2px solid #3b82f6; border-radius: 16px; padding: 20px; margin-bottom: 16px; }
     .wheel-display { width: 150px; height: 150px; border-radius: 50%; border: 4px dashed #facc15; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; background: #020617; color: #facc15; box-shadow: 0 0 20px rgba(250,204,21,0.2); transition: transform 0.5s ease; }
   </style>
@@ -133,7 +132,7 @@
         </div>
       </div>
 
-      <!-- FITUR 3: PENUKARAN TOKEN MENJADI SALDO -->
+      <!-- PENUKARAN TOKEN KE SALDO -->
       <div class="card" style="border-color: #059669;">
         <h3 style="font-size: 15px; font-weight: bold; color: #34d399; margin-bottom: 4px;">💸 Tukar Token Jadi Saldo</h3>
         <p class="text-sm" style="margin-bottom: 12px;">Minimal penukaran: <b>2.500 Token</b>. Rate: 100 Token = Rp 1.000 (Dikenakan potongan pajak administrasi 10%).</p>
@@ -142,7 +141,7 @@
         <button onclick="redeemTokensToSaldo()" class="btn btn-emerald">Tukar Token ke Saldo Sekarang</button>
       </div>
 
-      <!-- FITUR 2: BANTUAN WHATSAPP ADMIN -->
+      <!-- BANTUAN WHATSAPP ADMIN -->
       <div class="card" style="background: linear-gradient(135deg, #064e3b 0%, #0f172a 100%); border-color: #059669;">
         <h3 style="font-size: 15px; font-weight: bold; color: #34d399; margin-bottom: 4px;">📞 Layanan Bantuan & Kendala (Admin WA)</h3>
         <p class="text-sm" style="margin-bottom: 10px;">Mengalami kendala top-up, error sistem, atau butuh bantuan cepat? Hubungi admin resmi kami via WhatsApp.</p>
@@ -167,7 +166,7 @@
       </div>
     </div>
 
-    <!-- TAB RODA UNDIAN (SPIN) - FITUR 1 -->
+    <!-- TAB RODA UNDIAN (SPIN) -->
     <div id="view-spin" class="appview">
       <div class="wheel-box">
         <h2 style="font-size: 18px; font-weight: bold; color: #facc15; margin-bottom: 6px;">🎰 Roda Keberuntungan AutoSubs</h2>
@@ -186,7 +185,7 @@
       <div class="card">
         <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 6px;">ℹ️ Ketentuan Roda Undian</h3>
         <p class="text-sm">• Setiap user berhak mendapatkan <b>1x putaran gratis setiap 24 jam</b>.</p>
-        <p class="text-sm">• Melakukan top-up (nominal berapapun) otomatis memberikan tambahan **1 tiket putaran**.</p>
+        <p class="text-sm">• Melakukan top-up (nominal berapapun) otomatis memberikan tambahan <b>1 tiket putaran</b>.</p>
         <p class="text-sm">• Hadiah berupa Token gratis yang langsung masuk ke saldo akun Anda.</p>
       </div>
     </div>
@@ -418,9 +417,12 @@
       if(!users[email] || users[email].password !== pass) return showToast('Email atau password salah!', true);
       currentUser = email;
       localStorage.setItem('currentUser', currentUser);
-      addHistory('Berhasil masuk ke dalam sistem.');
       showToast('Login berhasil!');
-      loadApp();
+      
+      // Beri sedikit jeda agar transisi halaman mulus
+      setTimeout(() => {
+        loadApp();
+      }, 300);
     }
   }
 
@@ -433,8 +435,10 @@
 
     const userData = users[currentUser];
     if(userData.saldo === undefined) userData.saldo = 0;
+    if(userData.tokens === undefined) userData.tokens = 0;
     if(userData.spinTickets === undefined) userData.spinTickets = 1;
     if(userData.lastSpinTime === undefined) userData.lastSpinTime = 0;
+    saveDB('db_users', users);
 
     document.getElementById('profile-email-txt').innerText = currentUser;
     document.getElementById('greeting').innerText = 'Halo, ' + currentUser.split('@')[0] + '!';
@@ -453,18 +457,17 @@
     showPage('app');
   }
 
-  // FITUR 1: LOGIKA RODA UNDIAN (SPIN)
   function checkSpinStatus() {
     const users = getDB('db_users');
     const user = users[currentUser];
     if(!user) return;
 
     const now = Date.now();
-    const cooldown = 24 * 60 * 60 * 1000; // 24 jam dalam milidetik
+    const cooldown = 24 * 60 * 60 * 1000;
     const timeDiff = now - (user.lastSpinTime || 0);
 
     if (timeDiff >= cooldown && user.spinTickets === 0) {
-      user.spinTickets = 1; // Berikan 1 putaran gratis harian
+      user.spinTickets = 1;
       saveDB('db_users', users);
     }
 
@@ -495,7 +498,6 @@
     user.spinTickets--;
     user.lastSpinTime = Date.now();
 
-    // Hadiah Acak: 5, 10, 20, 50, atau 100 Token
     const rewards = [5, 10, 15, 20, 50, 100];
     const prize = rewards[Math.floor(Math.random() * rewards.length)];
 
@@ -512,7 +514,6 @@
     }, 500);
   }
 
-  // FITUR 3: PENUKARAN TOKEN KE SALDO
   function redeemTokensToSaldo() {
     const inputToken = parseInt(document.getElementById('input-redeem-tokens').value);
     if(isNaN(inputToken) || inputToken < 2500) {
@@ -526,9 +527,8 @@
       return showToast('Token Anda tidak mencukupi untuk jumlah penukaran ini!', true);
     }
 
-    // Rate: 100 Token = Rp 1.000, dipotong pajak admin 10%
     const grossRupiah = (inputToken / 100) * 1000;
-    const tax = grossRupiah * 0.10; // Potongan pajak 10%
+    const tax = grossRupiah * 0.10;
     const netRupiah = grossRupiah - tax;
 
     user.tokens -= inputToken;
@@ -833,7 +833,6 @@
     });
   }
 
-  // FITUR 1: OTOMATIS TAMBAH 1 TIKET SPIN KETIKA TOP-UP DISETUJUI ADMIN
   function approveTopup(orderId) {
     const topups = getDB('db_topups');
     const users = getDB('db_users');
@@ -843,7 +842,7 @@
     const order = topups[orderIndex];
     if(users[order.email]) {
       users[order.email].tokens += order.token;
-      users[order.email].spinTickets += 1; // Bonus 1 tiket putaran roda gratis
+      users[order.email].spinTickets += 1;
       saveDB('db_users', users);
     }
     
