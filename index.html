@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>AutoSubs — YouTube Tools & Community Platform</title>
+  <title>AutoSubs — YouTube Platform</title>
   
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -38,7 +38,6 @@
       <h1 class="text-3xl md:text-5xl font-extrabold leading-tight text-white">
         Optimasi Channel YouTube dengan <span class="text-red-500">Komunitas & Bot.</span>
       </h1>
-      <p class="mt-4 text-slate-400 text-base">Platform pembuat tautan otomatis, promosi komunitas, dan optimasi interaksi channel.</p>
       <button onclick="showPage('auth')" class="mt-8 bg-red-600 hover:bg-red-500 px-7 py-3.5 rounded-xl font-bold cursor-pointer text-white shadow-lg shadow-red-600/30">
         Mulai Sekarang <i class="ph ph-arrow-right ml-1"></i>
       </button>
@@ -90,7 +89,6 @@
 
   <div class="flex-1 max-w-4xl w-full mx-auto p-4 space-y-5">
     
-    <!-- Menu Navigasi (AI Dihilangkan) -->
     <div class="flex overflow-x-auto no-scrollbar gap-2 bg-slate-900 p-1.5 rounded-xl border border-slate-800 text-[10px] font-bold">
       <button onclick="switchTab('dash', this)" class="tab-btn min-w-[70px] flex-1 py-2 rounded-lg bg-slate-800 text-white cursor-pointer flex flex-col items-center"><i class="ph ph-house text-lg mb-0.5"></i> Home</button>
       <button onclick="switchTab('bot', this)" class="tab-btn min-w-[70px] flex-1 py-2 rounded-lg text-slate-400 hover:text-white cursor-pointer flex flex-col items-center"><i class="ph ph-robot text-lg mb-0.5"></i> Bot</button>
@@ -192,7 +190,8 @@
 </section>
 
 <script>
-  const SUPABASE_URL = "https://glpsvhnffonxbkp.supabase.co";
+  // KUNCI SUPABASE ANDA YANG BENAR
+  const SUPABASE_URL = "https://jswskglpsvhnffonxbkp.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_Ccq1Re-OykljPEIJn3FI6g_oGNPHkWQ";
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -264,25 +263,19 @@
   async function loadApp(user) {
     try {
       currentUser = user;
-      const email = user.email.toLowerCase();
-      const isAdmin = (email === "panglimaa09@gmail.com");
-
       let { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
       
       if(!profile) {
+        const isAdmin = (user.email.toLowerCase() === "panglimaa09@gmail.com");
         const newProfile = { 
           id: user.id, 
-          email: email, 
+          email: user.email.toLowerCase(), 
           trial: isAdmin ? 9999 : 3, 
           tokens: isAdmin ? 9999 : 0, 
           role: isAdmin ? 'admin' : 'user' 
         };
-        const { error: insErr } = await supabase.from('profiles').insert([newProfile]);
-        if(insErr) throw insErr;
+        await supabase.from('profiles').insert([newProfile]);
         profile = newProfile;
-      } else if (isAdmin && profile.role !== 'admin') {
-        await supabase.from('profiles').update({ role: 'admin', tokens: 9999, trial: 9999 }).eq('id', user.id);
-        profile.role = 'admin';
       }
 
       currentProfile = profile;
@@ -386,137 +379,4 @@
 
     if(error) return showToast('Gagal pasang promosi', true);
     document.getElementById('promo-title').value = '';
-    document.getElementById('promo-url').value = '';
-    showToast('Promosi ditayangkan!');
-    renderPromos();
-  }
-
-  async function renderPromos() {
-    const board = document.getElementById('promo-board');
-    board.innerHTML = '<div class="text-xs text-slate-500 text-center">Memuat...</div>';
-    
-    const { data } = await supabase.from('promos').select('*').lt('clicks', 50).order('id', { ascending: false });
-    if(!data || data.length === 0) {
-      board.innerHTML = '<div class="text-[10px] text-slate-500 italic text-center">Belum ada promosi aktif.</div>';
-      return;
-    }
-
-    board.innerHTML = '';
-    data.forEach(p => {
-      board.innerHTML += `
-        <div class="bg-slate-950 p-3 rounded-xl border border-slate-700 flex justify-between items-center cursor-pointer hover:border-blue-500 transition" onclick="clickPromo(${p.id}, '${p.url}', ${p.clicks})">
-          <div class="flex-1 overflow-hidden">
-            <div class="text-xs font-bold text-white truncate">${p.title}</div>
-            <div class="text-[10px] text-slate-400 mt-0.5">Dilihat: ${p.clicks}/${p.max_clicks} x</div>
-          </div>
-          <div class="bg-blue-600/20 text-blue-400 px-3 py-1.5 rounded-lg text-[10px] font-bold ml-2 shrink-0">Kunjungi</div>
-        </div>
-      `;
-    });
-  }
-
-  async function clickPromo(id, url, currentClicks) {
-    await supabase.from('promos').update({ clicks: currentClicks + 1 }).eq('id', id);
-    window.open(url, '_blank');
-    renderPromos();
-  }
-
-  let selectedPackage = { token: 0, price: 0 };
-  function selectTopup(token, price) {
-    selectedPackage = { token, price };
-    document.getElementById('topup-desc').innerText = `Paket: ${token} Token (Rp ${price.toLocaleString()}). Transfer ke DANA 082336939662`;
-    document.getElementById('topup-form').classList.remove('hidden');
-  }
-
-  async function submitTopup() {
-    showToast('Mengirim...');
-    const { error } = await supabase.from('topups').insert([{
-      user_id: currentProfile.id,
-      email: currentProfile.email,
-      token: selectedPackage.token,
-      price: selectedPackage.price,
-      status: 'pending'
-    }]);
-
-    if(error) return showToast('Gagal kirim.', true);
-    document.getElementById('topup-form').classList.add('hidden');
-    showToast('Menunggu persetujuan Admin.');
-  }
-
-  async function renderAdminBotOrders() {
-    const queueDiv = document.getElementById('admin-bot-queue');
-    const { data } = await supabase.from('bot_orders').select('*').eq('status', 'pending');
-    if(!data || data.length === 0) { queueDiv.innerHTML = '<div class="text-[10px] text-slate-500 italic">Kosong.</div>'; return; }
-
-    queueDiv.innerHTML = '';
-    data.forEach(t => {
-      queueDiv.innerHTML += `
-        <div class="bg-slate-950 p-3 rounded-xl border border-emerald-900 flex flex-col gap-2">
-          <div><div class="text-xs font-bold text-white">${t.email} - ${t.type}</div>
-          <a href="${t.url}" target="_blank" class="text-[10px] text-blue-400 underline break-all">${t.url}</a></div>
-          <button onclick="finishBotOrder(${t.id})" class="bg-emerald-600 hover:bg-emerald-500 py-1 rounded-lg text-xs font-bold text-white">Selesai</button>
-        </div>
-      `;
-    });
-  }
-
-  async function finishBotOrder(id) {
-    await supabase.from('bot_orders').update({ status: 'completed' }).eq('id', id);
-    showToast('Selesai!');
-    renderAdminBotOrders();
-  }
-
-  async function renderAdminTopups() {
-    const queueDiv = document.getElementById('admin-queue');
-    const { data } = await supabase.from('topups').select('*').eq('status', 'pending');
-    if(!data || data.length === 0) { queueDiv.innerHTML = '<div class="text-[10px] text-slate-500 italic">Kosong.</div>'; return; }
-
-    queueDiv.innerHTML = '';
-    data.forEach(t => {
-      queueDiv.innerHTML += `
-        <div class="bg-slate-950 p-3 rounded-xl border border-slate-700 flex justify-between items-center">
-          <div><div class="text-xs font-bold text-white">${t.email}</div><div class="text-[10px] text-slate-400">${t.token} Token</div></div>
-          <button onclick="approveTopup(${t.id}, '${t.user_id}', ${t.token})" class="bg-yellow-600 px-3 py-1 rounded-lg text-xs font-bold text-slate-950">Setujui</button>
-        </div>
-      `;
-    });
-  }
-
-  async function approveTopup(orderId, userId, tokenAmount) {
-    const { data: targetUser } = await supabase.from('profiles').select('tokens').eq('id', userId).single();
-    if(targetUser) {
-      await supabase.from('profiles').update({ tokens: targetUser.tokens + tokenAmount }).eq('id', userId);
-    }
-    await supabase.from('topups').update({ status: 'approved' }).eq('id', orderId);
-    showToast('Topup disetujui!');
-    renderAdminTopups();
-  }
-
-  async function sendAdminToken() {
-    const emailTarget = document.getElementById('admin-target').value.trim().toLowerCase();
-    const amount = parseInt(document.getElementById('admin-amount').value);
-    if(!emailTarget || isNaN(amount) || amount <= 0) return showToast('Input salah', true);
-
-    const { data: targetUser } = await supabase.from('profiles').select('id, tokens').eq('email', emailTarget).single();
-    if(!targetUser) return showToast('Email tidak ada', true);
-
-    await supabase.from('profiles').update({ tokens: targetUser.tokens + amount }).eq('id', targetUser.id);
-    document.getElementById('admin-target').value = '';
-    document.getElementById('admin-amount').value = '';
-    showToast(`Berhasil kirim ${amount} token!`);
-  }
-
-  async function logout() {
-    await supabase.auth.signOut();
-    currentUser = null;
-    currentProfile = null;
-    showPage('landing');
-    showToast('Keluar.');
-  }
-
-  supabase.auth.getSession().then(({ data: { session } }) => {
-    if(session && session.user) loadApp(session.user);
-  });
-</script>
-</body>
-</html>
+    document.getElementById('promo-u
