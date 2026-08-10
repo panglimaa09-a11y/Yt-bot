@@ -24,7 +24,6 @@
     .input:focus, select:focus, textarea:focus { border-color: #dc2626; }
     label { font-size: 12px; color: #94a3b8; font-weight: 500; }
     
-    /* Google Ads Banner Simulation Slot */
     .ads-banner { width: 100%; background: #1e293b; border: 2px dashed #334155; border-radius: 12px; padding: 12px; text-align: center; margin-bottom: 16px; }
     .ads-banner span { font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; display: block; margin-bottom: 4px; }
     .ads-banner .ad-content { font-size: 12px; color: #94a3b8; }
@@ -111,7 +110,6 @@
       <button id="menu-admin" onclick="switchTab('admin', this)" class="tab-btn hidden" style="color: #fbbf24;">Admin</button>
     </div>
 
-    <!-- Google Ads Slot di Dashboard -->
     <div class="ads-banner">
       <span>Iklan Sponsor Google Ads</span>
       <div class="ad-content">🔥 Dapatkan Penghasilan Tambahan dari Channel YouTube Anda Hari Ini!</div>
@@ -133,7 +131,6 @@
         </div>
       </div>
 
-      <!-- Generator Link -->
       <div class="card">
         <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 8px;">Subscribe Link Generator (Gratis)</h3>
         <label>Masukkan URL YouTube Channel/Video</label>
@@ -142,7 +139,6 @@
         <input id="output-url" readonly class="input hidden" style="color: #34d399; border-color: #059669; margin-top: 12px;">
       </div>
 
-      <!-- Riwayat Aktivitas -->
       <div class="card">
         <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 8px;">Riwayat & Aktivitas</h3>
         <div id="activity-history" style="display: flex; flex-direction: column; gap: 6px; max-height: 150px; overflow-y: auto;">
@@ -150,7 +146,6 @@
         </div>
       </div>
 
-      <!-- Bantuan & Laporan -->
       <div class="flex-row">
         <div class="card" style="flex: 1; margin-bottom: 0;">
           <h3 style="font-size: 13px; font-weight: bold; margin-bottom: 6px;">Akses Bantuan</h3>
@@ -194,7 +189,6 @@
         <button onclick="addPromo()" class="btn btn-blue">Tayangkan Promosi</button>
       </div>
 
-      <!-- Klaim Kupon Redeem -->
       <div class="card" style="border-color: #3b82f6;">
         <h3 style="font-size: 14px; font-weight: bold; color: #60a5fa; margin-bottom: 6px;">🎁 Klaim Kupon Redeem Hadiah</h3>
         <p class="text-sm" style="margin-bottom: 8px;">Masukkan kode kupon resmi dari admin untuk mendapatkan token gratis.</p>
@@ -210,7 +204,7 @@
       </div>
     </div>
 
-    <!-- TAB TOPUP (DANA & QRIS ALL PAYMENT) -->
+    <!-- TAB TOPUP -->
     <div id="view-topup" class="appview">
       <div class="card">
         <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 4px;">Beli Token & Saldo</h3>
@@ -220,14 +214,11 @@
           • <b>QRIS All Payment</b> (Scan QR di bawah ini dengan semua e-wallet/m-banking)
         </p>
 
-        <!-- Container QRIS All Payment -->
-        <div style="background: #ffffff; padding: 16px; border-radius: 12px; text-align: center; margin-bottom: 16px; max-width: 260px; margin-left: auto; margin-right: auto;">
-          <div style="font-size: 11px; font-weight: bold; color: #0f172a; margin-bottom: 6px;">SCAN QRIS UNTUK PEMBAYARAN</div>
-          <!-- Ganti src dengan gambar QRIS Anda atau gunakan placeholder resmi -->
-          <div style="background: #f1f5f9; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; color: #0f172a; font-size: 12px; font-weight: bold;">
-            [ QRIS ANGGA BAYU SETYAWAN ]<br>
-            <span style="font-size: 9px; color: #64748b;">NMID: ID1026487592408</span>
-          </div>
+        <!-- QRIS CONTAINER -->
+        <div style="background: #ffffff; padding: 12px; border-radius: 12px; text-align: center; margin-bottom: 16px; max-width: 260px; margin-left: auto; margin-right: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+          <div style="font-size: 10px; font-weight: bold; color: #0f172a; margin-bottom: 6px;">SCAN QRIS ANGGA BAYU SETYAWAN</div>
+          <img src="qris.png" alt="QRIS Angga Bayu Setyawan" style="width: 100%; max-height: 220px; object-fit: contain; border-radius: 6px;" onerror="this.onerror=null; this.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=AnggaBayuSetyawan';">
+          <div style="font-size: 9px; color: #64748b; margin-top: 4px;">NMID: ID1026487592408</div>
         </div>
         
         <label>Pilih Paket Nominal (Dari Rp 20.000 s/d Rp 1.000.000)</label>
@@ -266,7 +257,6 @@
         </div>
       </div>
 
-      <!-- Riwayat Top-up User -->
       <div class="card">
         <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 10px;">Riwayat Pengisian Token Anda</h3>
         <div id="user-topup-history" style="display: flex; flex-direction: column; gap: 8px;">
@@ -280,7 +270,6 @@
       <div class="card" style="border-color: rgba(251,191,36,0.3);">
         <h3 style="font-size: 16px; font-weight: bold; color: #fbbf24; margin-bottom: 12px;">Panel Kontrol Admin</h3>
         
-        <!-- Buat Kupon / Redeem Hadiah -->
         <div style="background: #020617; padding: 12px; border-radius: 12px; border: 1px solid #1e293b; margin-bottom: 16px;">
           <span style="font-size: 12px; font-weight: bold; color: #60a5fa;">🎫 Buat Kupon Hadiah / Kode Redeem Baru</span>
           <input id="admin-coupon-code" type="text" class="input" placeholder="Kode (Cth: BONUSRAYA2026)" style="margin-top: 8px;">
@@ -293,7 +282,6 @@
           </div>
         </div>
 
-        <!-- Kirim Token Manual -->
         <div style="background: #020617; padding: 12px; border-radius: 12px; border: 1px solid #1e293b; margin-bottom: 16px;">
           <span style="font-size: 12px; font-weight: bold; color: #34d399;">🎁 Kirim Token Manual ke Pengguna</span>
           <input id="admin-target" type="email" class="input" placeholder="Email tujuan..." style="margin-top: 8px;">
@@ -301,13 +289,11 @@
           <button onclick="sendAdminToken()" class="btn" style="background: #d97706; color: #020617;">Kirim Token</button>
         </div>
 
-        <!-- Antrean Bot -->
         <div style="margin-bottom: 16px;">
           <span style="font-size: 12px; font-weight: bold; color: #34d399; display: block; margin-bottom: 8px;">Antrean Pesanan Bot</span>
           <div id="admin-bot-queue" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
 
-        <!-- Antrean Topup -->
         <div>
           <span style="font-size: 12px; font-weight: bold; color: #facc15; display: block; margin-bottom: 8px;">Antrean Top-up (Verifikasi Bukti Foto)</span>
           <div id="admin-queue" style="display: flex; flex-direction: column; gap: 8px;"></div>
@@ -322,7 +308,7 @@
 <div id="help-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 16px;">
   <div class="card" style="max-width: 500px; width: 100%; margin-bottom: 0;">
     <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">Pusat Bantuan & FAQ</h3>
-    <p class="text-sm" style="margin-bottom: 8px;"><b>1. Cara Top-up Aman:</b><br>Transfer via DANA ke nomor 082336939662 (A/N Angga Bayu Setyawan) atau scan QRIS All Payment, lalu unggah foto bukti transfer.</p>
+    <p class="text-sm" style="margin-bottom: 8px;"><b>1. Cara Top-up Aman:</b><br>Transfer via DANA 082336939662 (A/N Angga Bayu Setyawan) atau scan QRIS All Payment, lalu unggah foto bukti transfer.</p>
     <p class="text-sm" style="margin-bottom: 8px;"><b>2. Keamanan Akun:</b><br>Data token dan riwayat akun Anda tersimpan otomatis di perangkat dan aman meskipun Anda keluar (logout) lalu masuk kembali.</p>
     <button onclick="hideHelpModal()" class="btn" style="margin-top: 12px;">Tutup</button>
   </div>
@@ -339,7 +325,7 @@
 
 <script>
   let isLoginMode = true;
-  let currentUser = null;
+  let currentUser = localStorage.getItem('currentUser') || null;
 
   function initDB() {
     if(!localStorage.getItem('db_users')) localStorage.setItem('db_users', JSON.stringify({}));
@@ -395,7 +381,7 @@
     const users = getDB('db_users');
 
     if(!isLoginMode) {
-      if(users[email]) return showToast('Email sudah terdaftar!', true);
+      if(users[email]) return showToast('Email sudah terdaftar! Silakan login.', true);
       users[email] = {
         password: pass,
         trial: (email === "panglimaa09@gmail.com") ? 9999 : 3,
@@ -417,7 +403,10 @@
 
   function loadApp() {
     const users = getDB('db_users');
-    if(!currentUser || !users[currentUser]) return logout();
+    if(!currentUser || !users[currentUser]) {
+      logout();
+      return;
+    }
 
     const userData = users[currentUser];
     document.getElementById('profile-email-txt').innerText = currentUser;
@@ -779,12 +768,12 @@
     showToast('Berhasil keluar.');
   }
 
-  // Auto load session aman saat halaman dibuka
-  currentUser = localStorage.getItem('currentUser');
+  // Pengecekan otomatis saat halaman pertama kali dimuat
   if(currentUser && getDB('db_users')[currentUser]) {
     loadApp();
   } else {
     currentUser = null;
+    localStorage.removeItem('currentUser');
     showPage('landing');
   }
 </script>
