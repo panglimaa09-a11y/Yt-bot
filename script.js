@@ -5,8 +5,6 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLI
 
 // ================================================================
 
-// ================================================================
-
 let currentUser = null;
 let currentProfile = null;
 let authMode = "login";
