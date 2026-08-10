@@ -1,9 +1,12 @@
 // ================= KONFIGURASI SUPABASE & GEMINI =================
+// ================= KONFIGURASI SUPABASE & GEMINI =================
 const SUPABASE_URL = "https://glpsvhnffonxbkp.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ccq1Re-OykljPEIJn3FI6g_oGNPHkWQ";
+const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impzd3NrZ2xwc3ZobmZmb254YmtwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYyOTIzNjYsImV4cCI6MjEwMTg2ODM2Nn0.J6_ZGJKgYP55DQMSHTty6OAD3OXpk_V5_ggV-U8mqic";
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
 const GEMINI_API_KEY = "AQ.Ab8RN6Lt6duba1juQY_RnVrZXxYXzvrJ-XRw-6Mmg9mJGVjwmQ";
+// ================================================================
+
 // ================================================================
 
 let currentUser = null;
