@@ -2,376 +2,497 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>AutoSubs — YouTube Tools & AI Platform</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Inter','sans-serif'] },
-          colors: { brand: { 400:'#f87171', 500:'#ef4444', 600:'#dc2626', 700:'#b91c1c', 900:'#7f1d1d' } }
-        }
-      }
-    }
-  </script>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoSubs — YouTube Platform</title>
   <style>
-    *{box-sizing:border-box}
-    html,body{margin:0;min-height:100%;font-family:Inter,sans-serif}
-    ::-webkit-scrollbar{width:8px}
-    ::-webkit-scrollbar-track{background:#0f172a}
-    ::-webkit-scrollbar-thumb{background:#334155;border-radius:8px}
-    .page{display:none}.page.active{display:flex}
-    .appview{display:none}.appview.active{display:block}
-    .glass{background:rgba(30,41,59,.72);backdrop-filter:blur(14px)}
-    .toast{transform:translateY(100px);opacity:0;pointer-events:none}
-    .toast.show{transform:translateY(0);opacity:1}
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background-color: #020617; color: #f1f5f9; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+    .page { display: none; min-height: 100vh; flex-direction: column; }
+    .page.active { display: flex; }
+    .appview { display: none; }
+    .appview.active { display: block; }
+    
+    /* Utility & Components */
+    .container { max-width: 800px; width: 100%; margin: 0 auto; padding: 16px; }
+    .card { background-color: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+    .btn { background-color: #dc2626; color: white; border: none; padding: 12px 16px; border-radius: 12px; font-weight: bold; width: 100%; cursor: pointer; font-size: 14px; transition: background 0.2s; }
+    .btn:hover { background-color: #b91c1c; }
+    .btn-emerald { background-color: #059669; }
+    .btn-emerald:hover { background-color: #047857; }
+    .btn-blue { background-color: #2563eb; }
+    .btn-blue:hover { background-color: #1d4ed8; }
+    .input, select, textarea { width: 100%; background-color: #020617; border: 1px solid #334155; border-radius: 12px; padding: 12px; color: white; font-size: 14px; outline: none; margin-top: 6px; margin-bottom: 12px; }
+    .input:focus, select:focus { border-color: #dc2626; }
+    label { font-size: 12px; color: #94a3b8; font-weight: 500; }
+    
+    /* Toast Notification */
+    .toast { position: fixed; bottom: 20px; right: 20px; left: 20px; max-width: 350px; margin: 0 auto; background: #059669; color: white; padding: 12px 20px; border-radius: 12px; text-align: center; font-weight: 500; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); transform: translateY(100px); opacity: 0; transition: all 0.3s ease; z-index: 100; pointer-events: none; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.error { background: #dc2626; }
+
+    /* Navigasi Tab Horizontal */
+    .nav-tabs { display: flex; gap: 8px; overflow-x: auto; background: #0f172a; padding: 8px; border-radius: 12px; border: 1px solid #1e293b; margin-bottom: 16px; scrollbar-width: none; }
+    .nav-tabs::-webkit-scrollbar { display: none; }
+    .tab-btn { background: transparent; border: none; color: #94a3b8; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; flex: 1; min-width: 70px; text-align: center; white-space: nowrap; }
+    .tab-btn.active { background: #1e293b; color: white; }
+    
+    .header { height: 60px; background: #0f172a; border-bottom: 1px solid #1e293b; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; position: sticky; top: 0; z-index: 50; }
+    .hidden { display: none !important; }
+    .flex-row { display: flex; gap: 12px; }
+    .text-center { text-align: center; }
+    .text-sm { font-size: 12px; color: #94a3b8; }
+    .text-xs { font-size: 10px; color: #64748b; }
+    .font-bold { font-weight: bold; }
+    .mt-2 { margin-top: 8px; }
   </style>
 </head>
+<body>
 
-<body class="bg-slate-950 text-slate-200 min-h-screen">
+<div id="toast" class="toast">Notifikasi</div>
 
-<!-- Toast Notification -->
-<div id="toast" class="toast fixed z-[100] bottom-5 right-5 max-w-sm px-5 py-3 rounded-xl shadow-2xl text-white font-medium transition-all duration-300"></div>
-
-<!-- LANDING -->
-<section id="landing" class="page active min-h-screen flex-col">
-  <nav class="w-full max-w-7xl mx-auto px-5 py-5 flex items-center justify-between border-b border-slate-800">
-    <div class="flex items-center gap-2 font-extrabold text-xl text-white">
-      <i class="ph-fill ph-youtube-logo text-brand-500 text-3xl"></i>
-      AutoSubs AI
+<!-- HALAMAN LANDING -->
+<section id="landing" class="page active">
+  <nav style="max-width: 1200px; width: 100%; margin: 0 auto; padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b;">
+    <div style="font-weight: 900; font-size: 20px; display: flex; align-items: center; gap: 8px;">
+      <span style="background: #dc2626; color: white; padding: 4px 8px; border-radius: 8px;">▶</span> AutoSubs
     </div>
-    <button onclick="showPage('auth')" class="bg-brand-600 hover:bg-brand-500 px-5 py-2.5 rounded-xl font-bold">
-      Login / Register
-    </button>
+    <button onclick="showPage('auth')" class="btn" style="width: auto; padding: 8px 16px;">Masuk / Daftar</button>
   </nav>
-
-  <main class="flex-1 flex items-center justify-center text-center px-5 py-20">
-    <div class="max-w-4xl">
-      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-sm text-slate-400 mb-7">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        YouTube AI Tools & Event Harian
-      </div>
-      <h1 class="text-4xl md:text-6xl font-extrabold leading-tight text-white">
-        Optimasi Channel YouTube dengan <span class="text-brand-500">Kekuatan AI.</span>
-      </h1>
-      <p class="mt-6 text-slate-400 text-lg max-w-2xl mx-auto">
-        Buat judul, deskripsi, strategi konten instan dengan AI, absen harian, dan kelola channel dari satu dashboard.
-      </p>
-      <button onclick="showPage('auth')" class="mt-9 bg-brand-600 hover:bg-brand-500 px-7 py-3.5 rounded-xl font-bold">
-        Mulai Sekarang <i class="ph ph-arrow-right ml-1"></i>
-      </button>
+  <div style="flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px;">
+    <div>
+      <h1 style="font-size: 32px; font-weight: 900; margin-bottom: 12px;">Optimasi YouTube dengan <span style="color: #dc2626;">Komunitas & Bot</span></h1>
+      <p style="color: #94a3b8; font-size: 14px; margin-bottom: 24px;">Platform pembuat tautan berlangganan, promosi otomatis, dan layanan interaksi.</p>
+      <button onclick="showPage('auth')" class="btn" style="width: auto; padding: 14px 28px; font-size: 16px;">Mulai Sekarang</button>
     </div>
-  </main>
+  </div>
 </section>
 
-<!-- AUTH -->
-<section id="auth" class="page min-h-screen items-center justify-center p-5 relative">
-  <button onclick="showPage('landing')" class="absolute top-5 left-5 text-slate-400 hover:text-white">
-    <i class="ph ph-arrow-left"></i> Beranda
-  </button>
-
-  <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-7 shadow-2xl">
-    <div class="text-center mb-7">
-      <div class="mx-auto w-14 h-14 rounded-2xl bg-brand-600 flex items-center justify-center">
-        <i class="ph-fill ph-youtube-logo text-3xl text-white"></i>
-      </div>
-      <h2 id="auth-title" class="text-2xl font-extrabold text-white mt-5">Login</h2>
-      <p id="auth-subtitle" class="text-slate-400 text-sm mt-1">Masuk ke dashboard Anda.</p>
-    </div>
-
-    <form id="auth-form" onsubmit="submitAuth(event)" class="space-y-4">
-      <div>
-        <label class="text-sm text-slate-300">Email</label>
-        <input id="email" type="email" required autocomplete="email"
-          class="mt-1.5 w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-brand-500"
-          placeholder="nama@email.com">
-      </div>
-
-      <div>
-        <label class="text-sm text-slate-300">Password</label>
-        <input id="password" type="password" required minlength="6" autocomplete="current-password"
-          class="mt-1.5 w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-brand-500"
-          placeholder="Minimal 6 karakter">
-      </div>
-
-      <button id="auth-submit" type="submit"
-        class="w-full bg-brand-600 hover:bg-brand-500 py-3 rounded-xl font-bold text-white">
-        Login
-      </button>
+<!-- HALAMAN AUTH -->
+<section id="auth" class="page" style="align-items: center; justify-content: center; padding: 16px; position: relative;">
+  <button onclick="showPage('landing')" style="position: absolute; top: 20px; left: 20px; background: transparent; border: none; color: #94a3b8; cursor: pointer; font-size: 14px;">← Beranda</button>
+  <div class="card" style="width: 100%; max-width: 400px;">
+    <h2 id="auth-title" style="text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 20px;">Login</h2>
+    <form onsubmit="handleAuth(event)">
+      <label>Email Akun</label>
+      <input id="auth-email" type="email" required class="input" placeholder="nama@email.com">
+      <label>Password</label>
+      <input id="auth-password" type="password" required class="input" placeholder="Minimal 6 karakter">
+      <button id="auth-submit" type="submit" class="btn">Login</button>
     </form>
-
-    <button id="auth-switch" onclick="toggleAuthMode()" class="w-full mt-4 text-sm text-slate-400 hover:text-white">
-      Belum punya akun? <span class="text-brand-400 font-semibold">Daftar</span>
-    </button>
+    <button onclick="toggleAuthMode()" id="auth-switch" style="background: transparent; border: none; color: #94a3b8; width: 100%; margin-top: 16px; cursor: pointer; font-size: 12px;">Belum punya akun? <b style="color: #f87171;">Daftar</b></button>
   </div>
 </section>
 
-<!-- APP -->
-<section id="app" class="page min-h-screen w-full">
-  <aside id="sidebar" class="fixed lg:static z-40 inset-y-0 left-0 w-64 bg-slate-950 border-r border-slate-800 -translate-x-full lg:translate-x-0 transition-transform flex flex-col">
-    <div class="h-16 px-5 border-b border-slate-800 flex items-center gap-2 font-extrabold text-white">
-      <i class="ph-fill ph-youtube-logo text-brand-500 text-3xl"></i> AutoSubs AI
+<!-- HALAMAN APLIKASI UTAMA -->
+<section id="app" class="page" style="padding-bottom: 80px;">
+  <header class="header">
+    <div style="font-weight: 900; font-size: 16px;">AutoSubs Dashboard</div>
+    <div style="display: flex; gap: 8px; font-size: 11px;">
+      <div style="background: #1e293b; padding: 6px 10px; border-radius: 8px;">Trial: <b id="ui-trial" style="color: #fbbf24;">0</b></div>
+      <div style="background: #1e293b; padding: 6px 10px; border-radius: 8px;">Token: <b id="ui-tokens" style="color: #facc15;">0</b></div>
+      <button onclick="logout()" style="background: transparent; border: none; color: #f87171; cursor: pointer; font-weight: bold; margin-left: 4px;">Keluar</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Menu Tab -->
+    <div class="nav-tabs">
+      <button onclick="switchTab('dash', this)" class="tab-btn active">Home</button>
+      <button onclick="switchTab('bot', this)" class="tab-btn">Bot</button>
+      <button onclick="switchTab('promo', this)" class="tab-btn">Promosi</button>
+      <button onclick="switchTab('topup', this)" class="tab-btn">Topup</button>
+      <button id="menu-admin" onclick="switchTab('admin', this)" class="tab-btn hidden" style="color: #fbbf24;">Admin</button>
     </div>
 
-    <nav class="p-4 space-y-1 flex-1 overflow-y-auto">
-      <button onclick="openView('dashboard')" class="nav w-full text-left px-4 py-3 rounded-xl bg-slate-800 text-white">
-        <i class="ph ph-squares-four mr-2"></i> Dashboard
-      </button>
-      <button onclick="openView('ai')" class="nav w-full text-left px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white">
-        <i class="ph ph-sparkle mr-2"></i> AI Assistant <span class="ml-1 text-[10px] bg-emerald-500 text-slate-950 font-bold px-1.5 py-0.5 rounded">NEW</span>
-      </button>
-      <button onclick="openView('tools')" class="nav w-full text-left px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white">
-        <i class="ph ph-wrench mr-2"></i> Free Tools
-      </button>
-      <button onclick="openView('service')" class="nav w-full text-left px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white">
-        <i class="ph ph-robot mr-2"></i> Bot Services
-      </button>
-      <button onclick="openView('topup')" class="nav w-full text-left px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white">
-        <i class="ph ph-credit-card mr-2"></i> Top-up Token
-      </button>
-      <button id="admin-nav" onclick="openView('admin')" class="nav hidden w-full text-left px-4 py-3 rounded-xl text-brand-400 hover:bg-slate-800">
-        <i class="ph ph-shield-star mr-2"></i> Admin Panel
-      </button>
-    </nav>
+    <!-- TAB DASHBOARD -->
+    <div id="view-dash" class="appview active">
+      <div class="card">
+        <h2 id="greeting" style="font-size: 18px; font-weight: bold;">Halo!</h2>
+        <p id="profile-email-txt" class="text-sm mt-2"></p>
+        <div class="flex-row" style="margin-top: 16px;">
+          <div style="flex: 1; background: #020617; padding: 12px; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+            <span class="text-xs">Status Akun</span>
+            <p id="profile-role" style="font-weight: bold; color: #f87171; margin-top: 4px; text-transform: uppercase; font-size: 12px;">User</p>
+          </div>
+          <button onclick="claimBonus()" style="flex: 1; background: rgba(5,150,105,0.2); border: 1px solid #059669; border-radius: 12px; color: #34d399; cursor: pointer; font-weight: bold; font-size: 11px;">
+            Hadiah Harian<br><span style="font-size: 13px;">Klaim 2 Token</span>
+          </button>
+        </div>
+      </div>
 
-    <div class="p-4 border-t border-slate-800">
-      <button onclick="logout()" class="w-full text-left px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white">
-        <i class="ph ph-sign-out mr-2"></i> Logout
-      </button>
+      <div class="card">
+        <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 8px;">Subscribe Link Generator (Gratis)</h3>
+        <label>Masukkan URL YouTube Channel/Video</label>
+        <input id="input-yt-url" type="url" class="input" placeholder="https://youtube.com/@channel">
+        <button onclick="generateSubLink()" class="btn" style="background: #334155;">Buat Tautan Berlangganan</button>
+        <input id="output-url" readonly class="input hidden" style="color: #34d399; border-color: #059669; margin-top: 12px;">
+      </div>
     </div>
-  </aside>
 
-  <div class="flex-1 min-w-0 lg:ml-0">
-    <header class="h-16 border-b border-slate-800 bg-slate-950/90 backdrop-blur flex items-center justify-between px-5 sticky top-0 z-30">
-      <button onclick="toggleSidebar()" class="lg:hidden text-slate-300 text-2xl"><i class="ph ph-list"></i></button>
-      <div id="header-title" class="font-bold text-white ml-2 lg:ml-0">Dashboard</div>
-
-      <div class="flex items-center gap-2">
-        <div class="px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-sm">
-          Trial: <b id="trial">0</b>
-        </div>
-        <div class="px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-sm">
-          Token: <b id="tokens">0</b>
-        </div>
-        <div id="avatar" class="w-9 h-9 rounded-full bg-brand-600 flex items-center justify-center font-bold">U</div>
+    <!-- TAB BOT -->
+    <div id="view-bot" class="appview">
+      <div class="card">
+        <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 4px;">Bot Layanan Interaksi</h3>
+        <p class="text-sm" style="margin-bottom: 12px;">Pesanan akan diproses admin (Memotong 1 Token/Trial).</p>
+        <label>Tautan Target YouTube</label>
+        <input id="bot-url" type="url" class="input" placeholder="https://youtube.com/...">
+        <label>Pilih Layanan</label>
+        <select id="bot-type" class="input">
+          <option value="Auto Subscribe">Auto Subscribe Target</option>
+          <option value="Auto Views">Auto Views Target</option>
+        </select>
+        <button onclick="requestBot()" class="btn btn-emerald">Kirim Pesanan Layanan</button>
       </div>
-    </header>
+    </div>
 
-    <main class="p-5 md:p-8 max-w-7xl mx-auto">
-
-      <!-- BANNER IKLAN -->
-      <div id="ads-container" class="mb-6 bg-slate-900/90 border border-slate-800 rounded-2xl p-4 text-center overflow-hidden">
-        <div class="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Advertisement / Google Ads</div>
-        <div class="py-3 px-4 bg-slate-950 border border-slate-800 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div class="text-left">
-            <span class="text-white font-bold text-sm">Butuh Layanan Monetisasi & Subscriber Cepat?</span>
-            <p class="text-xs text-slate-400">Dapatkan promosi eksklusif channel YouTube Anda sekarang juga.</p>
-          </div>
-          <a href="https://wa.me/6289681992892" target="_blank" class="bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold px-4 py-2 rounded-xl shrink-0">Hubungi Admin (WhatsApp)</a>
-        </div>
+    <!-- TAB PROMOSI -->
+    <div id="view-promo" class="appview">
+      <div class="card">
+        <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 4px;">Pasang Promosi</h3>
+        <p class="text-sm" style="margin-bottom: 12px;">Biaya: 5 Token untuk 50 Klik Asli.</p>
+        <label>Judul Promosi</label>
+        <input id="promo-title" type="text" class="input" placeholder="Bantu tembus 1k Subs!">
+        <label>URL Video / Channel</label>
+        <input id="promo-url" type="url" class="input" placeholder="https://youtube.com/...">
+        <button onclick="addPromo()" class="btn btn-blue">Tayangkan Promosi Sekarang</button>
       </div>
+      <div class="card">
+        <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 12px;">Papan Promosi Komunitas</h3>
+        <div id="promo-board" style="display: flex; flex-direction: column; gap: 8px;"></div>
+      </div>
+    </div>
 
-      <!-- DASHBOARD -->
-      <div id="view-dashboard" class="appview active">
-        <div class="glass rounded-2xl border border-slate-800 p-7">
-          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-              <p class="text-brand-400 text-sm font-semibold">DASHBOARD</p>
-              <h1 id="welcome" class="text-3xl font-extrabold text-white mt-2">Selamat datang</h1>
-              <p id="user-email" class="text-slate-400 mt-1"></p>
-            </div>
-            <button onclick="claimDailyReward()" id="checkin-btn" class="bg-emerald-600 hover:bg-emerald-500 px-5 py-3 rounded-xl font-bold text-white text-sm flex items-center gap-2 shadow-lg shadow-emerald-900/50">
-              <i class="ph-fill ph-gift text-lg animate-bounce"></i> Klaim Hadiah Login Harian
-            </button>
+    <!-- TAB TOPUP -->
+    <div id="view-topup" class="appview">
+      <div class="card">
+        <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 4px;">Beli Token</h3>
+        <p class="text-sm" style="margin-bottom: 12px;">1 Token = Rp 1.000. Transfer ke DANA: <b style="color: white;">082336939662</b></p>
+        <div class="flex-row">
+          <div onclick="selectTopup(20, 20000)" style="flex: 1; background: #020617; border: 1px solid #334155; padding: 14px; border-radius: 12px; text-align: center; cursor: pointer;">
+            <div style="font-weight: bold; color: #facc15; font-size: 16px;">20 Token</div>
+            <div class="text-xs mt-2">Rp 20.000</div>
           </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-7">
-            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5">
-              <p class="text-slate-500 text-sm">Trial Gratis</p>
-              <p id="dash-trial" class="text-3xl font-extrabold text-white mt-2">0</p>
-            </div>
-            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5">
-              <p class="text-slate-500 text-sm">Saldo Token</p>
-              <p id="dash-tokens" class="text-3xl font-extrabold text-amber-400 mt-2">0</p>
-            </div>
-            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5">
-              <p class="text-slate-500 text-sm">Status Akun</p>
-              <p id="dash-role" class="text-2xl font-extrabold text-brand-400 mt-2 uppercase">User</p>
-            </div>
+          <div onclick="selectTopup(50, 50000)" style="flex: 1; background: #020617; border: 1px solid #dc2626; padding: 14px; border-radius: 12px; text-align: center; cursor: pointer; position: relative;">
+            <span style="position: absolute; top: 0; right: 0; background: #dc2626; font-size: 8px; padding: 2px 6px; border-bottom-left-radius: 8px; font-weight: bold;">PROMO</span>
+            <div style="font-weight: bold; color: #facc15; font-size: 16px;">50 Token</div>
+            <div class="text-xs mt-2">Rp 50.000</div>
           </div>
+        </div>
+        <div id="topup-form" class="hidden" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #1e293b;">
+          <p id="topup-desc" class="text-sm" style="margin-bottom: 12px;"></p>
+          <button onclick="submitTopup()" class="btn">Konfirmasi Pesanan Topup</button>
         </div>
       </div>
+    </div>
 
-      <!-- AI ASSISTANT VIEW -->
-      <div id="view-ai" class="appview">
-        <h2 class="text-2xl font-extrabold text-white flex items-center gap-2">
-          <i class="ph-fill ph-sparkle text-brand-400"></i> YouTube AI Assistant
-        </h2>
-        <p class="text-slate-400 mt-1">Gunakan kecerdasan buatan Gemini untuk membuat ide konten dan optimasi SEO (Memotong 1 Token per generate).</p>
-
-        <div class="mt-6 bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-3xl">
-          <div class="space-y-4">
-            <div>
-              <label class="text-sm text-slate-300">Pilih Mode AI</label>
-              <select id="ai-mode" class="mt-1 w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-brand-500">
-                <option value="ideas">Buat 5 Ide Konten YouTube Viral</option>
-                <option value="title">Buat Judul & Deskripsi SEO</option>
-                <option value="tags">Buat Tags / Kata Kunci YouTube</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="text-sm text-slate-300">Topik atau Niche Channel Anda</label>
-              <input id="ai-prompt" type="text" class="mt-1 w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-brand-500" placeholder="Contoh: Tutorial Gaming, Kuliner...">
-            </div>
-
-            <button onclick="generateAIContent()" id="ai-btn" class="w-full bg-brand-600 hover:bg-brand-500 py-3 rounded-xl font-bold text-white text-sm transition shadow-lg shadow-brand-600/30">
-              Generate dengan AI <i class="ph ph-lightning ml-1"></i>
-            </button>
-          </div>
-
-          <div id="ai-result-box" class="hidden mt-6 bg-slate-950 border border-slate-800 rounded-xl p-5">
-            <h4 class="text-xs uppercase tracking-wider text-slate-500 font-bold mb-2">Hasil AI Generator:</h4>
-            <div id="ai-output" class="text-sm text-slate-200 whitespace-pre-line leading-relaxed"></div>
-          </div>
+    <!-- TAB ADMIN -->
+    <div id="view-admin" class="appview">
+      <div class="card" style="border-color: rgba(251,191,36,0.3);">
+        <h3 style="font-size: 16px; font-weight: bold; color: #fbbf24; margin-bottom: 12px;">Panel Admin</h3>
+        <div style="background: #020617; padding: 12px; border-radius: 12px; border: 1px solid #1e293b; margin-bottom: 16px;">
+          <span style="font-size: 12px; font-weight: bold;">Kirim Token Manual</span>
+          <input id="admin-target" type="email" class="input" placeholder="Email tujuan..." style="margin-top: 8px;">
+          <input id="admin-amount" type="number" class="input" placeholder="Jumlah token...">
+          <button onclick="sendAdminToken()" class="btn" style="background: #d97706; color: #020617;">Kirim Token</button>
+        </div>
+        <div style="margin-bottom: 16px;">
+          <span style="font-size: 12px; font-weight: bold; color: #34d399; display: block; margin-bottom: 8px;">Antrean Pesanan Bot</span>
+          <div id="admin-bot-queue" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+        <div>
+          <span style="font-size: 12px; font-weight: bold; color: #facc15; display: block; margin-bottom: 8px;">Antrean Top-up Pending</span>
+          <div id="admin-queue" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
       </div>
+    </div>
 
-      <!-- FREE TOOLS -->
-      <div id="view-tools" class="appview">
-        <h2 class="text-2xl font-extrabold text-white">Free YouTube Tools</h2>
-        <p class="text-slate-400 mt-1">Alat bantu sederhana tanpa mengurangi saldo.</p>
-
-        <div class="mt-6 bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-2xl">
-          <h3 class="font-bold text-white">Subscribe Link Generator</h3>
-          <input id="yt-url" class="mt-3 w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-emerald-500" placeholder="https://www.youtube.com/@channel">
-          <button onclick="generateLink()" class="mt-3 w-full bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold">Generate</button>
-          <div id="generated" class="hidden mt-4">
-            <input id="generated-url" readonly class="w-full bg-slate-950 border border-emerald-800 rounded-xl px-4 py-3 text-emerald-400 text-sm">
-          </div>
-        </div>
-      </div>
-
-      <!-- SERVICES -->
-      <div id="view-service" class="appview">
-        <h2 class="text-2xl font-extrabold text-white">Bot Services</h2>
-        <div class="mt-6 bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-2xl">
-          <label class="text-sm text-slate-300">URL YouTube</label>
-          <input id="service-url" type="url" class="mt-2 w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-brand-500" placeholder="https://www.youtube.com/...">
-          <button onclick="createServiceRequest()" class="mt-5 w-full bg-brand-600 hover:bg-brand-500 py-3 rounded-xl font-bold">Buat Permintaan</button>
-        </div>
-      </div>
-
-      <!-- TOPUP -->
-      <div id="view-topup" class="appview">
-        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div>
-            <h2 class="text-2xl font-extrabold text-white">Top-up Token</h2>
-            <p class="text-slate-400 mt-1">Transfer ke DANA: <b class="text-white select-all">082336939662</b> (a/n Angga Bayu Setyawan)</p>
-          </div>
-        </div>
-
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-            <p class="text-slate-400 text-sm font-semibold">Starter</p>
-            <p class="text-3xl font-extrabold text-white mt-3">10 Token</p>
-            <p class="text-xl font-bold text-white mt-3">Rp10.000</p>
-            <button onclick="orderTopup(10,10000)" class="mt-5 w-full bg-slate-800 hover:bg-brand-600 py-2.5 rounded-xl font-bold">Pilih Paket</button>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 border-brand-500">
-            <p class="text-brand-400 text-sm font-semibold">Popular</p>
-            <p class="text-3xl font-extrabold text-white mt-3">50 Token</p>
-            <p class="text-xl font-bold text-brand-400 mt-3">Rp50.000</p>
-            <button onclick="orderTopup(50,50000)" class="mt-5 w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold">Pilih Paket</button>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-            <p class="text-slate-400 text-sm font-semibold">Pro</p>
-            <p class="text-3xl font-extrabold text-white mt-3">100 Token</p>
-            <p class="text-xl font-bold text-white mt-3">Rp100.000</p>
-            <button onclick="orderTopup(100,100000)" class="mt-5 w-full bg-slate-800 hover:bg-brand-600 py-2.5 rounded-xl font-bold">Pilih Paket</button>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-            <p class="text-slate-400 text-sm font-semibold">Agency</p>
-            <p class="text-3xl font-extrabold text-white mt-3">500 Token</p>
-            <p class="text-xl font-bold text-white mt-3">Rp500.000</p>
-            <button onclick="orderTopup(500,500000)" class="mt-5 w-full bg-slate-800 hover:bg-brand-600 py-2.5 rounded-xl font-bold">Pilih Paket</button>
-          </div>
-        </div>
-
-        <div id="topup-modal" class="hidden mt-6 bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-xl">
-          <h3 class="font-bold text-white text-lg">Konfirmasi Pembayaran DANA</h3>
-          <p id="selected-package-text" class="text-sm text-slate-400 mt-1"></p>
-          <div class="mt-4">
-            <label class="text-sm text-slate-300">Upload Bukti Screenshot</label>
-            <input id="proof-file" type="file" accept="image/*" class="mt-2 w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm">
-          </div>
-          <div class="flex gap-3 mt-5">
-            <button onclick="submitTopupOrder()" class="flex-1 bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white">Kirim ke Admin</button>
-            <button onclick="closeTopupModal()" class="bg-slate-800 hover:bg-slate-700 px-5 py-2.5 rounded-xl font-bold text-slate-300">Batal</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ADMIN PANEL -->
-      <div id="view-admin" class="appview">
-        <h2 class="text-2xl font-extrabold text-white">Admin Panel</h2>
-        <p class="text-slate-400 mt-1">Persetujuan pesanan top-up & kirim token gratis.</p>
-
-        <div class="mt-6 bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-xl mb-6">
-          <h3 class="font-bold text-white text-lg mb-2">Kirim Token Gratis ke User</h3>
-          <div class="space-y-3">
-            <div>
-              <label class="text-xs text-slate-300">Email User Tujuan</label>
-              <input id="admin-target-email" type="email" class="mt-1 w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm" placeholder="user@email.com">
-            </div>
-            <div>
-              <label class="text-xs text-slate-300">Jumlah Token</label>
-              <input id="admin-token-amount" type="number" min="1" class="mt-1 w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm" placeholder="10">
-            </div>
-            <button onclick="adminSendFreeTokens()" class="w-full bg-brand-600 hover:bg-brand-500 py-2.5 rounded-xl font-bold text-white text-sm">Kirim Token</button>
-          </div>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-          <h3 class="font-bold text-white mb-4">Persetujuan Top-up Pending</h3>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-              <thead>
-                <tr class="border-b border-slate-800 text-slate-400 text-sm">
-                  <th class="p-3">Email / Paket</th>
-                  <th class="p-3">Bukti</th>
-                  <th class="p-3">Aksi</th>
-                </tr>
-              </thead>
-              <tbody id="admin-topup-list">
-                <tr><td colspan="3" class="p-3 text-center text-slate-500">Memuat data...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-    </main>
   </div>
 </section>
 
-<!-- Modal Gambar Bukti -->
-<div id="imageModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 max-w-lg w-full text-center">
-    <h3 class="font-bold text-white mb-3">Bukti Transfer</h3>
-    <img id="modalImg" src="" alt="Bukti" class="max-h-[70vh] mx-auto rounded-xl mb-4">
-    <button onclick="closeModal()" class="bg-slate-800 hover:bg-slate-700 px-5 py-2 rounded-xl font-bold text-white">Tutup</button>
-  </div>
-</div>
+<script>
+  let isLoginMode = true;
+  let currentUser = null;
 
-<script src="script.js"></script>
+  function initDB() {
+    if(!localStorage.getItem('db_users')) localStorage.setItem('db_users', JSON.stringify({}));
+    if(!localStorage.getItem('db_topups')) localStorage.setItem('db_topups', JSON.stringify([]));
+    if(!localStorage.getItem('db_bot_orders')) localStorage.setItem('db_bot_orders', JSON.stringify([]));
+    if(!localStorage.getItem('db_promos')) localStorage.setItem('db_promos', JSON.stringify([]));
+  }
+  initDB();
+
+  function getDB(key) { return JSON.parse(localStorage.getItem(key)); }
+  function saveDB(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+
+  function showToast(msg, isError = false) {
+    const t = document.getElementById('toast');
+    if(!t) return;
+    t.innerText = msg;
+    t.className = `toast show ${isError ? 'error' : ''}`;
+    setTimeout(() => { t.className = 'toast'; }, 3000);
+  }
+
+  function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+  }
+
+  function switchTab(tabId, btn) {
+    document.querySelectorAll('.appview').forEach(v => v.classList.remove('active'));
+    document.getElementById('view-' + tabId).classList.add('active');
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+    if(tabId === 'admin') { renderAdminTopups(); renderAdminBotOrders(); }
+    if(tabId === 'promo') { renderPromos(); }
+  }
+
+  function toggleAuthMode() {
+    isLoginMode = !isLoginMode;
+    document.getElementById('auth-title').innerText = isLoginMode ? 'Login' : 'Daftar';
+    document.getElementById('auth-submit').innerText = isLoginMode ? 'Login' : 'Daftar';
+    document.getElementById('auth-switch').innerHTML = isLoginMode ? 'Belum punya akun? <b style="color: #f87171;">Daftar</b>' : 'Sudah punya akun? <b style="color: #f87171;">Login</b>';
+  }
+
+  function handleAuth(e) {
+    e.preventDefault();
+    const email = document.getElementById('auth-email').value.trim().toLowerCase();
+    const pass = document.getElementById('auth-password').value;
+    const users = getDB('db_users');
+
+    if(!isLoginMode) {
+      if(users[email]) return showToast('Email sudah terdaftar!', true);
+      users[email] = {
+        password: pass,
+        trial: (email === "panglimaa09@gmail.com") ? 9999 : 3,
+        tokens: (email === "panglimaa09@gmail.com") ? 9999 : 0,
+        role: (email === "panglimaa09@gmail.com") ? 'admin' : 'user'
+      };
+      saveDB('db_users', users);
+      showToast('Pendaftaran berhasil! Silakan login.');
+      toggleAuthMode();
+    } else {
+      if(!users[email] || users[email].password !== pass) return showToast('Email atau password salah!', true);
+      currentUser = email;
+      localStorage.setItem('currentUser', currentUser);
+      showToast('Login berhasil!');
+      loadApp();
+    }
+  }
+
+  function loadApp() {
+    const users = getDB('db_users');
+    const userData = users[currentUser];
+    if(!userData) return logout();
+
+    document.getElementById('profile-email-txt').innerText = currentUser;
+    document.getElementById('greeting').innerText = 'Halo, ' + currentUser.split('@')[0] + '!';
+    document.getElementById('profile-role').innerText = userData.role;
+    document.getElementById('ui-trial').innerText = userData.role === 'admin' ? '∞' : userData.trial;
+    document.getElementById('ui-tokens').innerText = userData.role === 'admin' ? '∞' : userData.tokens;
+
+    const adminMenu = document.getElementById('menu-admin');
+    if(userData.role === 'admin') adminMenu.classList.remove('hidden');
+    else adminMenu.classList.add('hidden');
+    
+    showPage('app');
+  }
+
+  function chargeToken(amount = 1) {
+    const users = getDB('db_users');
+    const user = users[currentUser];
+    if(user.role === 'admin') return true; 
+
+    if(amount === 1 && user.trial > 0) {
+      user.trial--;
+    } else if (user.tokens >= amount) {
+      user.tokens -= amount;
+    } else {
+      showToast(`Token tidak cukup! Butuh ${amount} Token.`, true);
+      return false;
+    }
+    saveDB('db_users', users);
+    loadApp(); 
+    return true;
+  }
+
+  function claimBonus() {
+    const users = getDB('db_users');
+    if(users[currentUser].role === 'admin') return showToast('Admin unlimited!');
+    users[currentUser].tokens += 2;
+    saveDB('db_users', users);
+    loadApp();
+    showToast('Berhasil klaim 2 Token harian!');
+  }
+
+  function generateSubLink() {
+    const url = document.getElementById('input-yt-url').value.trim();
+    if(!url) return showToast('Masukkan URL!', true);
+    const finalLink = url.includes('?sub_confirmation=1') ? url : url + (url.endsWith('/') ? '' : '/') + '?sub_confirmation=1';
+    const out = document.getElementById('output-url');
+    out.value = finalLink;
+    out.classList.remove('hidden');
+    showToast('Tautan berhasil dibuat!');
+  }
+
+  function requestBot() {
+    const url = document.getElementById('bot-url').value.trim();
+    const type = document.getElementById('bot-type').value;
+    if(!url) return showToast('Masukkan URL!', true);
+    if(!chargeToken()) return;
+
+    const orders = getDB('db_bot_orders');
+    orders.push({ id: Date.now(), email: currentUser, url: url, type: type, status: 'pending' });
+    saveDB('db_bot_orders', orders);
+    document.getElementById('bot-url').value = '';
+    showToast('Pesanan bot berhasil masuk antrean!');
+  }
+
+  function addPromo() {
+    const title = document.getElementById('promo-title').value.trim();
+    let url = document.getElementById('promo-url').value.trim();
+    if(!title || !url) return showToast('Lengkapi form!', true);
+    if(!chargeToken(5)) return;
+
+    const promos = getDB('db_promos');
+    promos.unshift({ id: Date.now(), email: currentUser, title: title, url: url.includes('?sub_confirmation=1') ? url : url + '?sub_confirmation=1', clicks: 0, max_clicks: 50 });
+    saveDB('db_promos', promos);
+    document.getElementById('promo-title').value = '';
+    document.getElementById('promo-url').value = '';
+    showToast('Promosi berhasil ditayangkan!');
+    renderPromos();
+  }
+
+  function renderPromos() {
+    const promos = getDB('db_promos');
+    const board = document.getElementById('promo-board');
+    board.innerHTML = '';
+    const activePromos = promos.filter(p => p.clicks < p.max_clicks);
+    if(activePromos.length === 0) {
+      board.innerHTML = '<div style="font-size: 10px; color: #64748b; font-style: italic; text-align: center;">Belum ada promosi aktif.</div>';
+      return;
+    }
+    activePromos.forEach(p => {
+      board.innerHTML += `
+        <div style="background: #020617; padding: 12px; border-radius: 12px; border: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="clickPromo(${p.id}, '${p.url}')">
+          <div style="overflow: hidden; flex: 1;">
+            <div style="font-size: 13px; font-weight: bold; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.title}</div>
+            <div style="font-size: 10px; color: #94a3b8; margin-top: 2px;">Dilihat: ${p.clicks}/${p.max_clicks} x</div>
+          </div>
+          <div style="background: rgba(37,99,235,0.2); color: #60a5fa; padding: 6px 12px; border-radius: 8px; font-size: 10px; font-weight: bold; margin-left: 8px; flex-shrink: 0;">Kunjungi</div>
+        </div>
+      `;
+    });
+  }
+
+  function clickPromo(id, url) {
+    const promos = getDB('db_promos');
+    const index = promos.findIndex(p => p.id === id);
+    if(index !== -1) {
+      promos[index].clicks += 1;
+      saveDB('db_promos', promos);
+      renderPromos();
+    }
+    window.open(url, '_blank');
+  }
+
+  let selectedPackage = { token: 0, price: 0 };
+  function selectTopup(token, price) {
+    selectedPackage = { token, price };
+    document.getElementById('topup-desc').innerText = `Paket: ${token} Token (Rp ${price.toLocaleString()}). \nSilakan transfer ke DANA 082336939662.`;
+    document.getElementById('topup-form').classList.remove('hidden');
+  }
+
+  function submitTopup() {
+    const topups = getDB('db_topups');
+    topups.push({ id: Date.now(), email: currentUser, token: selectedPackage.token, price: selectedPackage.price, status: 'pending' });
+    saveDB('db_topups', topups);
+    document.getElementById('topup-form').classList.add('hidden');
+    showToast('Pesanan topup terkirim! Menunggu Admin.');
+  }
+
+  function renderAdminBotOrders() {
+    const orders = getDB('db_bot_orders');
+    const queueDiv = document.getElementById('admin-bot-queue');
+    const pendings = orders.filter(t => t.status === 'pending');
+    if(pendings.length === 0) { queueDiv.innerHTML = '<div style="font-size: 10px; color: #64748b; font-style: italic;">Tidak ada antrean bot.</div>'; return; }
+    queueDiv.innerHTML = '';
+    pendings.forEach(t => {
+      queueDiv.innerHTML += `
+        <div style="background: #020617; padding: 10px; border-radius: 8px; border: 1px solid #065f46; display: flex; flex-direction: column; gap: 6px;">
+          <div style="font-size: 11px; color: white;"><b>${t.email}</b> - <span style="color: #34d399;">${t.type}</span></div>
+          <a href="${t.url}" target="_blank" style="font-size: 10px; color: #60a5fa; word-break: break-all;">${t.url}</a>
+          <button onclick="finishBotOrder(${t.id})" class="btn btn-emerald" style="padding: 6px; font-size: 11px;">Tandai Selesai</button>
+        </div>
+      `;
+    });
+  }
+
+  function finishBotOrder(id) {
+    const orders = getDB('db_bot_orders');
+    const index = orders.findIndex(t => t.id === id);
+    if(index !== -1) {
+      orders[index].status = 'completed';
+      saveDB('db_bot_orders', orders);
+      showToast('Pesanan selesai!');
+      renderAdminBotOrders();
+    }
+  }
+
+  function renderAdminTopups() {
+    const topups = getDB('db_topups');
+    const queueDiv = document.getElementById('admin-queue');
+    const pendings = topups.filter(t => t.status === 'pending');
+    if(pendings.length === 0) { queueDiv.innerHTML = '<div style="font-size: 10px; color: #64748b; font-style: italic;">Tidak ada antrean topup.</div>'; return; }
+    queueDiv.innerHTML = '';
+    pendings.forEach(t => {
+      queueDiv.innerHTML += `
+        <div style="background: #020617; padding: 10px; border-radius: 8px; border: 1px solid #334155; display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 11px; color: white;"><b>${t.email}</b><br><span style="color: #facc15;">${t.token} Token</span></div>
+          <button onclick="approveTopup(${t.id})" style="background: #d97706; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer;">Setujui</button>
+        </div>
+      `;
+    });
+  }
+
+  function approveTopup(orderId) {
+    const topups = getDB('db_topups');
+    const users = getDB('db_users');
+    const orderIndex = topups.findIndex(t => t.id === orderId);
+    if(orderIndex === -1) return;
+    const order = topups[orderIndex];
+    if(users[order.email]) {
+      users[order.email].tokens += order.token;
+      saveDB('db_users', users);
+    }
+    topups[orderIndex].status = 'approved';
+    saveDB('db_topups', topups);
+    showToast('Topup disetujui!');
+    renderAdminTopups();
+    if(currentUser === order.email) loadApp();
+  }
+
+  function sendAdminToken() {
+    const target = document.getElementById('admin-target').value.trim().toLowerCase();
+    const amount = parseInt(document.getElementById('admin-amount').value);
+    if(!target || isNaN(amount) || amount <= 0) return showToast('Input tidak valid!', true);
+    const users = getDB('db_users');
+    if(!users[target]) return showToast('Email tidak ditemukan!', true);
+    users[target].tokens += amount;
+    saveDB('db_users', users);
+    document.getElementById('admin-target').value = '';
+    document.getElementById('admin-amount').value = '';
+    showToast(`Berhasil mengirim ${amount} Token!`);
+  }
+
+  function logout() {
+    localStorage.removeItem('currentUser');
+    currentUser = null;
+    showPage('landing');
+    showToast('Berhasil keluar.');
+  }
+
+  currentUser = localStorage.getItem('currentUser');
+  if(currentUser && getDB('db_users')[currentUser]) loadApp();
+</script>
 </body>
 </html>
