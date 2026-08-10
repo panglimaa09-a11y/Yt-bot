@@ -3,207 +3,259 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AutoSubs — YouTube Platform & Spin Reward</title>
+  <title>AutoSubs — Premium YouTube & Monetization Platform</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background-color: #020617; color: #f1f5f9; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+    :root {
+      --bg-primary: #030712;
+      --bg-secondary: #0f172a;
+      --bg-card: #1e293b;
+      --accent-gold: #f59e0b;
+      --accent-red: #ef4444;
+      --accent-emerald: #10b981;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background-color: var(--bg-primary); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+    
     .page { display: none; min-height: 100vh; flex-direction: column; }
     .page.active { display: flex; }
     .appview { display: none; }
     .appview.active { display: block; }
     
-    .container { max-width: 800px; width: 100%; margin: 0 auto; padding: 16px; }
-    .card { background-color: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 20px; margin-bottom: 16px; }
-    .btn { background-color: #dc2626; color: white; border: none; padding: 12px 16px; border-radius: 12px; font-weight: bold; width: 100%; cursor: pointer; font-size: 14px; transition: background 0.2s; }
-    .btn:hover { background-color: #b91c1c; }
-    .btn-emerald { background-color: #059669; }
-    .btn-emerald:hover { background-color: #047857; }
-    .btn-blue { background-color: #2563eb; }
-    .btn-blue:hover { background-color: #1d4ed8; }
-    .btn-wa { background-color: #25d366; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-weight: bold; padding: 12px; border-radius: 12px; font-size: 14px; margin-top: 10px; }
-    .btn-wa:hover { background-color: #1ebe5d; }
+    .container { max-width: 900px; width: 100%; margin: 0 auto; padding: 20px; }
     
-    .input, select, textarea { width: 100%; background-color: #020617; border: 1px solid #334155; border-radius: 12px; padding: 12px; color: white; font-size: 14px; outline: none; margin-top: 6px; margin-bottom: 12px; }
-    .input:focus, select:focus, textarea:focus { border-color: #dc2626; }
-    label { font-size: 12px; color: #94a3b8; font-weight: 500; }
+    /* Luxury Card & Glow */
+    .card { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px; margin-bottom: 20px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px); }
+    .card-gold { border-color: rgba(245, 158, 11, 0.4); box-shadow: 0 0 25px rgba(245, 158, 11, 0.1); }
     
-    .ads-banner { width: 100%; background: #1e293b; border: 2px dashed #334155; border-radius: 12px; padding: 12px; text-align: center; margin-bottom: 16px; }
-    .ads-banner span { font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; display: block; margin-bottom: 4px; }
-    .ads-banner .ad-content { font-size: 12px; color: #94a3b8; }
+    .btn { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; border: none; padding: 14px 20px; border-radius: 14px; font-weight: bold; width: 100%; cursor: pointer; font-size: 15px; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(239, 68, 68, 0.5); }
+    .btn-emerald { background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+    .btn-emerald:hover { box-shadow: 0 6px 16px rgba(16, 185, 129, 0.5); }
+    .btn-gold { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #030712; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); }
+    .btn-gold:hover { box-shadow: 0 6px 16px rgba(245, 158, 11, 0.5); }
+    .btn-social { background: #1e293b; border: 1px solid var(--border-color); color: white; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; font-weight: 600; }
+    .btn-social:hover { background: #334155; }
+    
+    .input, select, textarea { width: 100%; background-color: #030712; border: 1px solid var(--border-color); border-radius: 14px; padding: 14px; color: white; font-size: 15px; outline: none; margin-top: 6px; margin-bottom: 16px; transition: border-color 0.2s; }
+    .input:focus { border-color: var(--accent-gold); box-shadow: 0 0 10px rgba(245, 158, 11, 0.2); }
+    label { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+    
+    /* Google Ads Banner Luxury */
+    .ads-banner { width: 100%; background: linear-gradient(90deg, #1e293b 0%, #0f172a 100%); border: 1px dashed var(--accent-gold); border-radius: 16px; padding: 16px; text-align: center; margin-bottom: 20px; box-shadow: inset 0 0 15px rgba(245, 158, 11, 0.05); }
+    .ads-banner span { font-size: 11px; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 2px; font-weight: 800; display: block; margin-bottom: 4px; }
+    .ads-banner .ad-content { font-size: 13px; color: var(--text-muted); font-weight: 500; }
 
-    .toast { position: fixed; bottom: 20px; right: 20px; left: 20px; max-width: 350px; margin: 0 auto; background: #059669; color: white; padding: 12px 20px; border-radius: 12px; text-align: center; font-weight: 500; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); transform: translateY(100px); opacity: 0; transition: all 0.3s ease; z-index: 100; pointer-events: none; }
+    /* Toast Notification */
+    .toast { position: fixed; bottom: 30px; right: 20px; left: 20px; max-width: 400px; margin: 0 auto; background: var(--accent-emerald); color: white; padding: 14px 24px; border-radius: 16px; text-align: center; font-weight: 600; box-shadow: 0 15px 30px rgba(0,0,0,0.6); transform: translateY(120px); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 1000; pointer-events: none; }
     .toast.show { transform: translateY(0); opacity: 1; }
-    .toast.error { background: #dc2626; }
+    .toast.error { background: var(--accent-red); }
 
-    .nav-tabs { display: flex; gap: 8px; overflow-x: auto; background: #0f172a; padding: 8px; border-radius: 12px; border: 1px solid #1e293b; margin-bottom: 16px; scrollbar-width: none; }
+    /* Navigation Tabs */
+    .nav-tabs { display: flex; gap: 8px; overflow-x: auto; background: var(--bg-secondary); padding: 10px; border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 20px; scrollbar-width: none; }
     .nav-tabs::-webkit-scrollbar { display: none; }
-    .tab-btn { background: transparent; border: none; color: #94a3b8; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; flex: 1; min-width: 60px; text-align: center; white-space: nowrap; }
-    .tab-btn.active { background: #1e293b; color: white; }
+    .tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 10px 16px; border-radius: 12px; font-size: 12px; font-weight: bold; cursor: pointer; flex: 1; min-width: 75px; text-align: center; white-space: nowrap; transition: all 0.2s; }
+    .tab-btn.active { background: var(--border-color); color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
     
-    .header { height: 60px; background: #0f172a; border-bottom: 1px solid #1e293b; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; position: sticky; top: 0; z-index: 50; }
+    .header { height: 70px; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; position: sticky; top: 0; z-index: 100; }
     .hidden { display: none !important; }
-    .flex-row { display: flex; gap: 12px; }
-    .text-sm { font-size: 12px; color: #94a3b8; }
-    .text-xs { font-size: 10px; color: #64748b; }
-    
-    .wheel-box { text-align: center; background: radial-gradient(circle, #1e293b 0%, #0f172a 100%); border: 2px solid #3b82f6; border-radius: 16px; padding: 20px; margin-bottom: 16px; }
-    .wheel-display { width: 150px; height: 150px; border-radius: 50%; border: 4px dashed #facc15; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; background: #020617; color: #facc15; box-shadow: 0 0 20px rgba(250,204,21,0.2); transition: transform 0.5s ease; }
+    .flex-row { display: flex; gap: 14px; }
+    .text-sm { font-size: 13px; color: var(--text-muted); }
+    .text-xs { font-size: 11px; color: var(--text-muted); }
+
+    /* Luxury Spin Wheel Showcase */
+    .wheel-box { text-align: center; background: radial-gradient(circle, #1e293b 0%, #0f172a 100%); border: 2px solid var(--accent-gold); border-radius: 24px; padding: 30px 20px; margin-bottom: 20px; box-shadow: 0 0 40px rgba(245, 158, 11, 0.15); }
+    .wheel-display { width: 160px; height: 160px; border-radius: 50%; border: 4px dashed var(--accent-gold); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 900; background: #030712; color: var(--accent-gold); box-shadow: 0 0 30px rgba(245,204,21,0.3); transition: transform 0.6s cubic-bezier(0.15, 0.9, 0.2, 1); }
+    .token-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+    .token-badge { background: #030712; border: 1px solid var(--border-color); border-radius: 12px; padding: 10px; text-align: center; }
   </style>
 </head>
 <body>
 
 <div id="toast" class="toast">Notifikasi</div>
 
-<!-- HALAMAN LANDING -->
+<!-- LANDING PAGE -->
 <section id="landing" class="page active">
-  <nav style="max-width: 1200px; width: 100%; margin: 0 auto; padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b;">
-    <div style="font-weight: 900; font-size: 20px; display: flex; align-items: center; gap: 8px;">
-      <span style="background: #dc2626; color: white; padding: 4px 8px; border-radius: 8px;">▶</span> AutoSubs
+  <nav style="max-width: 1200px; width: 100%; margin: 0 auto; padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color);">
+    <div style="font-weight: 900; font-size: 22px; display: flex; align-items: center; gap: 10px;">
+      <span style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 6px 12px; border-radius: 10px; box-shadow: 0 4px 12px rgba(239,68,68,0.4);">▶</span> AutoSubs <span style="font-size: 11px; background: rgba(245,158,11,0.2); color: var(--accent-gold); padding: 2px 8px; border-radius: 6px;">LUXURY</span>
     </div>
-    <button onclick="showPage('auth')" class="btn" style="width: auto; padding: 8px 16px;">Masuk / Daftar</button>
+    <button onclick="showPage('auth')" class="btn" style="width: auto; padding: 10px 22px;">Masuk / Daftar</button>
   </nav>
 
-  <div style="max-width: 800px; margin: 20px auto 0; padding: 0 16px;">
+  <div style="max-width: 800px; margin: 30px auto 0; padding: 0 20px;">
     <div class="ads-banner">
-      <span>Google Ads / Sponsor Komisi Platform</span>
-      <div class="ad-content">🚀 Tingkatkan Channel YouTube Anda & Mainkan Roda Undian Berhadiah Token Gratis!</div>
+      <span>Google Ads / Premium Global Sponsor</span>
+      <div class="ad-content">🚀 Akses Eksklusif Platform Bot Otomatis & Roda Keberuntungan Berhadiah Token VIP!</div>
     </div>
   </div>
 
   <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px;">
-    <div>
-      <h1 style="font-size: 32px; font-weight: 900; margin-bottom: 12px;">Optimasi YouTube dengan <span style="color: #dc2626;">Komunitas & Spin Berhadiah</span></h1>
-      <p style="color: #94a3b8; font-size: 14px; margin-bottom: 24px;">Platform bot otomatis, tukar token jadi saldo, dan putar roda keberuntungan setiap hari!</p>
-      <button onclick="showPage('auth')" class="btn" style="width: auto; padding: 14px 28px; font-size: 16px;">Mulai Sekarang</button>
+    <div style="max-width: 650px;">
+      <h1 style="font-size: 38px; font-weight: 900; margin-bottom: 16px; line-height: 1.2;">Platform Otomasi YouTube & <span style="background: linear-gradient(135deg, #f59e0b, #ef4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Sistem Hadiah Mewah</span></h1>
+      <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 30px; line-height: 1.6;">Solusi cerdas kreator konten untuk mengelola subscriber, interaksi bot, penukaran token ke saldo, dan undian harian.</p>
+      <button onclick="showPage('auth')" class="btn" style="width: auto; padding: 16px 36px; font-size: 16px;">Mulai Akses Platform</button>
     </div>
-    <!-- Tombol Reset Data Jika Terjadi Error/Crash -->
-    <button onclick="hardResetApp()" style="background: transparent; color: #64748b; border: 1px solid #334155; padding: 8px 16px; border-radius: 8px; font-size: 11px; margin-top: 40px; cursor: pointer;">Pecahkan Masalah (Reset Data Browser)</button>
+    <button onclick="hardResetApp()" style="background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 10px; font-size: 11px; margin-top: 50px; cursor: pointer;">Reset Data Sesi Browser</button>
   </div>
 </section>
 
-<!-- HALAMAN AUTH -->
-<section id="auth" class="page" style="align-items: center; justify-content: center; padding: 16px; position: relative;">
-  <button onclick="showPage('landing')" style="position: absolute; top: 20px; left: 20px; background: transparent; border: none; color: #94a3b8; cursor: pointer; font-size: 14px;">← Beranda</button>
-  <div class="card" style="width: 100%; max-width: 400px;">
-    <h2 id="auth-title" style="text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 20px;">Login</h2>
+<!-- AUTH PAGE -->
+<section id="auth" class="page" style="align-items: center; justify-content: center; padding: 20px; position: relative;">
+  <button onclick="showPage('landing')" style="position: absolute; top: 25px; left: 25px; background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px; font-weight: 600;">← Beranda</button>
+  
+  <div class="card card-gold" style="width: 100%; max-width: 420px;">
+    <h2 id="auth-title" style="text-align: center; font-size: 26px; font-weight: 900; margin-bottom: 24px;">Autentikasi Akun</h2>
+    
+    <!-- Login Sosial (Fitur 4) -->
+    <div style="margin-bottom: 20px;">
+      <button onclick="socialLogin('Google')" class="btn btn-social"><img src="https://www.svgrepo.com/show/475656/google-color.svg" width="18" height="18"> Lanjutkan dengan Google / Email</button>
+      <button onclick="socialLogin('Facebook')" class="btn btn-social"><img src="https://www.svgrepo.com/show/475647/facebook-color.svg" width="18" height="18"> Lanjutkan dengan Facebook</button>
+      <button onclick="socialLogin('Apple')" class="btn btn-social"><img src="https://www.svgrepo.com/show/511330/apple-173.svg" width="18" height="18"> Lanjutkan dengan Apple ID</button>
+    </div>
+
+    <div style="display: flex; align-items: center; text-align: center; margin: 16px 0; color: var(--text-muted); font-size: 12px;">
+      <div style="flex: 1; border-bottom: 1px solid var(--border-color);"></div>
+      <span style="padding: 0 10px;">Atau gunakan Email Manual</span>
+      <div style="flex: 1; border-bottom: 1px solid var(--border-color);"></div>
+    </div>
+
     <form onsubmit="handleAuth(event)">
-      <label>Email Akun</label>
+      <label>Email Akses</label>
       <input id="auth-email" type="email" required class="input" placeholder="nama@email.com">
-      <label>Password</label>
+      <label>Password Akun</label>
       <input id="auth-password" type="password" required class="input" placeholder="Minimal 6 karakter">
-      <button id="auth-submit" type="submit" class="btn">Login</button>
+      <button id="auth-submit" type="submit" class="btn">Masuk Sistem</button>
     </form>
-    <button onclick="toggleAuthMode()" id="auth-switch" style="background: transparent; border: none; color: #94a3b8; width: 100%; margin-top: 16px; cursor: pointer; font-size: 12px;">Belum punya akun? <b style="color: #f87171;">Daftar</b></button>
+    
+    <button onclick="toggleAuthMode()" id="auth-switch" style="background: transparent; border: none; color: var(--text-muted); width: 100%; margin-top: 18px; cursor: pointer; font-size: 13px;">Belum punya akun? <b style="color: var(--accent-gold);">Daftar Sekarang</b></button>
   </div>
 </section>
 
-<!-- HALAMAN APLIKASI UTAMA -->
+<!-- MAIN APP DASHBOARD -->
 <section id="app" class="page" style="padding-bottom: 80px;">
   <header class="header">
-    <div style="font-weight: 900; font-size: 16px;">AutoSubs Dashboard</div>
-    <div style="display: flex; gap: 6px; font-size: 11px; align-items: center;">
-      <div style="background: #1e293b; padding: 5px 8px; border-radius: 8px;">Token: <b id="ui-tokens" style="color: #facc15;">0</b></div>
-      <div style="background: #1e293b; padding: 5px 8px; border-radius: 8px;">Saldo: <b id="ui-saldo" style="color: #34d399;">Rp 0</b></div>
-      <button onclick="logout()" style="background: transparent; border: none; color: #f87171; cursor: pointer; font-weight: bold; margin-left: 2px;">Keluar</button>
+    <div style="font-weight: 900; font-size: 18px; display: flex; align-items: center; gap: 8px;">
+      <span style="color: var(--accent-gold);">★</span> AutoSubs Pro
+    </div>
+    <div style="display: flex; gap: 8px; font-size: 12px; align-items: center;">
+      <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 10px;">Token: <b id="ui-tokens" style="color: var(--accent-gold);">0</b></div>
+      <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 10px;">Saldo: <b id="ui-saldo" style="color: var(--accent-emerald);">Rp 0</b></div>
+      <button onclick="logout()" style="background: transparent; border: none; color: var(--accent-red); cursor: pointer; font-weight: bold; margin-left: 4px;">Keluar</button>
     </div>
   </header>
 
   <div class="container">
     <div class="nav-tabs">
       <button onclick="switchTab('dash', this)" class="tab-btn active">Home</button>
-      <button onclick="switchTab('spin', this)" class="tab-btn" style="color: #facc15;">🎁 Spin</button>
+      <button onclick="switchTab('spin', this)" class="tab-btn" style="color: var(--accent-gold);">🎁 Lucky Spin</button>
       <button onclick="switchTab('bot', this)" class="tab-btn">Bot</button>
       <button onclick="switchTab('promo', this)" class="tab-btn">Promosi</button>
       <button onclick="switchTab('topup', this)" class="tab-btn">Topup</button>
-      <button id="menu-admin" onclick="switchTab('admin', this)" class="tab-btn hidden" style="color: #fbbf24;">Admin</button>
+      <button id="menu-admin" onclick="switchTab('admin', this)" class="tab-btn hidden" style="color: var(--accent-gold);">Admin Panel</button>
+    </div>
+
+    <!-- Sponsor Banner Google Ads (Fitur 3) -->
+    <div class="ads-banner">
+      <span>Google Ads / Global Sponsor Platform</span>
+      <div class="ad-content">💎 Platform Monetisasi Terverifikasi — Iklan Aktif Mendukung Operasional Server 24/7.</div>
     </div>
 
     <!-- TAB DASHBOARD (HOME) -->
     <div id="view-dash" class="appview active">
-      <div class="card">
-        <h2 id="greeting" style="font-size: 18px; font-weight: bold;">Halo!</h2>
+      <div class="card card-gold">
+        <h2 id="greeting" style="font-size: 20px; font-weight: bold;">Halo, Kreator!</h2>
         <p id="profile-email-txt" class="text-sm" style="margin-top: 4px;"></p>
-        <div class="flex-row" style="margin-top: 16px;">
-          <div style="flex: 1; background: #020617; padding: 10px; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
-            <span class="text-xs">Tiket Spin Aktif</span>
-            <p id="profile-spin-tickets" style="font-weight: bold; color: #facc15; margin-top: 4px; font-size: 14px;">0 Tiket</p>
+        <div class="flex-row" style="margin-top: 18px;">
+          <div style="flex: 1; background: var(--bg-primary); padding: 12px; border-radius: 14px; border: 1px solid var(--border-color); text-align: center;">
+            <span class="text-xs">Tiket Spin Tersedia</span>
+            <p id="profile-spin-tickets" style="font-weight: 900; color: var(--accent-gold); margin-top: 4px; font-size: 16px;">0 Tiket</p>
           </div>
-          <button onclick="claimBonus()" style="flex: 1; background: rgba(5,150,105,0.2); border: 1px solid #059669; border-radius: 12px; color: #34d399; cursor: pointer; font-weight: bold; font-size: 11px; padding: 8px;">
-            Aktivitas Harian<br><span style="font-size: 12px;">Klaim 2 Token</span>
+          <button onclick="claimBonus()" style="flex: 1; background: rgba(16, 185, 129, 0.15); border: 1px solid var(--accent-emerald); border-radius: 14px; color: #34d399; cursor: pointer; font-weight: bold; font-size: 12px; padding: 10px;">
+            Aktivitas Harian<br><span style="font-size: 13px;">Klaim +2 Token</span>
           </button>
         </div>
       </div>
 
-      <!-- PENUKARAN TOKEN KE SALDO -->
-      <div class="card" style="border-color: #059669;">
-        <h3 style="font-size: 15px; font-weight: bold; color: #34d399; margin-bottom: 4px;">💸 Tukar Token Jadi Saldo</h3>
-        <p class="text-sm" style="margin-bottom: 12px;">Minimal penukaran: <b>2.500 Token</b>. Rate: 100 Token = Rp 1.000 (Dikenakan potongan pajak administrasi 10%).</p>
-        <label>Jumlah Token yang Ingin Ditukar</label>
+      <!-- Penukaran Token Jadi Saldo -->
+      <div class="card">
+        <h3 style="font-size: 16px; font-weight: bold; color: var(--accent-emerald); margin-bottom: 6px;">💸 Penukaran Token ke Saldo Tunai</h3>
+        <p class="text-sm" style="margin-bottom: 14px;">Minimal <b>2.500 Token</b>. Rate: 100 Token = Rp 1.000 (Dikenakan potongan pajak admin 10% yang wajar).</p>
+        <label>Jumlah Token Ditukar</label>
         <input id="input-redeem-tokens" type="number" class="input" placeholder="Minimal 2500">
-        <button onclick="redeemTokensToSaldo()" class="btn btn-emerald">Tukar Token ke Saldo Sekarang</button>
+        <button onclick="redeemTokensToSaldo()" class="btn btn-emerald">Tukar Token Sekarang</button>
       </div>
 
-      <!-- BANTUAN WHATSAPP ADMIN -->
-      <div class="card" style="background: linear-gradient(135deg, #064e3b 0%, #0f172a 100%); border-color: #059669;">
-        <h3 style="font-size: 15px; font-weight: bold; color: #34d399; margin-bottom: 4px;">📞 Layanan Bantuan & Kendala</h3>
-        <p class="text-sm" style="margin-bottom: 10px;">Mengalami kendala top-up, error sistem, atau butuh bantuan cepat? Hubungi admin resmi kami via WhatsApp.</p>
-        <a href="https://wa.me/6282336939662?text=Halo%20Admin%20AutoSubs,%20saya%20ingin%20melaporkan%20kendala%20terkait%20akun%20saya." target="_blank" class="btn-wa">
-          💬 Chat WhatsApp Admin (0823-3693-9662)
+      <!-- Bantuan WhatsApp Admin -->
+      <div class="card" style="background: linear-gradient(135deg, #064e3b 0%, #0f172a 100%); border-color: var(--accent-emerald);">
+        <h3 style="font-size: 16px; font-weight: bold; color: #34d399; margin-bottom: 6px;">📞 Layanan Bantuan & Laporan Kendala</h3>
+        <p class="text-sm" style="margin-bottom: 12px;">Mengalami kendala top-up, verifikasi lambat, atau error sistem? Hubungi Admin WhatsApp resmi kami.</p>
+        <a href="https://wa.me/6282336939662?text=Halo%20Admin%20AutoSubs,%20saya%20ingin%20melaporkan%20kendala%20akun%20saya." target="_blank" style="background: #25d366; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-weight: bold; padding: 12px; border-radius: 12px; font-size: 14px;">
+          💬 Hubungi Admin WhatsApp (0823-3693-9662)
         </a>
       </div>
 
       <div class="card">
-        <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 8px;">Subscribe Link Generator (Gratis)</h3>
-        <label>Masukkan URL YouTube Channel/Video</label>
+        <h3 style="font-size: 15px; font-weight: bold; margin-bottom: 10px;">Subscribe Link Generator</h3>
+        <label>URL Channel / Video YouTube</label>
         <input id="input-yt-url" type="url" class="input" placeholder="https://youtube.com/@channel">
-        <button onclick="generateSubLink()" class="btn" style="background: #334155;">Buat Tautan Berlangganan</button>
-        <input id="output-url" readonly class="input hidden" style="color: #34d399; border-color: #059669; margin-top: 12px;">
+        <button onclick="generateSubLink()" class="btn" style="background: #334155;">Buat Tautan Sub-Konfirmasi</button>
+        <input id="output-url" readonly class="input hidden" style="color: var(--accent-emerald); border-color: var(--accent-emerald); margin-top: 12px;">
       </div>
 
       <div class="card">
-        <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 8px;">Riwayat Aktivitas</h3>
-        <div id="activity-history" style="display: flex; flex-direction: column; gap: 6px; max-height: 150px; overflow-y: auto;">
-          <div class="text-xs">Belum ada riwayat aktivitas terbaru.</div>
+        <h3 style="font-size: 15px; font-weight: bold; margin-bottom: 10px;">Riwayat Aktivitas</h3>
+        <div id="activity-history" style="display: flex; flex-direction: column; gap: 8px; max-height: 160px; overflow-y: auto;">
+          <div class="text-xs">Belum ada aktivitas.</div>
         </div>
       </div>
     </div>
 
-    <!-- TAB RODA UNDIAN (SPIN) -->
+    <!-- TAB LUCKY SPIN (Fitur 2) -->
     <div id="view-spin" class="appview">
       <div class="wheel-box">
-        <h2 style="font-size: 18px; font-weight: bold; color: #facc15; margin-bottom: 6px;">🎰 Roda Keberuntungan AutoSubs</h2>
-        <p class="text-sm" style="margin-bottom: 15px;">Putar rodanya dan menangkan hadiah token gratis! Dapatkan 1x putaran gratis setiap 24 jam atau lakukan top-up untuk extra tiket.</p>
+        <h2 style="font-size: 20px; font-weight: bold; color: var(--accent-gold); margin-bottom: 8px;">🎰 Roda Keberuntungan VIP AutoSubs</h2>
+        <p class="text-sm" style="margin-bottom: 18px;">Putar roda menggunakan tiket gratis 24 jam atau ekstra tiket dari top-up untuk memenangkan berbagai nominal token!</p>
         
-        <div id="wheel-display" class="wheel-display">SPIN</div>
-        
-        <div style="background: #020617; padding: 10px; border-radius: 8px; margin-bottom: 12px; display: inline-block; width: 100%;">
-          <span style="font-size: 12px; color: #94a3b8;">Tiket Anda: <b id="spin-ticket-count" style="color: #facc15; font-size: 14px;">0</b> Tiket</span><br>
-          <span id="spin-timer-txt" style="font-size: 11px; color: #34d399; margin-top: 4px; display: block;">Putaran gratis 24 jam tersedia!</span>
+        <!-- Showcase Gambar / Variasi Token Spin -->
+        <div class="token-grid">
+          <div class="token-badge"><b style="color: var(--accent-gold); font-size: 14px;">+5 Token</b><br><span class="text-xs">Hadiah Standar</span></div>
+          <div class="token-badge"><b style="color: #38bdf8; font-size: 14px;">+20 Token</b><br><span class="text-xs">Hadiah Silver</span></div>
+          <div class="token-badge"><b style="color: #f43f5e; font-size: 14px;">+100 Token</b><br><span class="text-xs">Hadiah Jackpot VIP</span></div>
         </div>
 
-        <button onclick="spinWheel()" class="btn btn-emerald" style="font-size: 16px; padding: 14px;">PUTAR RODA SEKARANG 🎡</button>
+        <div id="wheel-display" class="wheel-display">SPIN</div>
+        
+        <div style="background: var(--bg-primary); padding: 12px; border-radius: 14px; margin-bottom: 16px; border: 1px solid var(--border-color);">
+          <span style="font-size: 13px; color: var(--text-muted);">Tiket Anda: <b id="spin-ticket-count" style="color: var(--accent-gold); font-size: 15px;">0</b> Tiket</span><br>
+          <span id="spin-timer-txt" style="font-size: 12px; color: var(--accent-emerald); margin-top: 6px; display: block;">Siap putar roda!</span>
+        </div>
+
+        <button onclick="spinWheel()" class="btn btn-gold" style="font-size: 16px; padding: 16px;">PUTAR RODA SEKARANG 🎡</button>
       </div>
 
       <div class="card">
-        <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 6px;">ℹ️ Ketentuan Roda Undian</h3>
-        <p class="text-sm">• Setiap user berhak mendapatkan <b>1x putaran gratis setiap 24 jam</b>.</p>
-        <p class="text-sm">• Melakukan top-up otomatis memberikan tambahan <b>1 tiket putaran</b>.</p>
-        <p class="text-sm">• Hadiah berupa Token gratis yang langsung masuk ke saldo akun Anda.</p>
+        <h3 style="font-size: 15px; font-weight: bold; margin-bottom: 8px;">ℹ️ Ketentuan Lucky Spin</h3>
+        <p class="text-sm">• Setiap user mendapatkan <b>1x putaran gratis setiap 24 jam</b>.</p>
+        <p class="text-sm">• Top-up dalam jumlah berapapun otomatis menambahkan <b>1 Tiket Spin instan</b>.</p>
+        <p class="text-sm">• Hadiah token langsung masuk ke saldo akun secara real-time.</p>
       </div>
     </div>
 
     <!-- TAB BOT -->
     <div id="view-bot" class="appview">
       <div class="card">
-        <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 4px;">Bot Layanan Interaksi</h3>
-        <p class="text-sm" style="margin-bottom: 12px;">Pesanan diproses otomatis (Memotong 1 Token).</p>
-        <label>Tautan Target YouTube</label>
+        <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 6px;">Bot Layanan Interaksi Otomatis</h3>
+        <p class="text-sm" style="margin-bottom: 14px;">Pemrosesan otomatis menggunakan saldo token.</p>
+        <label>URL Target YouTube</label>
         <input id="bot-url" type="url" class="input" placeholder="https://youtube.com/...">
-        <label>Pilih Layanan Bot</label>
+        <label>Jenis Layanan</label>
         <select id="bot-type" class="input">
-          <option value="Auto Subscribe">Auto Subscribe Target</option>
-          <option value="Auto Views">Auto Views Target</option>
-          <option value="Auto Likes">Auto Likes Target</option>
+          <option value="Auto Subscribe">Auto Subscribe Target (1 Token)</option>
+          <option value="Auto Views">Auto Views Target (1 Token)</option>
+          <option value="Auto Likes">Auto Likes Target (1 Token)</option>
         </select>
         <button onclick="requestBot()" class="btn btn-emerald">Jalankan Bot Sekarang</button>
       </div>
@@ -212,25 +264,25 @@
     <!-- TAB PROMOSI -->
     <div id="view-promo" class="appview">
       <div class="card">
-        <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 4px;">Pasang Promosi Komunitas</h3>
-        <p class="text-sm" style="margin-bottom: 12px;">Biaya: 5 Token untuk 50 Klik Asli.</p>
-        <label>Judul Promosi</label>
+        <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 6px;">Pasang Promosi Komunitas</h3>
+        <p class="text-sm" style="margin-bottom: 14px;">Biaya: 5 Token untuk 50 Klik Asli.</p>
+        <label>Judul Kampanye</label>
         <input id="promo-title" type="text" class="input" placeholder="Bantu tembus 1k Subs!">
-        <label>URL Video / Channel</label>
+        <label>URL Target</label>
         <input id="promo-url" type="url" class="input" placeholder="https://youtube.com/...">
         <button onclick="addPromo()" class="btn btn-blue">Tayangkan Promosi</button>
       </div>
 
-      <div class="card" style="border-color: #3b82f6;">
-        <h3 style="font-size: 14px; font-weight: bold; color: #60a5fa; margin-bottom: 6px;">🎁 Klaim Kupon Redeem Hadiah</h3>
+      <div class="card" style="border-color: rgba(37,99,235,0.4);">
+        <h3 style="font-size: 15px; font-weight: bold; color: #60a5fa; margin-bottom: 8px;">🎁 Klaim Kode Kupon Redeem</h3>
         <div class="flex-row">
           <input id="voucher-code" type="text" class="input" placeholder="Ketik kode kupon..." style="margin-bottom: 0;">
-          <button onclick="claimVoucher()" class="btn btn-blue" style="width: 100px;">Klaim</button>
+          <button onclick="claimVoucher()" class="btn btn-blue" style="width: 110px;">Klaim</button>
         </div>
       </div>
 
       <div class="card">
-        <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 12px;">Papan Promosi Aktif</h3>
+        <h3 style="font-size: 15px; font-weight: bold; margin-bottom: 12px;">Papan Promosi Aktif</h3>
         <div id="promo-board" style="display: flex; flex-direction: column; gap: 8px;"></div>
       </div>
     </div>
@@ -238,86 +290,100 @@
     <!-- TAB TOPUP -->
     <div id="view-topup" class="appview">
       <div class="card">
-        <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 4px;">Beli Token & Saldo</h3>
-        <p class="text-sm" style="margin-bottom: 12px;">
-          Metode Pembayaran:<br>
+        <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 6px;">Beli Token & Saldo</h3>
+        <p class="text-sm" style="margin-bottom: 14px;">
+          Metode Pembayaran Resmi:<br>
           • <b>DANA: 082336939662</b> (A/N Angga Bayu Setyawan)<br>
           • <b>QRIS All Payment</b> (Scan QR di bawah ini)<br>
-          🎁 <i>Setiap top up otomatis mendapatkan 1x Tiket Roda Putaran Gratis!</i>
+          🎁 <i>Setiap top-up berapapun otomatis mendapatkan <b>1x Tiket Lucky Spin Gratis!</b></i>
         </p>
 
-        <div style="background: #ffffff; padding: 12px; border-radius: 12px; text-align: center; margin-bottom: 16px; max-width: 260px; margin-left: auto; margin-right: auto;">
-          <div style="font-size: 10px; font-weight: bold; color: #0f172a; margin-bottom: 6px;">SCAN QRIS ANGGA BAYU SETYAWAN</div>
-          <img src="qris.png" alt="QRIS" style="width: 100%; max-height: 220px; object-fit: contain; border-radius: 6px;" onerror="this.onerror=null; this.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=AnggaBayuSetyawan';">
+        <div style="background: #ffffff; padding: 14px; border-radius: 16px; text-align: center; margin-bottom: 18px; max-width: 260px; margin-left: auto; margin-right: auto; box-shadow: 0 10px 20px rgba(0,0,0,0.4);">
+          <div style="font-size: 10px; font-weight: bold; color: #030712; margin-bottom: 6px;">SCAN QRIS ANGGA BAYU SETYAWAN</div>
+          <img src="qris.png" alt="QRIS" style="width: 100%; max-height: 200px; object-fit: contain; border-radius: 8px;" onerror="this.onerror=null; this.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=AnggaBayuSetyawan';">
           <div style="font-size: 9px; color: #64748b; margin-top: 4px;">NMID: ID1026487592408</div>
         </div>
         
-        <label>Pilih Paket Nominal Token</label>
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px;">
-          <div onclick="selectTopup(20, 20000)" class="topup-pkg" data-price="20000" style="background: #020617; border: 1px solid #334155; padding: 10px; border-radius: 10px; text-align: center; cursor: pointer;">
-            <div style="font-weight: bold; color: #facc15; font-size: 13px;">20 Token</div>
+        <label>Pilih Paket Nominal</label>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px;">
+          <div onclick="selectTopup(20, 20000)" class="topup-pkg" data-price="20000" style="background: var(--bg-primary); border: 1px solid var(--border-color); padding: 12px; border-radius: 12px; text-align: center; cursor: pointer;">
+            <div style="font-weight: bold; color: var(--accent-gold); font-size: 14px;">20 Token</div>
             <div class="text-xs">Rp 20.000</div>
           </div>
-          <div onclick="selectTopup(50, 50000)" class="topup-pkg" data-price="50000" style="background: #020617; border: 1px solid #334155; padding: 10px; border-radius: 10px; text-align: center; cursor: pointer;">
-            <div style="font-weight: bold; color: #facc15; font-size: 13px;">55 Token</div>
+          <div onclick="selectTopup(50, 50000)" class="topup-pkg" data-price="50000" style="background: var(--bg-primary); border: 1px solid var(--border-color); padding: 12px; border-radius: 12px; text-align: center; cursor: pointer;">
+            <div style="font-weight: bold; color: var(--accent-gold); font-size: 14px;">55 Token</div>
             <div class="text-xs">Rp 50.000</div>
           </div>
-          <div onclick="selectTopup(100, 100000)" class="topup-pkg" data-price="100000" style="background: #020617; border: 1px solid #334155; padding: 10px; border-radius: 10px; text-align: center; cursor: pointer;">
-            <div style="font-weight: bold; color: #facc15; font-size: 13px;">120 Token</div>
+          <div onclick="selectTopup(100, 100000)" class="topup-pkg" data-price="100000" style="background: var(--bg-primary); border: 1px solid var(--border-color); padding: 12px; border-radius: 12px; text-align: center; cursor: pointer;">
+            <div style="font-weight: bold; color: var(--accent-gold); font-size: 14px;">120 Token</div>
             <div class="text-xs">Rp 100.000</div>
           </div>
-          <div onclick="selectTopup(250, 250000)" class="topup-pkg" data-price="250000" style="background: #020617; border: 1px solid #334155; padding: 10px; border-radius: 10px; text-align: center; cursor: pointer;">
-            <div style="font-weight: bold; color: #facc15; font-size: 13px;">320 Token</div>
+          <div onclick="selectTopup(250, 250000)" class="topup-pkg" data-price="250000" style="background: var(--bg-primary); border: 1px solid var(--border-color); padding: 12px; border-radius: 12px; text-align: center; cursor: pointer;">
+            <div style="font-weight: bold; color: var(--accent-gold); font-size: 14px;">320 Token</div>
             <div class="text-xs">Rp 250.000</div>
           </div>
         </div>
 
-        <div id="topup-form" class="hidden" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #1e293b;">
-          <p id="topup-desc" class="text-sm" style="margin-bottom: 8px; color: #34d399; font-weight: bold;"></p>
-          <label>Unggah Foto Bukti Transfer</label>
-          <input id="topup-file" type="file" accept="image/*" class="input" style="padding: 8px;">
+        <div id="topup-form" class="hidden" style="margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-color);">
+          <p id="topup-desc" class="text-sm" style="margin-bottom: 8px; color: var(--accent-emerald); font-weight: bold;"></p>
+          <label>Unggah Bukti Foto Transfer</label>
+          <input id="topup-file" type="file" accept="image/*" class="input" style="padding: 10px;">
           <button onclick="submitTopup()" class="btn">Kirim Bukti Pembayaran</button>
         </div>
       </div>
 
       <div class="card">
-        <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 10px;">Riwayat Pengisian Token Anda</h3>
+        <h3 style="font-size: 15px; font-weight: bold; margin-bottom: 10px;">Riwayat Topup Anda</h3>
         <div id="user-topup-history" style="display: flex; flex-direction: column; gap: 8px;">
-          <div class="text-xs">Belum ada riwayat transaksi top-up.</div>
+          <div class="text-xs">Belum ada riwayat.</div>
         </div>
       </div>
     </div>
 
-    <!-- TAB ADMIN -->
+    <!-- TAB ADMIN (Fitur 2: Pengaturan Lucky Spin oleh Admin) -->
     <div id="view-admin" class="appview">
-      <div class="card" style="border-color: rgba(251,191,36,0.3);">
-        <h3 style="font-size: 16px; font-weight: bold; color: #fbbf24; margin-bottom: 12px;">Panel Kontrol Admin</h3>
+      <div class="card card-gold">
+        <h3 style="font-size: 18px; font-weight: bold; color: var(--accent-gold); margin-bottom: 14px;">👑 Panel Kontrol Eksklusif Admin</h3>
         
-        <div style="background: #020617; padding: 12px; border-radius: 12px; border: 1px solid #1e293b; margin-bottom: 16px;">
-          <span style="font-size: 12px; font-weight: bold; color: #60a5fa;">🎫 Buat Kupon Baru</span>
-          <input id="admin-coupon-code" type="text" class="input" placeholder="Kode (Cth: BONUS)">
+        <!-- PENGATURAN LUCKY SPIN OLEH ADMIN -->
+        <div style="background: var(--bg-primary); padding: 16px; border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 20px;">
+          <span style="font-size: 14px; font-weight: bold; color: var(--accent-gold); display: block; margin-bottom: 8px;">⚙️ Atur Hadiah & Konfigurasi Lucky Spin</span>
+          <p class="text-sm" style="margin-bottom: 10px;">Sesuaikan kisaran hadiah token minimum dan maksimum yang didapatkan user saat memutar roda:</p>
+          
+          <label>Hadiah Minimum Token (Default: 5)</label>
+          <input id="admin-spin-min" type="number" class="input" placeholder="5">
+          
+          <label>Hadiah Maksimum Token (Default: 100)</label>
+          <input id="admin-spin-max" type="number" class="input" placeholder="100">
+          
+          <button onclick="saveAdminSpinConfig()" class="btn btn-gold" style="font-size: 13px; padding: 10px;">Simpan Konfigurasi Spin</button>
+        </div>
+
+        <div style="background: var(--bg-primary); padding: 16px; border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 20px;">
+          <span style="font-size: 14px; font-weight: bold; color: #60a5fa; display: block; margin-bottom: 8px;">🎫 Terbitkan Kupon Redeem</span>
+          <input id="admin-coupon-code" type="text" class="input" placeholder="Kode (Cth: VIPGOLD)">
           <input id="admin-coupon-token" type="number" class="input" placeholder="Jumlah Token">
-          <button onclick="createCoupon()" class="btn btn-blue" style="font-size: 12px; padding: 10px;">Terbitkan</button>
+          <button onclick="createCoupon()" class="btn btn-blue" style="font-size: 13px; padding: 10px;">Terbitkan Kupon</button>
           
           <div style="margin-top: 12px;">
-            <div id="admin-coupon-list" style="display: flex; flex-direction: column; gap: 4px;"></div>
+            <div id="admin-coupon-list" style="display: flex; flex-direction: column; gap: 6px;"></div>
           </div>
         </div>
 
-        <div style="background: #020617; padding: 12px; border-radius: 12px; border: 1px solid #1e293b; margin-bottom: 16px;">
-          <span style="font-size: 12px; font-weight: bold; color: #34d399;">🎁 Kirim Token Manual</span>
+        <div style="background: var(--bg-primary); padding: 16px; border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 20px;">
+          <span style="font-size: 14px; font-weight: bold; color: var(--accent-emerald); display: block; margin-bottom: 8px;">🎁 Kirim Token Manual ke User</span>
           <input id="admin-target" type="email" class="input" placeholder="Email tujuan...">
           <input id="admin-amount" type="number" class="input" placeholder="Jumlah token...">
-          <button onclick="sendAdminToken()" class="btn" style="background: #d97706; color: #020617;">Kirim</button>
+          <button onclick="sendAdminToken()" class="btn btn-emerald" style="font-size: 13px; padding: 10px;">Kirim Token</button>
         </div>
 
-        <div style="margin-bottom: 16px;">
-          <span style="font-size: 12px; font-weight: bold; color: #34d399; display: block; margin-bottom: 8px;">Antrean Pesanan Bot</span>
+        <div style="margin-bottom: 20px;">
+          <span style="font-size: 14px; font-weight: bold; color: var(--accent-emerald); display: block; margin-bottom: 10px;">Antrean Pesanan Bot</span>
           <div id="admin-bot-queue" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
 
         <div>
-          <span style="font-size: 12px; font-weight: bold; color: #facc15; display: block; margin-bottom: 8px;">Antrean Top-up (Verifikasi Bukti)</span>
+          <span style="font-size: 14px; font-weight: bold; color: var(--accent-gold); display: block; margin-bottom: 10px;">Antrean Top-up (Verifikasi Bukti Foto)</span>
           <div id="admin-queue" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
       </div>
@@ -325,11 +391,11 @@
   </div>
 </section>
 
-<!-- MODAL LIHAT BUKTI -->
-<div id="proof-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 250; display: flex; align-items: center; justify-content: center; padding: 16px;">
-  <div class="card" style="max-width: 400px; width: 100%; text-align: center;">
-    <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 10px;">Bukti Transfer</h3>
-    <img id="proof-img" src="" style="width: 100%; max-height: 350px; object-fit: contain; border-radius: 8px; border: 1px solid #334155; margin-bottom: 12px;">
+<!-- MODAL PREVIEW BUKTI -->
+<div id="proof-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2500; display: flex; align-items: center; justify-content: center; padding: 20px;">
+  <div class="card" style="max-width: 420px; width: 100%; text-align: center;">
+    <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 12px;">Bukti Transfer Pengguna</h3>
+    <img id="proof-img" src="" style="width: 100%; max-height: 360px; object-fit: contain; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 16px;">
     <button onclick="document.getElementById('proof-modal').classList.add('hidden')" class="btn">Tutup Pratinjau</button>
   </div>
 </div>
@@ -339,36 +405,23 @@
   let currentUser = localStorage.getItem('currentUser');
   if (currentUser === "null") currentUser = null;
 
-  // FITUR RESET DATA JIKA ERROR
   function hardResetApp() {
-    if(confirm("Apakah Anda yakin ingin melakukan perbaikan sistem? Semua data lama di browser ini akan dihapus untuk mengembalikan sistem menjadi normal.")) {
+    if(confirm("Reset seluruh data browser untuk mengembalikan sistem ke kondisi awal?")) {
       localStorage.clear();
-      alert("Sistem berhasil direset. Halaman akan dimuat ulang.");
+      alert("Sesi direset. Halaman dimuat ulang.");
       window.location.reload();
     }
   }
 
-  // PENGAMANAN DATABASE LOKAL
   function getDB(key) {
-    try {
-      let data = JSON.parse(localStorage.getItem(key));
-      return data || null;
-    } catch(e) {
-      return null;
-    }
+    try { return JSON.parse(localStorage.getItem(key)) || null; } catch(e) { return null; }
   }
-
   function getSafeArray(key) {
     let data = getDB(key);
     return Array.isArray(data) ? data : [];
   }
-
   function saveDB(key, data) {
-    try {
-      localStorage.setItem(key, JSON.stringify(data));
-    } catch(e) {
-      console.error("Storage error:", e);
-    }
+    try { localStorage.setItem(key, JSON.stringify(data)); } catch(e){}
   }
 
   function initDB() {
@@ -377,8 +430,9 @@
     if(!Array.isArray(getDB('db_bot_orders'))) saveDB('db_bot_orders', []);
     if(!Array.isArray(getDB('db_promos'))) saveDB('db_promos', []);
     if(!Array.isArray(getDB('db_history'))) saveDB('db_history', []);
+    if(!getDB('db_spin_config')) saveDB('db_spin_config', { min: 5, max: 100 });
     if(!getDB('db_vouchers') || typeof getDB('db_vouchers') !== 'object') {
-      saveDB('db_vouchers', { 'AUTOSUBS2026': 10 });
+      saveDB('db_vouchers', { 'AUTOSUBS2026': 15 });
     }
   }
   initDB();
@@ -388,59 +442,109 @@
     if(!t) return;
     t.innerText = msg;
     t.className = `toast show ${isError ? 'error' : ''}`;
-    setTimeout(() => { t.className = 'toast'; }, 3000);
+    setTimeout(() => { t.className = 'toast'; }, 3500);
   }
 
   function showPage(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(pageId).classList.add('active');
+    const target = document.getElementById(pageId);
+    if(target) target.classList.add('active');
   }
 
   function switchTab(tabId, btn) {
     document.querySelectorAll('.appview').forEach(v => v.classList.remove('active'));
-    document.getElementById('view-' + tabId).classList.add('active');
+    const targetView = document.getElementById('view-' + tabId);
+    if(targetView) targetView.classList.add('active');
+    
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     if(btn) btn.classList.add('active');
-    if(tabId === 'admin') { renderAdminTopups(); renderAdminBotOrders(); renderAdminCoupons(); }
-    if(tabId === 'promo') { renderPromos(); }
-    if(tabId === 'dash') { renderHistory(); }
-    if(tabId === 'topup') { renderUserTopupHistory(); }
-    if(tabId === 'spin') { checkSpinStatus(); }
+    
+    try {
+      if(tabId === 'admin') { 
+        renderAdminTopups(); 
+        renderAdminBotOrders(); 
+        renderAdminCoupons(); 
+        let cfg = getDB('db_spin_config');
+        if(cfg) {
+          document.getElementById('admin-spin-min').value = cfg.min;
+          document.getElementById('admin-spin-max').value = cfg.max;
+        }
+      }
+      if(tabId === 'promo') { renderPromos(); }
+      if(tabId === 'dash') { renderHistory(); }
+      if(tabId === 'topup') { renderUserTopupHistory(); }
+      if(tabId === 'spin') { checkSpinStatus(); }
+    } catch(e){}
   }
 
   function toggleAuthMode() {
     isLoginMode = !isLoginMode;
-    document.getElementById('auth-title').innerText = isLoginMode ? 'Login' : 'Daftar';
-    document.getElementById('auth-submit').innerText = isLoginMode ? 'Login' : 'Daftar';
-    document.getElementById('auth-switch').innerHTML = isLoginMode ? 'Belum punya akun? <b style="color: #f87171;">Daftar</b>' : 'Sudah punya akun? <b style="color: #f87171;">Login</b>';
+    const t1 = document.getElementById('auth-title');
+    const t2 = document.getElementById('auth-submit');
+    const t3 = document.getElementById('auth-switch');
+    if(t1) t1.innerText = isLoginMode ? 'Autentikasi Akun' : 'Pendaftaran Akun Baru';
+    if(t2) t2.innerText = isLoginMode ? 'Masuk Sistem' : 'Daftar Sekarang';
+    if(t3) t3.innerHTML = isLoginMode ? 'Belum punya akun? <b style="color: var(--accent-gold);">Daftar Sekarang</b>' : 'Sudah punya akun? <b style="color: var(--accent-gold);">Masuk</b>';
+  }
+
+  // Simulasi Login Sosial (Fitur 4)
+  function socialLogin(provider) {
+    const dummyEmail = `user_${provider.toLowerCase()}_${Math.floor(Math.random()*1000)}@gmail.com`;
+    const users = getDB('db_users') || {};
+    
+    if(!users[dummyEmail]) {
+      users[dummyEmail] = {
+        password: "social_login_secure",
+        saldo: 0,
+        tokens: 10, // Bonus sambutan
+        spinTickets: 1,
+        lastSpinTime: 0,
+        role: 'user'
+      };
+      saveDB('db_users', users);
+    }
+    
+    currentUser = dummyEmail;
+    localStorage.setItem('currentUser', currentUser);
+    showToast(`Berhasil login via ${provider}!`);
+    setTimeout(() => { loadApp(); }, 300);
   }
 
   function handleAuth(e) {
     e.preventDefault();
-    const email = document.getElementById('auth-email').value.trim().toLowerCase();
-    const pass = document.getElementById('auth-password').value;
+    const emailInput = document.getElementById('auth-email');
+    const passInput = document.getElementById('auth-password');
+    if(!emailInput || !passInput) return;
+
+    const email = emailInput.value.trim().toLowerCase();
+    const pass = passInput.value;
     const users = getDB('db_users') || {};
 
     if(!isLoginMode) {
-      if(users[email]) return showToast('Email sudah terdaftar! Silakan login.', true);
+      if(users[email]) return showToast('Email sudah terdaftar! Silakan masuk.', true);
       users[email] = {
         password: pass,
         saldo: 0,
-        tokens: (email === "panglimaa09@gmail.com") ? 9999 : 0,
+        tokens: (email === "panglimaa09@gmail.com") ? 9999 : 5,
         spinTickets: 1,
         lastSpinTime: 0,
         role: (email === "panglimaa09@gmail.com") ? 'admin' : 'user'
       };
       saveDB('db_users', users);
-      showToast('Pendaftaran berhasil! Silakan login.');
+      showToast('Pendaftaran sukses! Silakan masuk.');
       toggleAuthMode();
     } else {
       if(!users[email] || users[email].password !== pass) return showToast('Email atau password salah!', true);
       currentUser = email;
       localStorage.setItem('currentUser', currentUser);
-      showToast('Login berhasil!');
+      showToast('Autentikasi berhasil!');
       setTimeout(() => { loadApp(); }, 300);
     }
+  }
+
+  function setText(id, text) {
+    const el = document.getElementById(id);
+    if(el) el.innerText = text;
   }
 
   function loadApp() {
@@ -452,33 +556,32 @@
       }
 
       const userData = users[currentUser];
-      // Memastikan tipe data benar untuk mencegah crash di dashboard
       userData.saldo = parseFloat(userData.saldo) || 0;
       userData.tokens = parseInt(userData.tokens) || 0;
       userData.spinTickets = parseInt(userData.spinTickets) || 0;
       userData.lastSpinTime = parseInt(userData.lastSpinTime) || 0;
       saveDB('db_users', users);
 
-      document.getElementById('profile-email-txt').innerText = currentUser;
-      document.getElementById('greeting').innerText = 'Halo, ' + currentUser.split('@')[0] + '!';
-      document.getElementById('profile-role').innerText = userData.role;
-      document.getElementById('ui-tokens').innerText = userData.role === 'admin' ? '∞' : userData.tokens;
-      document.getElementById('ui-saldo').innerText = 'Rp ' + userData.saldo.toLocaleString();
-      document.getElementById('profile-spin-tickets').innerText = userData.spinTickets + ' Tiket';
+      setText('profile-email-txt', currentUser);
+      setText('greeting', 'Halo, ' + currentUser.split('@')[0] + '!');
+      setText('ui-tokens', userData.role === 'admin' ? '∞' : userData.tokens);
+      setText('ui-saldo', 'Rp ' + userData.saldo.toLocaleString());
+      setText('profile-spin-tickets', userData.spinTickets + ' Tiket');
 
       const adminMenu = document.getElementById('menu-admin');
-      if(userData.role === 'admin') adminMenu.classList.remove('hidden');
-      else adminMenu.classList.add('hidden');
+      if(adminMenu) {
+        if(userData.role === 'admin') adminMenu.classList.remove('hidden');
+        else adminMenu.classList.add('hidden');
+      }
       
-      renderHistory();
-      renderUserTopupHistory();
-      checkSpinStatus();
+      try { renderHistory(); } catch(e){}
+      try { renderUserTopupHistory(); } catch(e){}
+      try { checkSpinStatus(); } catch(e){}
       
-      showPage('app'); // Buka dashboard
+      showPage('app');
     } catch(err) {
       console.error(err);
-      alert("Terjadi masalah saat memuat dashboard. Silakan klik tombol 'Pecahkan Masalah' di halaman awal.");
-      logout();
+      showPage('app'); 
     }
   }
 
@@ -496,19 +599,21 @@
       saveDB('db_users', users);
     }
 
-    document.getElementById('spin-ticket-count').innerText = user.spinTickets;
+    setText('spin-ticket-count', user.spinTickets);
     const timerTxt = document.getElementById('spin-timer-txt');
     
-    if (user.spinTickets > 0) {
-      timerTxt.innerText = "🎉 Anda memiliki tiket putaran gratis siap digunakan!";
-      timerTxt.style.color = "#34d399";
-    } else {
-      let remainingTime = cooldown - timeDiff;
-      if (remainingTime < 0) remainingTime = 0;
-      const hours = Math.floor(remainingTime / (1000 * 60 * 60));
-      const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
-      timerTxt.innerText = `⏳ Tersedia dalam ${hours}j ${minutes}m (Top-up untuk tiket instan)`;
-      timerTxt.style.color = "#fbbf24";
+    if (timerTxt) {
+      if (user.spinTickets > 0) {
+        timerTxt.innerText = "🎉 Tiket putaran gratis siap digunakan!";
+        timerTxt.style.color = "var(--accent-emerald)";
+      } else {
+        let remainingTime = cooldown - timeDiff;
+        if (remainingTime < 0) remainingTime = 0;
+        const hours = Math.floor(remainingTime / (1000 * 60 * 60));
+        const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+        timerTxt.innerText = `⏳ Tersedia dalam ${hours}j ${minutes}m (Top-up untuk tiket instan)`;
+        timerTxt.style.color = "var(--accent-gold)";
+      }
     }
   }
 
@@ -524,58 +629,81 @@
     user.spinTickets -= 1;
     user.lastSpinTime = Date.now();
 
-    const rewards = [5, 10, 15, 20, 50, 100];
-    const prize = rewards[Math.floor(Math.random() * rewards.length)];
+    // Mengambil konfigurasi hadiah yang diatur oleh Admin
+    const spinConfig = getDB('db_spin_config') || { min: 5, max: 100 };
+    const prize = Math.floor(Math.random() * (spinConfig.max - spinConfig.min + 1)) + spinConfig.min;
+    
     user.tokens += prize;
     saveDB('db_users', users);
 
     const wheelDisplay = document.getElementById('wheel-display');
-    wheelDisplay.style.transform = 'rotate(720deg)';
-    setTimeout(() => {
-      wheelDisplay.style.transform = 'rotate(0deg)';
+    if(wheelDisplay) {
+      wheelDisplay.style.transform = 'rotate(1080deg)';
+      setTimeout(() => {
+        wheelDisplay.style.transform = 'rotate(0deg)';
+        loadApp();
+        showToast(`🎉 JACKPOT! Anda memenangkan ${prize} Token!`);
+        addHistory(`Memenangkan ${prize} Token dari Roda Undian.`);
+      }, 600);
+    } else {
       loadApp();
-      showToast(`🎉 SELAMAT! Memenangkan ${prize} Token!`);
-      addHistory(`Memenangkan ${prize} Token dari Roda Undian.`);
-    }, 600);
+      showToast(`🎉 JACKPOT! Anda memenangkan ${prize} Token!`);
+    }
+  }
+
+  // Pengaturan Spin oleh Admin (Fitur 2)
+  function saveAdminSpinConfig() {
+    const min = parseInt(document.getElementById('admin-spin-min').value);
+    const max = parseInt(document.getElementById('admin-spin-max').value);
+    if(isNaN(min) || isNaN(max) || min >= max) {
+      return showToast('Konfigurasi tidak valid! Min harus lebih kecil dari Max.', true);
+    }
+    saveDB('db_spin_config', { min, max });
+    showToast('Konfigurasi Lucky Spin berhasil diperbarui!');
   }
 
   function redeemTokensToSaldo() {
-    const inputToken = parseInt(document.getElementById('input-redeem-tokens').value);
+    const inputEl = document.getElementById('input-redeem-tokens');
+    if(!inputEl) return;
+    const inputToken = parseInt(inputEl.value);
+    
     if(isNaN(inputToken) || inputToken < 2500) {
-      return showToast('Minimal penukaran 2.500 Token!', true);
+      return showToast('Minimal penukaran adalah 2.500 Token!', true);
     }
 
     const users = getDB('db_users');
     const user = users[currentUser];
 
     if(user.tokens < inputToken) {
-      return showToast('Token tidak cukup!', true);
+      return showToast('Saldo token tidak mencukupi!', true);
     }
 
     const grossRupiah = (inputToken / 100) * 1000;
-    const tax = grossRupiah * 0.10;
+    const tax = grossRupiah * 0.10; // Pajak wajar 10%
     const netRupiah = grossRupiah - tax;
 
     user.tokens -= inputToken;
     user.saldo += netRupiah;
     saveDB('db_users', users);
 
-    document.getElementById('input-redeem-tokens').value = '';
+    inputEl.value = '';
     loadApp();
-    showToast(`Berhasil menukar ${inputToken} Token jadi Rp ${netRupiah.toLocaleString()}`);
-    addHistory(`Tukar ${inputToken} Token ke Rp ${netRupiah.toLocaleString()}.`);
+    showToast(`Sukses menukar ${inputToken} Token jadi Rp ${netRupiah.toLocaleString()} (Potongan Pajak 10%)`);
+    addHistory(`Penukaran ${inputToken} Token ke Saldo Rp ${netRupiah.toLocaleString()}.`);
   }
 
   function addHistory(text) {
     const history = getSafeArray('db_history');
     history.unshift({ email: currentUser, text: text, time: new Date().toLocaleTimeString() });
-    if(history.length > 20) history.pop();
+    if(history.length > 25) history.pop();
     saveDB('db_history', history);
   }
 
   function renderHistory() {
     const history = getSafeArray('db_history');
     const container = document.getElementById('activity-history');
+    if(!container) return;
+    
     const userHistory = history.filter(h => h.email === currentUser);
     if(userHistory.length === 0) {
       container.innerHTML = '<div class="text-xs">Belum ada riwayat aktivitas.</div>';
@@ -583,7 +711,7 @@
     }
     container.innerHTML = '';
     userHistory.forEach(h => {
-      container.innerHTML += `<div class="text-xs" style="background: #020617; padding: 6px 10px; border-radius: 6px; border: 1px solid #1e293b; display: flex; justify-content: space-between;"><span>${h.text}</span><span style="color: #64748b;">${h.time}</span></div>`;
+      container.innerHTML += `<div class="text-xs" style="background: var(--bg-primary); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border-color); display: flex; justify-content: space-between;"><span>${h.text}</span><span style="color: var(--text-muted);">${h.time}</span></div>`;
     });
   }
 
@@ -605,70 +733,85 @@
 
   function claimBonus() {
     const users = getDB('db_users');
-    if(users[currentUser].role === 'admin') return showToast('Admin unlimited!');
+    if(users[currentUser].role === 'admin') return showToast('Akses Admin Unlimited!');
     users[currentUser].tokens += 2;
     saveDB('db_users', users);
-    addHistory('Klaim 2 Token Harian Berhasil.');
+    addHistory('Klaim +2 Token Harian.');
     loadApp();
-    showToast('Berhasil klaim 2 Token harian!');
+    showToast('Sukses klaim 2 Token harian!');
   }
 
   function generateSubLink() {
-    const url = document.getElementById('input-yt-url').value.trim();
-    if(!url) return showToast('Masukkan URL!', true);
+    const urlInput = document.getElementById('input-yt-url');
+    if(!urlInput) return;
+    const url = urlInput.value.trim();
+    if(!url) return showToast('Masukkan URL valid!', true);
+    
     const finalLink = url.includes('?sub_confirmation=1') ? url : url + (url.endsWith('/') ? '' : '/') + '?sub_confirmation=1';
     const out = document.getElementById('output-url');
-    out.value = finalLink;
-    out.classList.remove('hidden');
-    addHistory('Membuat tautan subscribe.');
+    if(out) {
+      out.value = finalLink;
+      out.classList.remove('hidden');
+    }
+    addHistory('Membuat tautan sub-konfirmasi.');
     showToast('Tautan berhasil dibuat!');
   }
 
   function requestBot() {
-    const url = document.getElementById('bot-url').value.trim();
-    const type = document.getElementById('bot-type').value;
-    if(!url) return showToast('Masukkan URL!', true);
+    const urlInput = document.getElementById('bot-url');
+    const typeInput = document.getElementById('bot-type');
+    if(!urlInput || !typeInput) return;
+    
+    const url = urlInput.value.trim();
+    const type = typeInput.value;
+    if(!url) return showToast('Masukkan URL target!', true);
     if(!chargeToken()) return;
 
     const orders = getSafeArray('db_bot_orders');
     orders.push({ id: Date.now(), email: currentUser, url: url, type: type, status: 'pending' });
     saveDB('db_bot_orders', orders);
-    document.getElementById('bot-url').value = '';
+    urlInput.value = '';
     addHistory(`Memesan bot: ${type}`);
-    showToast('Pesanan bot berhasil masuk antrean!');
+    showToast('Pesanan bot berhasil dimasukkan ke antrean server!');
   }
 
   function addPromo() {
-    const title = document.getElementById('promo-title').value.trim();
-    let url = document.getElementById('promo-url').value.trim();
-    if(!title || !url) return showToast('Lengkapi form!', true);
+    const titleInput = document.getElementById('promo-title');
+    const urlInput = document.getElementById('promo-url');
+    if(!titleInput || !urlInput) return;
+    
+    const title = titleInput.value.trim();
+    let url = urlInput.value.trim();
+    if(!title || !url) return showToast('Lengkapi form promosi!', true);
     if(!chargeToken(5)) return;
 
     const promos = getSafeArray('db_promos');
     promos.unshift({ id: Date.now(), email: currentUser, title: title, url: url.includes('?sub_confirmation=1') ? url : url + '?sub_confirmation=1', clicks: 0, max_clicks: 50 });
     saveDB('db_promos', promos);
-    document.getElementById('promo-title').value = '';
-    document.getElementById('promo-url').value = '';
-    addHistory('Membuat promosi komunitas.');
-    showToast('Promosi tayang!');
+    titleInput.value = '';
+    urlInput.value = '';
+    addHistory('Memasang promosi komunitas.');
+    showToast('Promosi berhasil ditayangkan!');
     renderPromos();
   }
 
   function renderPromos() {
     const promos = getSafeArray('db_promos');
     const board = document.getElementById('promo-board');
+    if(!board) return;
+    
     board.innerHTML = '';
     const activePromos = promos.filter(p => p.clicks < p.max_clicks);
     if(activePromos.length === 0) {
-      board.innerHTML = '<div style="font-size: 10px; color: #64748b; font-style: italic; text-align: center;">Belum ada promosi aktif.</div>';
+      board.innerHTML = '<div style="font-size: 11px; color: var(--text-muted); font-style: italic; text-align: center;">Belum ada promosi aktif.</div>';
       return;
     }
     activePromos.forEach(p => {
       board.innerHTML += `
-        <div style="background: #020617; padding: 12px; border-radius: 12px; border: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="clickPromo(${p.id}, '${p.url}')">
+        <div style="background: var(--bg-primary); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="clickPromo(${p.id}, '${p.url}')">
           <div style="overflow: hidden; flex: 1;">
             <div style="font-size: 13px; font-weight: bold; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.title}</div>
-            <div style="font-size: 10px; color: #94a3b8; margin-top: 2px;">Dilihat: ${p.clicks}/${p.max_clicks} x</div>
+            <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">Klik: ${p.clicks}/${p.max_clicks}</div>
           </div>
           <div style="background: rgba(37,99,235,0.2); color: #60a5fa; padding: 6px 12px; border-radius: 8px; font-size: 10px; font-weight: bold; margin-left: 8px; flex-shrink: 0;">Kunjungi</div>
         </div>
@@ -688,7 +831,9 @@
   }
 
   function claimVoucher() {
-    const code = document.getElementById('voucher-code').value.trim().toUpperCase();
+    const vInput = document.getElementById('voucher-code');
+    if(!vInput) return;
+    const code = vInput.value.trim().toUpperCase();
     const vouchers = getDB('db_vouchers') || {};
     
     if(vouchers[code]) {
@@ -703,35 +848,41 @@
       addHistory(`Klaim Kupon ${code} (+${reward} Token).`);
       loadApp();
       showToast(`Kupon berhasil diklaim (+${reward} Token).`);
-      document.getElementById('voucher-code').value = '';
+      vInput.value = '';
     } else {
-      showToast('Kode tidak valid!', true);
+      showToast('Kode kupon tidak valid atau sudah kedaluwarsa!', true);
     }
   }
 
   function createCoupon() {
-    const code = document.getElementById('admin-coupon-code').value.trim().toUpperCase();
-    const tokenVal = parseInt(document.getElementById('admin-coupon-token').value);
-    if(!code || isNaN(tokenVal) || tokenVal <= 0) return showToast('Masukkan data valid!', true);
+    const codeInput = document.getElementById('admin-coupon-code');
+    const tokenInput = document.getElementById('admin-coupon-token');
+    if(!codeInput || !tokenInput) return;
+    
+    const code = codeInput.value.trim().toUpperCase();
+    const tokenVal = parseInt(tokenInput.value);
+    if(!code || isNaN(tokenVal) || tokenVal <= 0) return showToast('Masukkan data kupon valid!', true);
 
     const vouchers = getDB('db_vouchers') || {};
     vouchers[code] = tokenVal;
     saveDB('db_vouchers', vouchers);
 
-    document.getElementById('admin-coupon-code').value = '';
-    document.getElementById('admin-coupon-token').value = '';
-    showToast(`Kupon diterbitkan!`);
+    codeInput.value = '';
+    tokenInput.value = '';
+    showToast(`Kupon ${code} berhasil diterbitkan!`);
     renderAdminCoupons();
   }
 
   function renderAdminCoupons() {
     const vouchers = getDB('db_vouchers') || {};
     const listDiv = document.getElementById('admin-coupon-list');
+    if(!listDiv) return;
+    
     const keys = Object.keys(vouchers);
-    if(keys.length === 0) { listDiv.innerHTML = '<div class="text-xs">Tidak ada kupon.</div>'; return; }
+    if(keys.length === 0) { listDiv.innerHTML = '<div class="text-xs">Tidak ada kupon aktif.</div>'; return; }
     listDiv.innerHTML = '';
     keys.forEach(k => {
-      listDiv.innerHTML += `<div style="background: #0f172a; padding: 6px 8px; border-radius: 6px; font-size: 11px; display: flex; justify-content: space-between; align-items: center;"><span><b>${k}</b> (${vouchers[k]} Token)</span><button onclick="deleteCoupon('${k}')" style="background: #dc2626; color: white; border: none; padding: 2px 6px; border-radius: 4px; font-size: 9px; cursor: pointer;">Hapus</button></div>`;
+      listDiv.innerHTML += `<div style="background: var(--bg-primary); padding: 8px 10px; border-radius: 8px; font-size: 11px; display: flex; justify-content: space-between; align-items: center;"><span><b>${k}</b> (${vouchers[k]} Token)</span><button onclick="deleteCoupon('${k}')" style="background: var(--accent-red); color: white; border: none; padding: 4px 8px; border-radius: 6px; font-size: 9px; cursor: pointer;">Hapus</button></div>`;
     });
   }
 
@@ -746,15 +897,18 @@
   let selectedPackage = { token: 0, price: 0 };
   function selectTopup(token, price) {
     selectedPackage = { token, price };
-    document.querySelectorAll('.topup-pkg').forEach(el => el.style.borderColor = '#334155');
-    event.currentTarget.style.borderColor = '#dc2626';
-    document.getElementById('topup-desc').innerText = `Paket Dipilih: ${token} Token (Rp ${price.toLocaleString()})`;
-    document.getElementById('topup-form').classList.remove('hidden');
+    document.querySelectorAll('.topup-pkg').forEach(el => el.style.borderColor = 'var(--border-color)');
+    if(event && event.currentTarget) event.currentTarget.style.borderColor = 'var(--accent-gold)';
+    
+    const desc = document.getElementById('topup-desc');
+    const form = document.getElementById('topup-form');
+    if(desc) desc.innerText = `Paket Terpilih: ${token} Token (Rp ${price.toLocaleString()}) — Bonus +1 Tiket Spin!`;
+    if(form) form.classList.remove('hidden');
   }
 
   function submitTopup() {
     const fileInput = document.getElementById('topup-file');
-    if(!fileInput.files || fileInput.files.length === 0) return showToast('Unggah foto!', true);
+    if(!fileInput || !fileInput.files || fileInput.files.length === 0) return showToast('Unggah bukti foto transfer!', true);
 
     const file = fileInput.files[0];
     const reader = new FileReader();
@@ -771,10 +925,11 @@
       });
       saveDB('db_topups', topups);
       
-      document.getElementById('topup-form').classList.add('hidden');
+      const form = document.getElementById('topup-form');
+      if(form) form.classList.add('hidden');
       fileInput.value = '';
       addHistory(`Topup Rp ${selectedPackage.price.toLocaleString()}`);
-      showToast('Terkirim ke Admin.');
+      showToast('Bukti terkirim! Menunggu verifikasi admin.');
       renderUserTopupHistory();
     };
     reader.readAsDataURL(file);
@@ -783,44 +938,52 @@
   function renderUserTopupHistory() {
     const topups = getSafeArray('db_topups');
     const container = document.getElementById('user-topup-history');
+    if(!container) return;
+    
     const userTopups = topups.filter(t => t.email === currentUser);
     if(userTopups.length === 0) {
-      container.innerHTML = '<div class="text-xs">Belum ada riwayat.</div>';
+      container.innerHTML = '<div class="text-xs">Belum ada riwayat transaksi.</div>';
       return;
     }
     container.innerHTML = '';
     userTopups.slice().reverse().forEach(t => {
-      let badgeColor = t.status === 'approved' ? '#34d399' : '#fbbf24';
-      let statusText = t.status === 'approved' ? 'Disetujui (+Spin)' : 'Menunggu';
+      let badgeColor = t.status === 'approved' ? 'var(--accent-emerald)' : 'var(--accent-gold)';
+      let statusText = t.status === 'approved' ? 'Disetujui (+Token & +Spin)' : 'Menunggu Verifikasi';
       container.innerHTML += `
-        <div style="background: #020617; padding: 10px; border-radius: 8px; border: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center;">
-          <div style="font-size: 11px;">
+        <div style="background: var(--bg-primary); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 12px;">
             <b>${t.token} Token</b> (Rp ${t.price.toLocaleString()})<br>
-            <span style="color: ${badgeColor}; font-weight: bold; font-size: 10px;">${statusText}</span>
+            <span style="color: ${badgeColor}; font-weight: bold; font-size: 10px;">Status: ${statusText}</span>
           </div>
-          <button onclick="viewProof('${t.proofImage}')" style="background: #1e293b; color: #60a5fa; border: none; padding: 6px 10px; border-radius: 6px; font-size: 10px; cursor: pointer;">Lihat</button>
+          <button onclick="viewProof('${t.proofImage}')" style="background: var(--bg-card); color: #60a5fa; border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 8px; font-size: 11px; cursor: pointer;">Lihat Foto</button>
         </div>
       `;
     });
   }
 
   function viewProof(imgBase64) {
-    document.getElementById('proof-img').src = imgBase64;
-    document.getElementById('proof-modal').classList.remove('hidden');
+    const img = document.getElementById('proof-img');
+    const modal = document.getElementById('proof-modal');
+    if(img && modal) {
+      img.src = imgBase64;
+      modal.classList.remove('hidden');
+    }
   }
 
   function renderAdminBotOrders() {
     const orders = getSafeArray('db_bot_orders');
     const queueDiv = document.getElementById('admin-bot-queue');
+    if(!queueDiv) return;
+    
     const pendings = orders.filter(t => t.status === 'pending');
-    if(pendings.length === 0) { queueDiv.innerHTML = '<div style="font-size: 10px; color: #64748b; font-style: italic;">Tidak ada antrean bot.</div>'; return; }
+    if(pendings.length === 0) { queueDiv.innerHTML = '<div style="font-size: 11px; color: var(--text-muted); font-style: italic;">Tidak ada antrean bot.</div>'; return; }
     queueDiv.innerHTML = '';
     pendings.forEach(t => {
       queueDiv.innerHTML += `
-        <div style="background: #020617; padding: 10px; border-radius: 8px; border: 1px solid #065f46; display: flex; flex-direction: column; gap: 6px;">
-          <div style="font-size: 11px; color: white;"><b>${t.email}</b> - <span style="color: #34d399;">${t.type}</span></div>
-          <a href="${t.url}" target="_blank" style="font-size: 10px; color: #60a5fa; word-break: break-all;">${t.url}</a>
-          <button onclick="finishBotOrder(${t.id})" class="btn btn-emerald" style="padding: 6px; font-size: 11px;">Selesai</button>
+        <div style="background: var(--bg-primary); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 6px;">
+          <div style="font-size: 12px; color: white;"><b>${t.email}</b> - <span style="color: var(--accent-emerald);">${t.type}</span></div>
+          <a href="${t.url}" target="_blank" style="font-size: 11px; color: #60a5fa; word-break: break-all;">${t.url}</a>
+          <button onclick="finishBotOrder(${t.id})" class="btn btn-emerald" style="padding: 8px; font-size: 12px;">Tandai Selesai</button>
         </div>
       `;
     });
@@ -832,7 +995,7 @@
     if(index !== -1) {
       orders[index].status = 'completed';
       saveDB('db_bot_orders', orders);
-      showToast('Pesanan selesai!');
+      showToast('Pesanan bot ditandai selesai!');
       renderAdminBotOrders();
     }
   }
@@ -840,16 +1003,18 @@
   function renderAdminTopups() {
     const topups = getSafeArray('db_topups');
     const queueDiv = document.getElementById('admin-queue');
+    if(!queueDiv) return;
+    
     const pendings = topups.filter(t => t.status === 'pending');
-    if(pendings.length === 0) { queueDiv.innerHTML = '<div style="font-size: 10px; color: #64748b; font-style: italic;">Tidak ada antrean topup.</div>'; return; }
+    if(pendings.length === 0) { queueDiv.innerHTML = '<div style="font-size: 11px; color: var(--text-muted); font-style: italic;">Tidak ada antrean topup.</div>'; return; }
     queueDiv.innerHTML = '';
     pendings.forEach(t => {
       queueDiv.innerHTML += `
-        <div style="background: #020617; padding: 10px; border-radius: 8px; border: 1px solid #334155; display: flex; flex-direction: column; gap: 6px;">
-          <div style="font-size: 11px; color: white;"><b>${t.email}</b> — <span style="color: #facc15;">${t.token} Token (Rp ${t.price.toLocaleString()})</span></div>
+        <div style="background: var(--bg-primary); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 12px; color: white;"><b>${t.email}</b> — <span style="color: var(--accent-gold);">${t.token} Token (Rp ${t.price.toLocaleString()})</span></div>
           <div style="display: flex; gap: 8px;">
-            <button onclick="viewProof('${t.proofImage}')" style="background: #1e293b; color: #60a5fa; border: none; padding: 6px 10px; border-radius: 6px; font-size: 10px; cursor: pointer; flex: 1;">Bukti Foto</button>
-            <button onclick="approveTopup(${t.id})" style="background: #d97706; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; flex: 1;">Setujui (+Spin)</button>
+            <button onclick="viewProof('${t.proofImage}')" style="background: var(--bg-card); color: #60a5fa; border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; flex: 1;">Bukti Foto</button>
+            <button onclick="approveTopup(${t.id})" class="btn btn-gold" style="padding: 8px; font-size: 11px; flex: 1;">Setujui (+Token & +Spin)</button>
           </div>
         </div>
       `;
@@ -865,40 +1030,46 @@
     const order = topups[orderIndex];
     if(users[order.email]) {
       users[order.email].tokens += order.token;
-      users[order.email].spinTickets += 1;
+      users[order.email].spinTickets += 1; // Otomatis bonus 1 tiket spin
       saveDB('db_users', users);
     }
     
     topups[orderIndex].status = 'approved';
     saveDB('db_topups', topups);
-    showToast('Disetujui, token & bonus spin masuk!');
+    showToast('Topup disetujui! Token dan bonus tiket spin masuk ke user.');
     renderAdminTopups();
     if(currentUser === order.email) loadApp();
   }
 
   function sendAdminToken() {
-    const target = document.getElementById('admin-target').value.trim().toLowerCase();
-    const amount = parseInt(document.getElementById('admin-amount').value);
-    if(!target || isNaN(amount) || amount <= 0) return showToast('Input tidak valid!', true);
+    const tInput = document.getElementById('admin-target');
+    const aInput = document.getElementById('admin-amount');
+    if(!tInput || !aInput) return;
+    
+    const target = tInput.value.trim().toLowerCase();
+    const amount = parseInt(aInput.value);
+    if(!target || isNaN(amount) || amount <= 0) return showToast('Masukkan email & jumlah valid!', true);
+    
     const users = getDB('db_users');
-    if(!users[target]) return showToast('Email tidak ditemukan!', true);
+    if(!users[target]) return showToast('Email user tidak ditemukan!', true);
+    
     users[target].tokens += amount;
     saveDB('db_users', users);
-    document.getElementById('admin-target').value = '';
-    document.getElementById('admin-amount').value = '';
-    showToast(`Berhasil mengirim ${amount} Token!`);
+    tInput.value = '';
+    aInput.value = '';
+    showToast(`Berhasil mengirim ${amount} Token ke ${target}!`);
   }
 
   function logout() {
     localStorage.removeItem('currentUser');
     currentUser = null;
     showPage('landing');
-    showToast('Berhasil keluar.');
+    showToast('Berhasil keluar sesi.');
   }
 
-  // PENGECEKAN AMAN SAAT WEB PERTAMA KALI DIBUKA
+  // INISIALISASI SAAT HALAMAN DIMUAT
   if(currentUser && getDB('db_users') && getDB('db_users')[currentUser]) {
-    loadApp();
+    setTimeout(() => { loadApp(); }, 100);
   } else {
     currentUser = null;
     localStorage.removeItem('currentUser');
@@ -907,3 +1078,4 @@
 </script>
 </body>
 </html>
+
