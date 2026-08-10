@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AutoSubs — YouTube Platform</title>
+  <title>AutoSubs — YouTube Platform & Ads Monetization</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background-color: #020617; color: #f1f5f9; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
@@ -24,6 +24,11 @@
     .input:focus, select:focus, textarea:focus { border-color: #dc2626; }
     label { font-size: 12px; color: #94a3b8; font-weight: 500; }
     
+    /* Google Ads Banner Simulation Slot */
+    .ads-banner { width: 100%; background: #1e293b; border: 2px dashed #334155; border-radius: 12px; padding: 12px; text-align: center; margin-bottom: 16px; }
+    .ads-banner span { font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; display: block; margin-bottom: 4px; }
+    .ads-banner .ad-content { font-size: 12px; color: #94a3b8; }
+
     .toast { position: fixed; bottom: 20px; right: 20px; left: 20px; max-width: 350px; margin: 0 auto; background: #059669; color: white; padding: 12px 20px; border-radius: 12px; text-align: center; font-weight: 500; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); transform: translateY(100px); opacity: 0; transition: all 0.3s ease; z-index: 100; pointer-events: none; }
     .toast.show { transform: translateY(0); opacity: 1; }
     .toast.error { background: #dc2626; }
@@ -38,7 +43,6 @@
     .flex-row { display: flex; gap: 12px; }
     .text-sm { font-size: 12px; color: #94a3b8; }
     .text-xs { font-size: 10px; color: #64748b; }
-    .badge { background: #1e293b; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -53,6 +57,15 @@
     </div>
     <button onclick="showPage('auth')" class="btn" style="width: auto; padding: 8px 16px;">Masuk / Daftar</button>
   </nav>
+
+  <!-- Google Ads Slot on Landing -->
+  <div style="max-width: 800px; margin: 20px auto 0; padding: 0 16px;">
+    <div class="ads-banner">
+      <span>Google Ads / Sponsor Komisi Platform</span>
+      <div class="ad-content">🚀 Tingkatkan Channel YouTube Anda Sekarang dengan Layanan Otomatis Terbaik!</div>
+    </div>
+  </div>
+
   <div style="flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px;">
     <div>
       <h1 style="font-size: 32px; font-weight: 900; margin-bottom: 12px;">Optimasi YouTube dengan <span style="color: #dc2626;">Komunitas & Bot</span></h1>
@@ -99,6 +112,12 @@
       <button id="menu-admin" onclick="switchTab('admin', this)" class="tab-btn hidden" style="color: #fbbf24;">Admin</button>
     </div>
 
+    <!-- Google Ads Slot di Dashboard -->
+    <div class="ads-banner">
+      <span>Iklan Sponsor Google Ads</span>
+      <div class="ad-content">🔥 Dapatkan Penghasilan Tambahan dari Channel YouTube Anda Hari Ini!</div>
+    </div>
+
     <!-- TAB DASHBOARD (HOME) -->
     <div id="view-dash" class="appview active">
       <div class="card">
@@ -124,19 +143,19 @@
         <input id="output-url" readonly class="input hidden" style="color: #34d399; border-color: #059669; margin-top: 12px;">
       </div>
 
-      <!-- Riwayat Aktivitas & Event -->
+      <!-- Riwayat Aktivitas -->
       <div class="card">
         <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 8px;">Riwayat & Aktivitas</h3>
         <div id="activity-history" style="display: flex; flex-direction: column; gap: 6px; max-height: 150px; overflow-y: auto;">
-          <div class="text-xs text-xs">Belum ada riwayat aktivitas terbaru.</div>
+          <div class="text-xs">Belum ada riwayat aktivitas terbaru.</div>
         </div>
       </div>
 
-      <!-- Laporkan Masalah & Bantuan -->
+      <!-- Bantuan & Laporan -->
       <div class="flex-row">
         <div class="card" style="flex: 1; margin-bottom: 0;">
           <h3 style="font-size: 13px; font-weight: bold; margin-bottom: 6px;">Akses Bantuan</h3>
-          <p class="text-xs" style="margin-bottom: 8px;">Butuh panduan penggunaan bot atau top-up?</p>
+          <p class="text-xs" style="margin-bottom: 8px;">Butuh panduan top-up atau bot?</p>
           <button onclick="showHelpModal()" class="btn" style="padding: 8px; font-size: 12px; background: #1e293b;">Buka FAQ</button>
         </div>
         <div class="card" style="flex: 1; margin-bottom: 0;">
@@ -151,24 +170,24 @@
     <div id="view-bot" class="appview">
       <div class="card">
         <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 4px;">Bot Layanan Interaksi</h3>
-        <p class="text-sm" style="margin-bottom: 12px;">Pesanan akan diproses otomatis oleh sistem (Memotong 1 Token/Trial).</p>
+        <p class="text-sm" style="margin-bottom: 12px;">Pesanan diproses otomatis (Memotong 1 Token/Trial).</p>
         <label>Tautan Target YouTube</label>
         <input id="bot-url" type="url" class="input" placeholder="https://youtube.com/...">
         <label>Pilih Layanan Bot</label>
         <select id="bot-type" class="input">
           <option value="Auto Subscribe">Auto Subscribe Target</option>
           <option value="Auto Views">Auto Views Target</option>
-          <option value="Auto Likes">Auto Likes Target (Bonus)</option>
+          <option value="Auto Likes">Auto Likes Target</option>
         </select>
         <button onclick="requestBot()" class="btn btn-emerald">Jalankan Bot Sekarang</button>
       </div>
     </div>
 
-    <!-- TAB PROMOSI & FITUR TAMBAHAN -->
+    <!-- TAB PROMOSI -->
     <div id="view-promo" class="appview">
       <div class="card">
         <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 4px;">Pasang Promosi Komunitas</h3>
-        <p class="text-sm" style="margin-bottom: 12px;">Biaya: 5 Token untuk 50 Klik Asli dari pengguna lain.</p>
+        <p class="text-sm" style="margin-bottom: 12px;">Biaya: 5 Token untuk 50 Klik Asli.</p>
         <label>Judul Promosi</label>
         <input id="promo-title" type="text" class="input" placeholder="Bantu tembus 1k Subs!">
         <label>URL Video / Channel</label>
@@ -176,13 +195,13 @@
         <button onclick="addPromo()" class="btn btn-blue">Tayangkan Promosi</button>
       </div>
 
-      <!-- Fitur Tambahan: Event & Voucher Komunitas -->
+      <!-- Klaim Kupon Redeem -->
       <div class="card" style="border-color: #3b82f6;">
-        <h3 style="font-size: 14px; font-weight: bold; color: #60a5fa; margin-bottom: 6px;">🎁 Event & Klaim Voucher Komunitas</h3>
-        <p class="text-sm" style="margin-bottom: 10px;">Masukkan kode voucher harian untuk mendapatkan token gratis!</p>
+        <h3 style="font-size: 14px; font-weight: bold; color: #60a5fa; margin-bottom: 6px;">🎁 Klaim Kupon Redeem Hadiah</h3>
+        <p class="text-sm" style="margin-bottom: 8px;">Masukkan kode kupon resmi dari admin untuk mendapatkan token gratis.</p>
         <div class="flex-row">
-          <input id="voucher-code" type="text" class="input" placeholder="Contoh: AUTOSUBS2026" style="margin-bottom: 0;">
-          <button onclick="claimVoucher()" class="btn btn-blue" style="width: 120px;">Klaim</button>
+          <input id="voucher-code" type="text" class="input" placeholder="Ketik kode kupon..." style="margin-bottom: 0;">
+          <button onclick="claimVoucher()" class="btn btn-blue" style="width: 100px;">Klaim</button>
         </div>
       </div>
 
@@ -192,66 +211,92 @@
       </div>
     </div>
 
-    <!-- TAB TOPUP (DARI 20RB HINGGA 1JT + BUKTI PEMBAYARAN) -->
+    <!-- TAB TOPUP -->
     <div id="view-topup" class="appview">
       <div class="card">
         <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 4px;">Beli Token & Saldo</h3>
-        <p class="text-sm" style="margin-bottom: 12px;">1 Token = Rp 1.000. Transfer ke DANA / BCA: <b style="color: white;">082336939662</b> (a.n AutoSubs)</p>
+        <p class="text-sm" style="margin-bottom: 12px;">Transfer ke DANA / BCA: <b style="color: white;">082336939662</b> (a.n AutoSubs)</p>
         
-        <label>Pilih Paket Nominal</label>
+        <label>Pilih Paket Nominal (Dari Rp 20.000 s/d Rp 1.000.000)</label>
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px;">
           <div onclick="selectTopup(20, 20000)" class="topup-pkg" data-price="20000" style="background: #020617; border: 1px solid #334155; padding: 10px; border-radius: 10px; text-align: center; cursor: pointer;">
-            <div style="font-weight: bold; color: #facc15; font-size: 14px;">20 Token</div>
+            <div style="font-weight: bold; color: #facc15; font-size: 13px;">20 Token</div>
             <div class="text-xs">Rp 20.000</div>
           </div>
           <div onclick="selectTopup(50, 50000)" class="topup-pkg" data-price="50000" style="background: #020617; border: 1px solid #334155; padding: 10px; border-radius: 10px; text-align: center; cursor: pointer;">
-            <div style="font-weight: bold; color: #facc15; font-size: 14px;">55 Token (Bonus)</div>
+            <div style="font-weight: bold; color: #facc15; font-size: 13px;">55 Token</div>
             <div class="text-xs">Rp 50.000</div>
           </div>
           <div onclick="selectTopup(100, 100000)" class="topup-pkg" data-price="100000" style="background: #020617; border: 1px solid #334155; padding: 10px; border-radius: 10px; text-align: center; cursor: pointer;">
-            <div style="font-weight: bold; color: #facc15; font-size: 14px;">120 Token</div>
+            <div style="font-weight: bold; color: #facc15; font-size: 13px;">120 Token</div>
             <div class="text-xs">Rp 100.000</div>
           </div>
           <div onclick="selectTopup(250, 250000)" class="topup-pkg" data-price="250000" style="background: #020617; border: 1px solid #334155; padding: 10px; border-radius: 10px; text-align: center; cursor: pointer;">
-            <div style="font-weight: bold; color: #facc15; font-size: 14px;">320 Token</div>
+            <div style="font-weight: bold; color: #facc15; font-size: 13px;">320 Token</div>
             <div class="text-xs">Rp 250.000</div>
           </div>
           <div onclick="selectTopup(500, 500000)" class="topup-pkg" data-price="500000" style="background: #020617; border: 1px solid #334155; padding: 10px; border-radius: 10px; text-align: center; cursor: pointer;">
-            <div style="font-weight: bold; color: #facc15; font-size: 14px;">700 Token</div>
+            <div style="font-weight: bold; color: #facc15; font-size: 13px;">700 Token</div>
             <div class="text-xs">Rp 500.000</div>
           </div>
-          <div onclick="selectTopup(1000, 1000000)" class="topup-pkg" data-price="1000000" style="background: #020617; border: 1px solid #dc2626; padding: 10px; border-radius: 10px; text-align: center; cursor: pointer; position: relative;">
-            <span style="position: absolute; top: 0; right: 0; background: #dc2626; font-size: 7px; padding: 2px 4px; border-bottom-left-radius: 6px; font-weight: bold;">VIP</span>
-            <div style="font-weight: bold; color: #facc15; font-size: 14px;">1500 Token</div>
+          <div onclick="selectTopup(1000, 1000000)" class="topup-pkg" data-price="1000000" style="background: #020617; border: 1px solid #dc2626; padding: 10px; border-radius: 10px; text-align: center; cursor: pointer;">
+            <div style="font-weight: bold; color: #facc15; font-size: 13px;">1500 Token (VIP)</div>
             <div class="text-xs">Rp 1.000.000</div>
           </div>
         </div>
 
         <div id="topup-form" class="hidden" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #1e293b;">
           <p id="topup-desc" class="text-sm" style="margin-bottom: 8px; color: #34d399; font-weight: bold;"></p>
-          <label>Bukti Pembayaran / Nama Pengirim / No Ref</label>
-          <input id="topup-proof" type="text" class="input" placeholder="Cth: DANA / Andi Saputra / Ref: 981273">
-          <button onclick="submitTopup()" class="btn">Kirim Bukti & Konfirmasi Topup</button>
+          <label>Unggah Foto / Screenshot Bukti Transfer</label>
+          <input id="topup-file" type="file" accept="image/*" class="input" style="padding: 8px;">
+          <button onclick="submitTopup()" class="btn">Kirim Bukti Pembayaran</button>
+        </div>
+      </div>
+
+      <!-- Riwayat Top-up User -->
+      <div class="card">
+        <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 10px;">Riwayat Pengisian Token Anda</h3>
+        <div id="user-topup-history" style="display: flex; flex-direction: column; gap: 8px;">
+          <div class="text-xs">Belum ada riwayat transaksi top-up.</div>
         </div>
       </div>
     </div>
 
-    <!-- TAB ADMIN -->
+    <!-- TAB ADMIN (FITUR LENGKAP EVENT, KODE HADIAH & KUPON REDEEM) -->
     <div id="view-admin" class="appview">
       <div class="card" style="border-color: rgba(251,191,36,0.3);">
-        <h3 style="font-size: 16px; font-weight: bold; color: #fbbf24; margin-bottom: 12px;">Panel Admin</h3>
+        <h3 style="font-size: 16px; font-weight: bold; color: #fbbf24; margin-bottom: 12px;">Panel Kontrol Admin</h3>
+        
+        <!-- Buat Kode Kupon / Redeem Hadiah -->
         <div style="background: #020617; padding: 12px; border-radius: 12px; border: 1px solid #1e293b; margin-bottom: 16px;">
-          <span style="font-size: 12px; font-weight: bold;">Kirim Token Manual</span>
+          <span style="font-size: 12px; font-weight: bold; color: #60a5fa;">🎫 Buat Kupon Hadiah / Kode Redeem Baru</span>
+          <input id="admin-coupon-code" type="text" class="input" placeholder="Kode (Cth: BONUSRAYA2026)" style="margin-top: 8px;">
+          <input id="admin-coupon-token" type="number" class="input" placeholder="Jumlah Token (Cth: 15)">
+          <button onclick="createCoupon()" class="btn btn-blue" style="font-size: 12px; padding: 10px;">Terbitkan Kupon</button>
+          
+          <div style="margin-top: 12px;">
+            <span style="font-size: 11px; font-weight: bold; color: #94a3b8; display: block; margin-bottom: 4px;">Daftar Kupon Aktif:</span>
+            <div id="admin-coupon-list" style="display: flex; flex-direction: column; gap: 4px; max-height: 100px; overflow-y: auto;"></div>
+          </div>
+        </div>
+
+        <!-- Kirim Token Manual -->
+        <div style="background: #020617; padding: 12px; border-radius: 12px; border: 1px solid #1e293b; margin-bottom: 16px;">
+          <span style="font-size: 12px; font-weight: bold; color: #34d399;">🎁 Kirim Token Manual ke Pengguna</span>
           <input id="admin-target" type="email" class="input" placeholder="Email tujuan..." style="margin-top: 8px;">
           <input id="admin-amount" type="number" class="input" placeholder="Jumlah token...">
           <button onclick="sendAdminToken()" class="btn" style="background: #d97706; color: #020617;">Kirim Token</button>
         </div>
+
+        <!-- Antrean Bot -->
         <div style="margin-bottom: 16px;">
           <span style="font-size: 12px; font-weight: bold; color: #34d399; display: block; margin-bottom: 8px;">Antrean Pesanan Bot</span>
           <div id="admin-bot-queue" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
+
+        <!-- Antrean Topup -->
         <div>
-          <span style="font-size: 12px; font-weight: bold; color: #facc15; display: block; margin-bottom: 8px;">Antrean Top-up (Verifikasi Bukti Pembayaran)</span>
+          <span style="font-size: 12px; font-weight: bold; color: #facc15; display: block; margin-bottom: 8px;">Antrean Top-up (Verifikasi Bukti Foto)</span>
           <div id="admin-queue" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
       </div>
@@ -260,13 +305,22 @@
   </div>
 </section>
 
-<!-- MODAL BANTUAN / FAQ -->
+<!-- MODAL BANTUAN -->
 <div id="help-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 16px;">
   <div class="card" style="max-width: 500px; width: 100%; margin-bottom: 0;">
     <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">Pusat Bantuan & FAQ</h3>
-    <p class="text-sm" style="margin-bottom: 8px;"><b>1. Bagaimana cara kerja Bot?</b><br>Masukkan URL target lalu pilih jenis bot. Sistem akan memotong 1 token/trial.</p>
-    <p class="text-sm" style="margin-bottom: 8px;"><b>2. Bagaimana cara Top-up?</b><br>Pilih nominal, transfer ke nomor DANA yang tertera, lalu masukkan nama pengirim atau bukti transaksi pada kolom yang disediakan.</p>
+    <p class="text-sm" style="margin-bottom: 8px;"><b>1. Cara Top-up yang Benar:</b><br>Pilih nominal, transfer ke DANA, lalu unggah foto bukti transfer pada menu Topup. Admin akan memverifikasi dan token otomatis masuk.</p>
+    <p class="text-sm" style="margin-bottom: 8px;"><b>2. Kode Hadiah & Kupon:</b><br>Dapatkan kode kupon menarik melalui event komunitas atau channel resmi kami lalu tukarkan di tab Promosi.</p>
     <button onclick="hideHelpModal()" class="btn" style="margin-top: 12px;">Tutup</button>
+  </div>
+</div>
+
+<!-- MODAL LIHAT BUKTI FOTO (ADMIN) -->
+<div id="proof-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 250; display: flex; align-items: center; justify-content: center; padding: 16px;">
+  <div class="card" style="max-width: 400px; width: 100%; text-align: center;">
+    <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 10px;">Bukti Transfer Pengguna</h3>
+    <img id="proof-img" src="" style="width: 100%; max-height: 350px; object-fit: contain; border-radius: 8px; border: 1px solid #334155; margin-bottom: 12px;">
+    <button onclick="document.getElementById('proof-modal').classList.add('hidden')" class="btn">Tutup Pratinjau</button>
   </div>
 </div>
 
@@ -281,6 +335,10 @@
     if(!localStorage.getItem('db_promos')) localStorage.setItem('db_promos', JSON.stringify([]));
     if(!localStorage.getItem('db_history')) localStorage.setItem('db_history', JSON.stringify([]));
     if(!localStorage.getItem('db_reports')) localStorage.setItem('db_reports', JSON.stringify([]));
+    if(!localStorage.getItem('db_vouchers')) {
+      // Default voucher awal
+      localStorage.setItem('db_vouchers', JSON.stringify({ 'AUTOSUBS2026': 10 }));
+    }
   }
   initDB();
 
@@ -305,9 +363,10 @@
     document.getElementById('view-' + tabId).classList.add('active');
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     if(btn) btn.classList.add('active');
-    if(tabId === 'admin') { renderAdminTopups(); renderAdminBotOrders(); }
+    if(tabId === 'admin') { renderAdminTopups(); renderAdminBotOrders(); renderAdminCoupons(); }
     if(tabId === 'promo') { renderPromos(); }
     if(tabId === 'dash') { renderHistory(); }
+    if(tabId === 'topup') { renderUserTopupHistory(); }
   }
 
   function toggleAuthMode() {
@@ -360,6 +419,7 @@
     else adminMenu.classList.add('hidden');
     
     renderHistory();
+    renderUserTopupHistory();
     showPage('app');
   }
 
@@ -488,17 +548,59 @@
 
   function claimVoucher() {
     const code = document.getElementById('voucher-code').value.trim().toUpperCase();
-    if(code === 'AUTOSUBS2026') {
+    const vouchers = getDB('db_vouchers');
+    
+    if(vouchers[code]) {
+      const reward = vouchers[code];
       const users = getDB('db_users');
-      users[currentUser].tokens += 10;
+      users[currentUser].tokens += reward;
       saveDB('db_users', users);
-      addHistory('Klaim Voucher 10 Token Berhasil.');
+      
+      // Hapus voucher setelah diklaim (optional, atau biarkan permanen)
+      delete vouchers[code];
+      saveDB('db_vouchers', vouchers);
+
+      addHistory(`Klaim Kupon ${code} (+${reward} Token) Berhasil.`);
       loadApp();
-      showToast('Selamat! Voucher berhasil diklaim (+10 Token).');
+      showToast(`Selamat! Kupon berhasil diklaim (+${reward} Token).`);
       document.getElementById('voucher-code').value = '';
     } else {
-      showToast('Kode voucher tidak valid atau sudah kedaluwarsa!', true);
+      showToast('Kode kupon tidak valid atau sudah kedaluwarsa!', true);
     }
+  }
+
+  function createCoupon() {
+    const code = document.getElementById('admin-coupon-code').value.trim().toUpperCase();
+    const tokenVal = parseInt(document.getElementById('admin-coupon-token').value);
+    if(!code || isNaN(tokenVal) || tokenVal <= 0) return showToast('Masukkan kode & jumlah token valid!', true);
+
+    const vouchers = getDB('db_vouchers');
+    vouchers[code] = tokenVal;
+    saveDB('db_vouchers', vouchers);
+
+    document.getElementById('admin-coupon-code').value = '';
+    document.getElementById('admin-coupon-token').value = '';
+    showToast(`Kupon ${code} berhasil diterbitkan!`);
+    renderAdminCoupons();
+  }
+
+  function renderAdminCoupons() {
+    const vouchers = getDB('db_vouchers');
+    const listDiv = document.getElementById('admin-coupon-list');
+    const keys = Object.keys(vouchers);
+    if(keys.length === 0) { listDiv.innerHTML = '<div class="text-xs">Tidak ada kupon aktif.</div>'; return; }
+    listDiv.innerHTML = '';
+    keys.forEach(k => {
+      listDiv.innerHTML += `<div style="background: #0f172a; padding: 6px 8px; border-radius: 6px; font-size: 11px; display: flex; justify-content: space-between; align-items: center;"><span><b>${k}</b> (${vouchers[k]} Token)</span><button onclick="deleteCoupon('${k}')" style="background: #dc2626; color: white; border: none; padding: 2px 6px; border-radius: 4px; font-size: 9px; cursor: pointer;">Hapus</button></div>`;
+    });
+  }
+
+  function deleteCoupon(code) {
+    const vouchers = getDB('db_vouchers');
+    delete vouchers[code];
+    saveDB('db_vouchers', vouchers);
+    renderAdminCoupons();
+    showToast('Kupon dihapus.');
   }
 
   let selectedPackage = { token: 0, price: 0 };
@@ -511,16 +613,62 @@
   }
 
   function submitTopup() {
-    const proof = document.getElementById('topup-proof').value.trim();
-    if(!proof) return showToast('Masukkan bukti pembayaran / nama pengirim!', true);
+    const fileInput = document.getElementById('topup-file');
+    if(!fileInput.files || fileInput.files.length === 0) {
+      return showToast('Harap unggah foto bukti transfer!', true);
+    }
 
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const base64Image = e.target.result;
+      const topups = getDB('db_topups');
+      topups.push({ 
+        id: Date.now(), 
+        email: currentUser, 
+        token: selectedPackage.token, 
+        price: selectedPackage.price, 
+        proofImage: base64Image, 
+        status: 'pending' 
+      });
+      saveDB('db_topups', topups);
+      
+      document.getElementById('topup-form').classList.add('hidden');
+      fileInput.value = '';
+      addHistory(`Mengirim bukti topup Rp ${selectedPackage.price.toLocaleString()}`);
+      showToast('Bukti foto terkirim! Menunggu verifikasi Admin.');
+      renderUserTopupHistory();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function renderUserTopupHistory() {
     const topups = getDB('db_topups');
-    topups.push({ id: Date.now(), email: currentUser, token: selectedPackage.token, price: selectedPackage.price, proof: proof, status: 'pending' });
-    saveDB('db_topups', topups);
-    document.getElementById('topup-form').classList.add('hidden');
-    document.getElementById('topup-proof').value = '';
-    addHistory(`Mengirim pesanan topup Rp ${selectedPackage.price.toLocaleString()}`);
-    showToast('Bukti terkirim! Menunggu verifikasi Admin.');
+    const container = document.getElementById('user-topup-history');
+    const userTopups = topups.filter(t => t.email === currentUser);
+    if(userTopups.length === 0) {
+      container.innerHTML = '<div class="text-xs">Belum ada riwayat transaksi top-up.</div>';
+      return;
+    }
+    container.innerHTML = '';
+    userTopups.reverse().forEach(t => {
+      let badgeColor = t.status === 'approved' ? '#34d399' : '#fbbf24';
+      let statusText = t.status === 'approved' ? 'Disetujui (Masuk)' : 'Menunggu Verifikasi Admin';
+      container.innerHTML += `
+        <div style="background: #020617; padding: 10px; border-radius: 8px; border: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 11px;">
+            <b>${t.token} Token</b> (Rp ${t.price.toLocaleString()})<br>
+            <span style="color: ${badgeColor}; font-weight: bold; font-size: 10px;">Status: ${statusText}</span>
+          </div>
+          <button onclick="viewProof('${t.proofImage}')" style="background: #1e293b; color: #60a5fa; border: none; padding: 6px 10px; border-radius: 6px; font-size: 10px; cursor: pointer;">Lihat Foto</button>
+        </div>
+      `;
+    });
+  }
+
+  function viewProof(imgBase64) {
+    document.getElementById('proof-img').src = imgBase64;
+    document.getElementById('proof-modal').classList.remove('hidden');
   }
 
   function showHelpModal() { document.getElementById('help-modal').classList.remove('hidden'); }
@@ -572,10 +720,12 @@
     queueDiv.innerHTML = '';
     pendings.forEach(t => {
       queueDiv.innerHTML += `
-        <div style="background: #020617; padding: 10px; border-radius: 8px; border: 1px solid #334155; display: flex; flex-direction: column; gap: 4px;">
+        <div style="background: #020617; padding: 10px; border-radius: 8px; border: 1px solid #334155; display: flex; flex-direction: column; gap: 6px;">
           <div style="font-size: 11px; color: white;"><b>${t.email}</b> — <span style="color: #facc15;">${t.token} Token (Rp ${t.price.toLocaleString()})</span></div>
-          <div style="font-size: 10px; color: #34d399;">Bukti: <b>${t.proof}</b></div>
-          <button onclick="approveTopup(${t.id})" style="background: #d97706; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; margin-top: 4px;">Setujui Topup</button>
+          <div style="display: flex; gap: 8px;">
+            <button onclick="viewProof('${t.proofImage}')" style="background: #1e293b; color: #60a5fa; border: none; padding: 6px 10px; border-radius: 6px; font-size: 10px; cursor: pointer; flex: 1;">Lihat Bukti Foto</button>
+            <button onclick="approveTopup(${t.id})" style="background: #d97706; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; flex: 1;">Setujui Topup</button>
+          </div>
         </div>
       `;
     });
@@ -593,7 +743,7 @@
     }
     topups[orderIndex].status = 'approved';
     saveDB('db_topups', topups);
-    showToast('Topup disetujui!');
+    showToast('Topup disetujui & token masuk!');
     renderAdminTopups();
     if(currentUser === order.email) loadApp();
   }
