@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AutoSubs — YouTube Platform</title>
+  <title>AutoSubs — YouTube Platform & Spin Reward</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background-color: #020617; color: #f1f5f9; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
@@ -20,6 +20,9 @@
     .btn-emerald:hover { background-color: #047857; }
     .btn-blue { background-color: #2563eb; }
     .btn-blue:hover { background-color: #1d4ed8; }
+    .btn-wa { background-color: #25d366; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-weight: bold; padding: 12px; border-radius: 12px; font-size: 14px; margin-top: 10px; }
+    .btn-wa:hover { background-color: #1ebe5d; }
+    
     .input, select, textarea { width: 100%; background-color: #020617; border: 1px solid #334155; border-radius: 12px; padding: 12px; color: white; font-size: 14px; outline: none; margin-top: 6px; margin-bottom: 12px; }
     .input:focus, select:focus, textarea:focus { border-color: #dc2626; }
     label { font-size: 12px; color: #94a3b8; font-weight: 500; }
@@ -34,7 +37,7 @@
 
     .nav-tabs { display: flex; gap: 8px; overflow-x: auto; background: #0f172a; padding: 8px; border-radius: 12px; border: 1px solid #1e293b; margin-bottom: 16px; scrollbar-width: none; }
     .nav-tabs::-webkit-scrollbar { display: none; }
-    .tab-btn { background: transparent; border: none; color: #94a3b8; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; flex: 1; min-width: 70px; text-align: center; white-space: nowrap; }
+    .tab-btn { background: transparent; border: none; color: #94a3b8; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; flex: 1; min-width: 60px; text-align: center; white-space: nowrap; }
     .tab-btn.active { background: #1e293b; color: white; }
     
     .header { height: 60px; background: #0f172a; border-bottom: 1px solid #1e293b; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; position: sticky; top: 0; z-index: 50; }
@@ -42,6 +45,10 @@
     .flex-row { display: flex; gap: 12px; }
     .text-sm { font-size: 12px; color: #94a3b8; }
     .text-xs { font-size: 10px; color: #64748b; }
+    
+    /* Styling Roda Undian */
+    .wheel-box { text-align: center; background: radial-gradient(circle, #1e293b 0%, #0f172a 100%); border: 2px solid #3b82f6; border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+    .wheel-display { width: 150px; height: 150px; border-radius: 50%; border: 4px dashed #facc15; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; background: #020617; color: #facc15; box-shadow: 0 0 20px rgba(250,204,21,0.2); transition: transform 0.5s ease; }
   </style>
 </head>
 <body>
@@ -60,14 +67,14 @@
   <div style="max-width: 800px; margin: 20px auto 0; padding: 0 16px;">
     <div class="ads-banner">
       <span>Google Ads / Sponsor Komisi Platform</span>
-      <div class="ad-content">🚀 Tingkatkan Channel YouTube Anda Sekarang dengan Layanan Otomatis Terbaik!</div>
+      <div class="ad-content">🚀 Tingkatkan Channel YouTube Anda & Mainkan Roda Undian Berhadiah Token Gratis!</div>
     </div>
   </div>
 
   <div style="flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px;">
     <div>
-      <h1 style="font-size: 32px; font-weight: 900; margin-bottom: 12px;">Optimasi YouTube dengan <span style="color: #dc2626;">Komunitas & Bot</span></h1>
-      <p style="color: #94a3b8; font-size: 14px; margin-bottom: 24px;">Platform pembuat tautan berlangganan, promosi otomatis, dan layanan interaksi terlengkap.</p>
+      <h1 style="font-size: 32px; font-weight: 900; margin-bottom: 12px;">Optimasi YouTube dengan <span style="color: #dc2626;">Komunitas & Spin Berhadiah</span></h1>
+      <p style="color: #94a3b8; font-size: 14px; margin-bottom: 24px;">Platform bot otomatis, tukar token jadi saldo, dan putar roda keberuntungan setiap hari!</p>
       <button onclick="showPage('auth')" class="btn" style="width: auto; padding: 14px 28px; font-size: 16px;">Mulai Sekarang</button>
     </div>
   </div>
@@ -93,25 +100,21 @@
 <section id="app" class="page" style="padding-bottom: 80px;">
   <header class="header">
     <div style="font-weight: 900; font-size: 16px;">AutoSubs Dashboard</div>
-    <div style="display: flex; gap: 8px; font-size: 11px; align-items: center;">
-      <div style="background: #1e293b; padding: 6px 10px; border-radius: 8px;">Trial: <b id="ui-trial" style="color: #fbbf24;">0</b></div>
-      <div style="background: #1e293b; padding: 6px 10px; border-radius: 8px;">Token: <b id="ui-tokens" style="color: #facc15;">0</b></div>
-      <button onclick="logout()" style="background: transparent; border: none; color: #f87171; cursor: pointer; font-weight: bold; margin-left: 4px;">Keluar</button>
+    <div style="display: flex; gap: 6px; font-size: 11px; align-items: center;">
+      <div style="background: #1e293b; padding: 5px 8px; border-radius: 8px;">Token: <b id="ui-tokens" style="color: #facc15;">0</b></div>
+      <div style="background: #1e293b; padding: 5px 8px; border-radius: 8px;">Saldo: <b id="ui-saldo" style="color: #34d399;">Rp 0</b></div>
+      <button onclick="logout()" style="background: transparent; border: none; color: #f87171; cursor: pointer; font-weight: bold; margin-left: 2px;">Keluar</button>
     </div>
   </header>
 
   <div class="container">
     <div class="nav-tabs">
       <button onclick="switchTab('dash', this)" class="tab-btn active">Home</button>
+      <button onclick="switchTab('spin', this)" class="tab-btn" style="color: #facc15;">🎁 Spin</button>
       <button onclick="switchTab('bot', this)" class="tab-btn">Bot</button>
       <button onclick="switchTab('promo', this)" class="tab-btn">Promosi</button>
       <button onclick="switchTab('topup', this)" class="tab-btn">Topup</button>
       <button id="menu-admin" onclick="switchTab('admin', this)" class="tab-btn hidden" style="color: #fbbf24;">Admin</button>
-    </div>
-
-    <div class="ads-banner">
-      <span>Iklan Sponsor Google Ads</span>
-      <div class="ad-content">🔥 Dapatkan Penghasilan Tambahan dari Channel YouTube Anda Hari Ini!</div>
     </div>
 
     <!-- TAB DASHBOARD (HOME) -->
@@ -120,14 +123,32 @@
         <h2 id="greeting" style="font-size: 18px; font-weight: bold;">Halo!</h2>
         <p id="profile-email-txt" class="text-sm" style="margin-top: 4px;"></p>
         <div class="flex-row" style="margin-top: 16px;">
-          <div style="flex: 1; background: #020617; padding: 12px; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
-            <span class="text-xs">Status Akun</span>
-            <p id="profile-role" style="font-weight: bold; color: #f87171; margin-top: 4px; text-transform: uppercase; font-size: 12px;">User</p>
+          <div style="flex: 1; background: #020617; padding: 10px; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
+            <span class="text-xs">Tiket Spin Aktif</span>
+            <p id="profile-spin-tickets" style="font-weight: bold; color: #facc15; margin-top: 4px; font-size: 14px;">0 Tiket</p>
           </div>
           <button onclick="claimBonus()" style="flex: 1; background: rgba(5,150,105,0.2); border: 1px solid #059669; border-radius: 12px; color: #34d399; cursor: pointer; font-weight: bold; font-size: 11px; padding: 8px;">
-            Aktivitas Harian<br><span style="font-size: 13px;">Klaim 2 Token</span>
+            Aktivitas Harian<br><span style="font-size: 12px;">Klaim 2 Token</span>
           </button>
         </div>
+      </div>
+
+      <!-- FITUR 3: PENUKARAN TOKEN MENJADI SALDO -->
+      <div class="card" style="border-color: #059669;">
+        <h3 style="font-size: 15px; font-weight: bold; color: #34d399; margin-bottom: 4px;">💸 Tukar Token Jadi Saldo</h3>
+        <p class="text-sm" style="margin-bottom: 12px;">Minimal penukaran: <b>2.500 Token</b>. Rate: 100 Token = Rp 1.000 (Dikenakan potongan pajak administrasi 10%).</p>
+        <label>Jumlah Token yang Ingin Ditukar</label>
+        <input id="input-redeem-tokens" type="number" class="input" placeholder="Minimal 2500">
+        <button onclick="redeemTokensToSaldo()" class="btn btn-emerald">Tukar Token ke Saldo Sekarang</button>
+      </div>
+
+      <!-- FITUR 2: BANTUAN WHATSAPP ADMIN -->
+      <div class="card" style="background: linear-gradient(135deg, #064e3b 0%, #0f172a 100%); border-color: #059669;">
+        <h3 style="font-size: 15px; font-weight: bold; color: #34d399; margin-bottom: 4px;">📞 Layanan Bantuan & Kendala (Admin WA)</h3>
+        <p class="text-sm" style="margin-bottom: 10px;">Mengalami kendala top-up, error sistem, atau butuh bantuan cepat? Hubungi admin resmi kami via WhatsApp.</p>
+        <a href="https://wa.me/6282336939662?text=Halo%20Admin%20AutoSubs,%20saya%20ingin%20melaporkan%20kendala%20terkait%20akun%20saya." target="_blank" class="btn-wa">
+          💬 Chat WhatsApp Admin (0823-3693-9662)
+        </a>
       </div>
 
       <div class="card">
@@ -139,23 +160,34 @@
       </div>
 
       <div class="card">
-        <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 8px;">Riwayat & Aktivitas</h3>
+        <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 8px;">Riwayat Aktivitas</h3>
         <div id="activity-history" style="display: flex; flex-direction: column; gap: 6px; max-height: 150px; overflow-y: auto;">
           <div class="text-xs">Belum ada riwayat aktivitas terbaru.</div>
         </div>
       </div>
+    </div>
 
-      <div class="flex-row">
-        <div class="card" style="flex: 1; margin-bottom: 0;">
-          <h3 style="font-size: 13px; font-weight: bold; margin-bottom: 6px;">Akses Bantuan</h3>
-          <p class="text-xs" style="margin-bottom: 8px;">Butuh panduan top-up atau bot?</p>
-          <button onclick="showHelpModal()" class="btn" style="padding: 8px; font-size: 12px; background: #1e293b;">Buka FAQ</button>
+    <!-- TAB RODA UNDIAN (SPIN) - FITUR 1 -->
+    <div id="view-spin" class="appview">
+      <div class="wheel-box">
+        <h2 style="font-size: 18px; font-weight: bold; color: #facc15; margin-bottom: 6px;">🎰 Roda Keberuntungan AutoSubs</h2>
+        <p class="text-sm" style="margin-bottom: 15px;">Putar rodanya dan menangkan hadiah token gratis! Dapatkan 1x putaran gratis setiap 24 jam atau lakukan top-up untuk extra tiket.</p>
+        
+        <div id="wheel-display" class="wheel-display">SPIN</div>
+        
+        <div style="background: #020617; padding: 10px; border-radius: 8px; margin-bottom: 12px; display: inline-block; width: 100%;">
+          <span style="font-size: 12px; color: #94a3b8;">Tiket Anda: <b id="spin-ticket-count" style="color: #facc15; font-size: 14px;">0</b> Tiket</span><br>
+          <span id="spin-timer-txt" style="font-size: 11px; color: #34d399; margin-top: 4px; display: block;">Putaran gratis 24 jam tersedia!</span>
         </div>
-        <div class="card" style="flex: 1; margin-bottom: 0;">
-          <h3 style="font-size: 13px; font-weight: bold; margin-bottom: 6px;">Laporkan Masalah</h3>
-          <input id="report-text" type="text" class="input" placeholder="Kendala..." style="margin-bottom: 6px; font-size: 12px; padding: 8px;">
-          <button onclick="submitReport()" class="btn" style="padding: 8px; font-size: 12px; background: #7f1d1d;">Kirim Laporan</button>
-        </div>
+
+        <button onclick="spinWheel()" class="btn btn-emerald" style="font-size: 16px; padding: 14px;">PUTAR RODA SEKARANG 🎡</button>
+      </div>
+
+      <div class="card">
+        <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 6px;">ℹ️ Ketentuan Roda Undian</h3>
+        <p class="text-sm">• Setiap user berhak mendapatkan <b>1x putaran gratis setiap 24 jam</b>.</p>
+        <p class="text-sm">• Melakukan top-up (nominal berapapun) otomatis memberikan tambahan **1 tiket putaran**.</p>
+        <p class="text-sm">• Hadiah berupa Token gratis yang langsung masuk ke saldo akun Anda.</p>
       </div>
     </div>
 
@@ -163,7 +195,7 @@
     <div id="view-bot" class="appview">
       <div class="card">
         <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 4px;">Bot Layanan Interaksi</h3>
-        <p class="text-sm" style="margin-bottom: 12px;">Pesanan diproses otomatis (Memotong 1 Token/Trial).</p>
+        <p class="text-sm" style="margin-bottom: 12px;">Pesanan diproses otomatis (Memotong 1 Token).</p>
         <label>Tautan Target YouTube</label>
         <input id="bot-url" type="url" class="input" placeholder="https://youtube.com/...">
         <label>Pilih Layanan Bot</label>
@@ -210,7 +242,8 @@
         <p class="text-sm" style="margin-bottom: 12px;">
           Metode Pembayaran:<br>
           • <b>DANA: 082336939662</b> (A/N Angga Bayu Setyawan)<br>
-          • <b>QRIS All Payment</b> (Scan QR di bawah ini)
+          • <b>QRIS All Payment</b> (Scan QR di bawah ini)<br>
+          🎁 <i>Setiap top up dalam jumlah berapapun otomatis mendapatkan 1x Tiket Roda Putaran Gratis!</i>
         </p>
 
         <div style="background: #ffffff; padding: 12px; border-radius: 12px; text-align: center; margin-bottom: 16px; max-width: 260px; margin-left: auto; margin-right: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
@@ -302,16 +335,6 @@
   </div>
 </section>
 
-<!-- MODAL BANTUAN -->
-<div id="help-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 16px;">
-  <div class="card" style="max-width: 500px; width: 100%; margin-bottom: 0;">
-    <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">Pusat Bantuan & FAQ</h3>
-    <p class="text-sm" style="margin-bottom: 8px;"><b>1. Cara Top-up Aman:</b><br>Transfer via DANA 082336939662 (A/N Angga Bayu Setyawan) atau scan QRIS All Payment, lalu unggah foto bukti transfer.</p>
-    <p class="text-sm" style="margin-bottom: 8px;"><b>2. Keamanan Akun:</b><br>Data token dan riwayat akun Anda tersimpan otomatis di perangkat dan aman meskipun Anda keluar (logout) lalu masuk kembali.</p>
-    <button onclick="hideHelpModal()" class="btn" style="margin-top: 12px;">Tutup</button>
-  </div>
-</div>
-
 <!-- MODAL LIHAT BUKTI FOTO (ADMIN) -->
 <div id="proof-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 250; display: flex; align-items: center; justify-content: center; padding: 16px;">
   <div class="card" style="max-width: 400px; width: 100%; text-align: center;">
@@ -331,7 +354,6 @@
     if(!localStorage.getItem('db_bot_orders')) localStorage.setItem('db_bot_orders', JSON.stringify([]));
     if(!localStorage.getItem('db_promos')) localStorage.setItem('db_promos', JSON.stringify([]));
     if(!localStorage.getItem('db_history')) localStorage.setItem('db_history', JSON.stringify([]));
-    if(!localStorage.getItem('db_reports')) localStorage.setItem('db_reports', JSON.stringify([]));
     if(!localStorage.getItem('db_vouchers')) {
       localStorage.setItem('db_vouchers', JSON.stringify({ 'AUTOSUBS2026': 10 }));
     }
@@ -363,6 +385,7 @@
     if(tabId === 'promo') { renderPromos(); }
     if(tabId === 'dash') { renderHistory(); }
     if(tabId === 'topup') { renderUserTopupHistory(); }
+    if(tabId === 'spin') { checkSpinStatus(); }
   }
 
   function toggleAuthMode() {
@@ -382,8 +405,10 @@
       if(users[email]) return showToast('Email sudah terdaftar! Silakan login.', true);
       users[email] = {
         password: pass,
-        trial: (email === "panglimaa09@gmail.com") ? 9999 : 3,
+        saldo: 0,
         tokens: (email === "panglimaa09@gmail.com") ? 9999 : 0,
+        spinTickets: 1,
+        lastSpinTime: 0,
         role: (email === "panglimaa09@gmail.com") ? 'admin' : 'user'
       };
       saveDB('db_users', users);
@@ -407,11 +432,16 @@
     }
 
     const userData = users[currentUser];
+    if(userData.saldo === undefined) userData.saldo = 0;
+    if(userData.spinTickets === undefined) userData.spinTickets = 1;
+    if(userData.lastSpinTime === undefined) userData.lastSpinTime = 0;
+
     document.getElementById('profile-email-txt').innerText = currentUser;
     document.getElementById('greeting').innerText = 'Halo, ' + currentUser.split('@')[0] + '!';
     document.getElementById('profile-role').innerText = userData.role;
-    document.getElementById('ui-trial').innerText = userData.role === 'admin' ? '∞' : userData.trial;
     document.getElementById('ui-tokens').innerText = userData.role === 'admin' ? '∞' : userData.tokens;
+    document.getElementById('ui-saldo').innerText = 'Rp ' + userData.saldo.toLocaleString();
+    document.getElementById('profile-spin-tickets').innerText = userData.spinTickets + ' Tiket';
 
     const adminMenu = document.getElementById('menu-admin');
     if(userData.role === 'admin') adminMenu.classList.remove('hidden');
@@ -419,7 +449,96 @@
     
     renderHistory();
     renderUserTopupHistory();
+    checkSpinStatus();
     showPage('app');
+  }
+
+  // FITUR 1: LOGIKA RODA UNDIAN (SPIN)
+  function checkSpinStatus() {
+    const users = getDB('db_users');
+    const user = users[currentUser];
+    if(!user) return;
+
+    const now = Date.now();
+    const cooldown = 24 * 60 * 60 * 1000; // 24 jam dalam milidetik
+    const timeDiff = now - (user.lastSpinTime || 0);
+
+    if (timeDiff >= cooldown && user.spinTickets === 0) {
+      user.spinTickets = 1; // Berikan 1 putaran gratis harian
+      saveDB('db_users', users);
+    }
+
+    document.getElementById('spin-ticket-count').innerText = user.spinTickets;
+    const timerTxt = document.getElementById('spin-timer-txt');
+    
+    if (user.spinTickets > 0) {
+      timerTxt.innerText = "🎉 Anda memiliki tiket putaran gratis siap digunakan!";
+      timerTxt.style.color = "#34d399";
+    } else {
+      const remainingTime = cooldown - timeDiff;
+      const hours = Math.floor(remainingTime / (1000 * 60 * 60));
+      const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+      timerTxt.innerText = `⏳ Putaran gratis berikutnya tersedia dalam ${hours}j ${minutes}m (Atau top-up untuk tiket instan)`;
+      timerTxt.style.color = "#fbbf24";
+    }
+  }
+
+  function spinWheel() {
+    const users = getDB('db_users');
+    const user = users[currentUser];
+    if(!user) return;
+
+    if (user.spinTickets <= 0) {
+      return showToast('Tiket spin habis! Silakan tunggu 24 jam atau lakukan top-up.', true);
+    }
+
+    user.spinTickets--;
+    user.lastSpinTime = Date.now();
+
+    // Hadiah Acak: 5, 10, 20, 50, atau 100 Token
+    const rewards = [5, 10, 15, 20, 50, 100];
+    const prize = rewards[Math.floor(Math.random() * rewards.length)];
+
+    user.tokens += prize;
+    saveDB('db_users', users);
+
+    const wheelDisplay = document.getElementById('wheel-display');
+    wheelDisplay.style.transform = 'rotate(720deg)';
+    setTimeout(() => {
+      wheelDisplay.style.transform = 'rotate(0deg)';
+      loadApp();
+      showToast(`🎉 SELAMAT! Anda memenangkan ${prize} Token dari Roda Undian!`);
+      addHistory(`Memenangkan ${prize} Token dari Roda Undian.`);
+    }, 500);
+  }
+
+  // FITUR 3: PENUKARAN TOKEN KE SALDO
+  function redeemTokensToSaldo() {
+    const inputToken = parseInt(document.getElementById('input-redeem-tokens').value);
+    if(isNaN(inputToken) || inputToken < 2500) {
+      return showToast('Minimal penukaran adalah 2.500 Token!', true);
+    }
+
+    const users = getDB('db_users');
+    const user = users[currentUser];
+
+    if(user.tokens < inputToken) {
+      return showToast('Token Anda tidak mencukupi untuk jumlah penukaran ini!', true);
+    }
+
+    // Rate: 100 Token = Rp 1.000, dipotong pajak admin 10%
+    const grossRupiah = (inputToken / 100) * 1000;
+    const tax = grossRupiah * 0.10; // Potongan pajak 10%
+    const netRupiah = grossRupiah - tax;
+
+    user.tokens -= inputToken;
+    user.saldo += netRupiah;
+    saveDB('db_users', users);
+
+    document.getElementById('input-redeem-tokens').value = '';
+    loadApp();
+    showToast(`Berhasil menukar ${inputToken} Token menjadi Saldo Rp ${netRupiah.toLocaleString()} (Potongan Pajak 10%)!`);
+    addHistory(`Menukar ${inputToken} Token menjadi Saldo Rp ${netRupiah.toLocaleString()}.`);
   }
 
   function addHistory(text) {
@@ -448,9 +567,7 @@
     const user = users[currentUser];
     if(user.role === 'admin') return true; 
 
-    if(amount === 1 && user.trial > 0) {
-      user.trial--;
-    } else if (user.tokens >= amount) {
+    if (user.tokens >= amount) {
       user.tokens -= amount;
     } else {
       showToast(`Token tidak cukup! Butuh ${amount} Token.`, true);
@@ -651,7 +768,7 @@
     container.innerHTML = '';
     userTopups.slice().reverse().forEach(t => {
       let badgeColor = t.status === 'approved' ? '#34d399' : '#fbbf24';
-      let statusText = t.status === 'approved' ? 'Disetujui (Masuk)' : 'Menunggu Verifikasi Admin';
+      let statusText = t.status === 'approved' ? 'Disetujui (Masuk + Bonus Spin)' : 'Menunggu Verifikasi Admin';
       container.innerHTML += `
         <div style="background: #020617; padding: 10px; border-radius: 8px; border: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center;">
           <div style="font-size: 11px;">
@@ -667,19 +784,6 @@
   function viewProof(imgBase64) {
     document.getElementById('proof-img').src = imgBase64;
     document.getElementById('proof-modal').classList.remove('hidden');
-  }
-
-  function showHelpModal() { document.getElementById('help-modal').classList.remove('hidden'); }
-  function hideHelpModal() { document.getElementById('help-modal').classList.add('hidden'); }
-
-  function submitReport() {
-    const text = document.getElementById('report-text').value.trim();
-    if(!text) return showToast('Tuliskan kendala Anda!', true);
-    const reports = getDB('db_reports');
-    reports.push({ email: currentUser, text: text, time: new Date().toLocaleString() });
-    saveDB('db_reports', reports);
-    document.getElementById('report-text').value = '';
-    showToast('Laporan berhasil dikirim ke Admin.');
   }
 
   function renderAdminBotOrders() {
@@ -722,26 +826,30 @@
           <div style="font-size: 11px; color: white;"><b>${t.email}</b> — <span style="color: #facc15;">${t.token} Token (Rp ${t.price.toLocaleString()})</span></div>
           <div style="display: flex; gap: 8px;">
             <button onclick="viewProof('${t.proofImage}')" style="background: #1e293b; color: #60a5fa; border: none; padding: 6px 10px; border-radius: 6px; font-size: 10px; cursor: pointer; flex: 1;">Lihat Bukti Foto</button>
-            <button onclick="approveTopup(${t.id})" style="background: #d97706; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; flex: 1;">Setujui Topup</button>
+            <button onclick="approveTopup(${t.id})" style="background: #d97706; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; flex: 1;">Setujui & Beri Bonus Spin</button>
           </div>
         </div>
       `;
     });
   }
 
+  // FITUR 1: OTOMATIS TAMBAH 1 TIKET SPIN KETIKA TOP-UP DISETUJUI ADMIN
   function approveTopup(orderId) {
     const topups = getDB('db_topups');
     const users = getDB('db_users');
     const orderIndex = topups.findIndex(t => t.id === orderId);
     if(orderIndex === -1) return;
+    
     const order = topups[orderIndex];
     if(users[order.email]) {
       users[order.email].tokens += order.token;
+      users[order.email].spinTickets += 1; // Bonus 1 tiket putaran roda gratis
       saveDB('db_users', users);
     }
+    
     topups[orderIndex].status = 'approved';
     saveDB('db_topups', topups);
-    showToast('Topup disetujui & token masuk!');
+    showToast('Topup disetujui, token masuk & bonus 1 tiket spin diberikan!');
     renderAdminTopups();
     if(currentUser === order.email) loadApp();
   }
