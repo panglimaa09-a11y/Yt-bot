@@ -12,7 +12,6 @@
     .appview { display: none; }
     .appview.active { display: block; }
     
-    /* Utility & Components */
     .container { max-width: 800px; width: 100%; margin: 0 auto; padding: 16px; }
     .card { background-color: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 20px; margin-bottom: 16px; }
     .btn { background-color: #dc2626; color: white; border: none; padding: 12px 16px; border-radius: 12px; font-weight: bold; width: 100%; cursor: pointer; font-size: 14px; transition: background 0.2s; }
@@ -22,15 +21,13 @@
     .btn-blue { background-color: #2563eb; }
     .btn-blue:hover { background-color: #1d4ed8; }
     .input, select, textarea { width: 100%; background-color: #020617; border: 1px solid #334155; border-radius: 12px; padding: 12px; color: white; font-size: 14px; outline: none; margin-top: 6px; margin-bottom: 12px; }
-    .input:focus, select:focus { border-color: #dc2626; }
+    .input:focus, select:focus, textarea:focus { border-color: #dc2626; }
     label { font-size: 12px; color: #94a3b8; font-weight: 500; }
     
-    /* Toast Notification */
     .toast { position: fixed; bottom: 20px; right: 20px; left: 20px; max-width: 350px; margin: 0 auto; background: #059669; color: white; padding: 12px 20px; border-radius: 12px; text-align: center; font-weight: 500; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); transform: translateY(100px); opacity: 0; transition: all 0.3s ease; z-index: 100; pointer-events: none; }
     .toast.show { transform: translateY(0); opacity: 1; }
     .toast.error { background: #dc2626; }
 
-    /* Navigasi Tab Horizontal */
     .nav-tabs { display: flex; gap: 8px; overflow-x: auto; background: #0f172a; padding: 8px; border-radius: 12px; border: 1px solid #1e293b; margin-bottom: 16px; scrollbar-width: none; }
     .nav-tabs::-webkit-scrollbar { display: none; }
     .tab-btn { background: transparent; border: none; color: #94a3b8; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; flex: 1; min-width: 70px; text-align: center; white-space: nowrap; }
@@ -39,11 +36,9 @@
     .header { height: 60px; background: #0f172a; border-bottom: 1px solid #1e293b; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; position: sticky; top: 0; z-index: 50; }
     .hidden { display: none !important; }
     .flex-row { display: flex; gap: 12px; }
-    .text-center { text-align: center; }
     .text-sm { font-size: 12px; color: #94a3b8; }
     .text-xs { font-size: 10px; color: #64748b; }
-    .font-bold { font-weight: bold; }
-    .mt-2 { margin-top: 8px; }
+    .badge { background: #1e293b; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -61,7 +56,7 @@
   <div style="flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px;">
     <div>
       <h1 style="font-size: 32px; font-weight: 900; margin-bottom: 12px;">Optimasi YouTube dengan <span style="color: #dc2626;">Komunitas & Bot</span></h1>
-      <p style="color: #94a3b8; font-size: 14px; margin-bottom: 24px;">Platform pembuat tautan berlangganan, promosi otomatis, dan layanan interaksi.</p>
+      <p style="color: #94a3b8; font-size: 14px; margin-bottom: 24px;">Platform pembuat tautan berlangganan, promosi otomatis, dan layanan interaksi terlengkap.</p>
       <button onclick="showPage('auth')" class="btn" style="width: auto; padding: 14px 28px; font-size: 16px;">Mulai Sekarang</button>
     </div>
   </div>
@@ -87,7 +82,7 @@
 <section id="app" class="page" style="padding-bottom: 80px;">
   <header class="header">
     <div style="font-weight: 900; font-size: 16px;">AutoSubs Dashboard</div>
-    <div style="display: flex; gap: 8px; font-size: 11px;">
+    <div style="display: flex; gap: 8px; font-size: 11px; align-items: center;">
       <div style="background: #1e293b; padding: 6px 10px; border-radius: 8px;">Trial: <b id="ui-trial" style="color: #fbbf24;">0</b></div>
       <div style="background: #1e293b; padding: 6px 10px; border-radius: 8px;">Token: <b id="ui-tokens" style="color: #facc15;">0</b></div>
       <button onclick="logout()" style="background: transparent; border: none; color: #f87171; cursor: pointer; font-weight: bold; margin-left: 4px;">Keluar</button>
@@ -104,22 +99,23 @@
       <button id="menu-admin" onclick="switchTab('admin', this)" class="tab-btn hidden" style="color: #fbbf24;">Admin</button>
     </div>
 
-    <!-- TAB DASHBOARD -->
+    <!-- TAB DASHBOARD (HOME) -->
     <div id="view-dash" class="appview active">
       <div class="card">
         <h2 id="greeting" style="font-size: 18px; font-weight: bold;">Halo!</h2>
-        <p id="profile-email-txt" class="text-sm mt-2"></p>
+        <p id="profile-email-txt" class="text-sm" style="margin-top: 4px;"></p>
         <div class="flex-row" style="margin-top: 16px;">
           <div style="flex: 1; background: #020617; padding: 12px; border-radius: 12px; border: 1px solid #1e293b; text-align: center;">
             <span class="text-xs">Status Akun</span>
             <p id="profile-role" style="font-weight: bold; color: #f87171; margin-top: 4px; text-transform: uppercase; font-size: 12px;">User</p>
           </div>
-          <button onclick="claimBonus()" style="flex: 1; background: rgba(5,150,105,0.2); border: 1px solid #059669; border-radius: 12px; color: #34d399; cursor: pointer; font-weight: bold; font-size: 11px;">
-            Hadiah Harian<br><span style="font-size: 13px;">Klaim 2 Token</span>
+          <button onclick="claimBonus()" style="flex: 1; background: rgba(5,150,105,0.2); border: 1px solid #059669; border-radius: 12px; color: #34d399; cursor: pointer; font-weight: bold; font-size: 11px; padding: 8px;">
+            Aktivitas Harian<br><span style="font-size: 13px;">Klaim 2 Token</span>
           </button>
         </div>
       </div>
 
+      <!-- Generator Link -->
       <div class="card">
         <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 8px;">Subscribe Link Generator (Gratis)</h3>
         <label>Masukkan URL YouTube Channel/Video</label>
@@ -127,60 +123,115 @@
         <button onclick="generateSubLink()" class="btn" style="background: #334155;">Buat Tautan Berlangganan</button>
         <input id="output-url" readonly class="input hidden" style="color: #34d399; border-color: #059669; margin-top: 12px;">
       </div>
+
+      <!-- Riwayat Aktivitas & Event -->
+      <div class="card">
+        <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 8px;">Riwayat & Aktivitas</h3>
+        <div id="activity-history" style="display: flex; flex-direction: column; gap: 6px; max-height: 150px; overflow-y: auto;">
+          <div class="text-xs text-xs">Belum ada riwayat aktivitas terbaru.</div>
+        </div>
+      </div>
+
+      <!-- Laporkan Masalah & Bantuan -->
+      <div class="flex-row">
+        <div class="card" style="flex: 1; margin-bottom: 0;">
+          <h3 style="font-size: 13px; font-weight: bold; margin-bottom: 6px;">Akses Bantuan</h3>
+          <p class="text-xs" style="margin-bottom: 8px;">Butuh panduan penggunaan bot atau top-up?</p>
+          <button onclick="showHelpModal()" class="btn" style="padding: 8px; font-size: 12px; background: #1e293b;">Buka FAQ</button>
+        </div>
+        <div class="card" style="flex: 1; margin-bottom: 0;">
+          <h3 style="font-size: 13px; font-weight: bold; margin-bottom: 6px;">Laporkan Masalah</h3>
+          <input id="report-text" type="text" class="input" placeholder="Kendala..." style="margin-bottom: 6px; font-size: 12px; padding: 8px;">
+          <button onclick="submitReport()" class="btn" style="padding: 8px; font-size: 12px; background: #7f1d1d;">Kirim Laporan</button>
+        </div>
+      </div>
     </div>
 
     <!-- TAB BOT -->
     <div id="view-bot" class="appview">
       <div class="card">
         <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 4px;">Bot Layanan Interaksi</h3>
-        <p class="text-sm" style="margin-bottom: 12px;">Pesanan akan diproses admin (Memotong 1 Token/Trial).</p>
+        <p class="text-sm" style="margin-bottom: 12px;">Pesanan akan diproses otomatis oleh sistem (Memotong 1 Token/Trial).</p>
         <label>Tautan Target YouTube</label>
         <input id="bot-url" type="url" class="input" placeholder="https://youtube.com/...">
-        <label>Pilih Layanan</label>
+        <label>Pilih Layanan Bot</label>
         <select id="bot-type" class="input">
           <option value="Auto Subscribe">Auto Subscribe Target</option>
           <option value="Auto Views">Auto Views Target</option>
+          <option value="Auto Likes">Auto Likes Target (Bonus)</option>
         </select>
-        <button onclick="requestBot()" class="btn btn-emerald">Kirim Pesanan Layanan</button>
+        <button onclick="requestBot()" class="btn btn-emerald">Jalankan Bot Sekarang</button>
       </div>
     </div>
 
-    <!-- TAB PROMOSI -->
+    <!-- TAB PROMOSI & FITUR TAMBAHAN -->
     <div id="view-promo" class="appview">
       <div class="card">
-        <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 4px;">Pasang Promosi</h3>
-        <p class="text-sm" style="margin-bottom: 12px;">Biaya: 5 Token untuk 50 Klik Asli.</p>
+        <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 4px;">Pasang Promosi Komunitas</h3>
+        <p class="text-sm" style="margin-bottom: 12px;">Biaya: 5 Token untuk 50 Klik Asli dari pengguna lain.</p>
         <label>Judul Promosi</label>
         <input id="promo-title" type="text" class="input" placeholder="Bantu tembus 1k Subs!">
         <label>URL Video / Channel</label>
         <input id="promo-url" type="url" class="input" placeholder="https://youtube.com/...">
-        <button onclick="addPromo()" class="btn btn-blue">Tayangkan Promosi Sekarang</button>
+        <button onclick="addPromo()" class="btn btn-blue">Tayangkan Promosi</button>
       </div>
+
+      <!-- Fitur Tambahan: Event & Voucher Komunitas -->
+      <div class="card" style="border-color: #3b82f6;">
+        <h3 style="font-size: 14px; font-weight: bold; color: #60a5fa; margin-bottom: 6px;">🎁 Event & Klaim Voucher Komunitas</h3>
+        <p class="text-sm" style="margin-bottom: 10px;">Masukkan kode voucher harian untuk mendapatkan token gratis!</p>
+        <div class="flex-row">
+          <input id="voucher-code" type="text" class="input" placeholder="Contoh: AUTOSUBS2026" style="margin-bottom: 0;">
+          <button onclick="claimVoucher()" class="btn btn-blue" style="width: 120px;">Klaim</button>
+        </div>
+      </div>
+
       <div class="card">
-        <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 12px;">Papan Promosi Komunitas</h3>
+        <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 12px;">Papan Promosi Aktif</h3>
         <div id="promo-board" style="display: flex; flex-direction: column; gap: 8px;"></div>
       </div>
     </div>
 
-    <!-- TAB TOPUP -->
+    <!-- TAB TOPUP (DARI 20RB HINGGA 1JT + BUKTI PEMBAYARAN) -->
     <div id="view-topup" class="appview">
       <div class="card">
-        <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 4px;">Beli Token</h3>
-        <p class="text-sm" style="margin-bottom: 12px;">1 Token = Rp 1.000. Transfer ke DANA: <b style="color: white;">082336939662</b></p>
-        <div class="flex-row">
-          <div onclick="selectTopup(20, 20000)" style="flex: 1; background: #020617; border: 1px solid #334155; padding: 14px; border-radius: 12px; text-align: center; cursor: pointer;">
-            <div style="font-weight: bold; color: #facc15; font-size: 16px;">20 Token</div>
-            <div class="text-xs mt-2">Rp 20.000</div>
+        <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 4px;">Beli Token & Saldo</h3>
+        <p class="text-sm" style="margin-bottom: 12px;">1 Token = Rp 1.000. Transfer ke DANA / BCA: <b style="color: white;">082336939662</b> (a.n AutoSubs)</p>
+        
+        <label>Pilih Paket Nominal</label>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px;">
+          <div onclick="selectTopup(20, 20000)" class="topup-pkg" data-price="20000" style="background: #020617; border: 1px solid #334155; padding: 10px; border-radius: 10px; text-align: center; cursor: pointer;">
+            <div style="font-weight: bold; color: #facc15; font-size: 14px;">20 Token</div>
+            <div class="text-xs">Rp 20.000</div>
           </div>
-          <div onclick="selectTopup(50, 50000)" style="flex: 1; background: #020617; border: 1px solid #dc2626; padding: 14px; border-radius: 12px; text-align: center; cursor: pointer; position: relative;">
-            <span style="position: absolute; top: 0; right: 0; background: #dc2626; font-size: 8px; padding: 2px 6px; border-bottom-left-radius: 8px; font-weight: bold;">PROMO</span>
-            <div style="font-weight: bold; color: #facc15; font-size: 16px;">50 Token</div>
-            <div class="text-xs mt-2">Rp 50.000</div>
+          <div onclick="selectTopup(50, 50000)" class="topup-pkg" data-price="50000" style="background: #020617; border: 1px solid #334155; padding: 10px; border-radius: 10px; text-align: center; cursor: pointer;">
+            <div style="font-weight: bold; color: #facc15; font-size: 14px;">55 Token (Bonus)</div>
+            <div class="text-xs">Rp 50.000</div>
+          </div>
+          <div onclick="selectTopup(100, 100000)" class="topup-pkg" data-price="100000" style="background: #020617; border: 1px solid #334155; padding: 10px; border-radius: 10px; text-align: center; cursor: pointer;">
+            <div style="font-weight: bold; color: #facc15; font-size: 14px;">120 Token</div>
+            <div class="text-xs">Rp 100.000</div>
+          </div>
+          <div onclick="selectTopup(250, 250000)" class="topup-pkg" data-price="250000" style="background: #020617; border: 1px solid #334155; padding: 10px; border-radius: 10px; text-align: center; cursor: pointer;">
+            <div style="font-weight: bold; color: #facc15; font-size: 14px;">320 Token</div>
+            <div class="text-xs">Rp 250.000</div>
+          </div>
+          <div onclick="selectTopup(500, 500000)" class="topup-pkg" data-price="500000" style="background: #020617; border: 1px solid #334155; padding: 10px; border-radius: 10px; text-align: center; cursor: pointer;">
+            <div style="font-weight: bold; color: #facc15; font-size: 14px;">700 Token</div>
+            <div class="text-xs">Rp 500.000</div>
+          </div>
+          <div onclick="selectTopup(1000, 1000000)" class="topup-pkg" data-price="1000000" style="background: #020617; border: 1px solid #dc2626; padding: 10px; border-radius: 10px; text-align: center; cursor: pointer; position: relative;">
+            <span style="position: absolute; top: 0; right: 0; background: #dc2626; font-size: 7px; padding: 2px 4px; border-bottom-left-radius: 6px; font-weight: bold;">VIP</span>
+            <div style="font-weight: bold; color: #facc15; font-size: 14px;">1500 Token</div>
+            <div class="text-xs">Rp 1.000.000</div>
           </div>
         </div>
-        <div id="topup-form" class="hidden" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #1e293b;">
-          <p id="topup-desc" class="text-sm" style="margin-bottom: 12px;"></p>
-          <button onclick="submitTopup()" class="btn">Konfirmasi Pesanan Topup</button>
+
+        <div id="topup-form" class="hidden" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #1e293b;">
+          <p id="topup-desc" class="text-sm" style="margin-bottom: 8px; color: #34d399; font-weight: bold;"></p>
+          <label>Bukti Pembayaran / Nama Pengirim / No Ref</label>
+          <input id="topup-proof" type="text" class="input" placeholder="Cth: DANA / Andi Saputra / Ref: 981273">
+          <button onclick="submitTopup()" class="btn">Kirim Bukti & Konfirmasi Topup</button>
         </div>
       </div>
     </div>
@@ -200,7 +251,7 @@
           <div id="admin-bot-queue" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
         <div>
-          <span style="font-size: 12px; font-weight: bold; color: #facc15; display: block; margin-bottom: 8px;">Antrean Top-up Pending</span>
+          <span style="font-size: 12px; font-weight: bold; color: #facc15; display: block; margin-bottom: 8px;">Antrean Top-up (Verifikasi Bukti Pembayaran)</span>
           <div id="admin-queue" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
       </div>
@@ -208,6 +259,16 @@
 
   </div>
 </section>
+
+<!-- MODAL BANTUAN / FAQ -->
+<div id="help-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 16px;">
+  <div class="card" style="max-width: 500px; width: 100%; margin-bottom: 0;">
+    <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">Pusat Bantuan & FAQ</h3>
+    <p class="text-sm" style="margin-bottom: 8px;"><b>1. Bagaimana cara kerja Bot?</b><br>Masukkan URL target lalu pilih jenis bot. Sistem akan memotong 1 token/trial.</p>
+    <p class="text-sm" style="margin-bottom: 8px;"><b>2. Bagaimana cara Top-up?</b><br>Pilih nominal, transfer ke nomor DANA yang tertera, lalu masukkan nama pengirim atau bukti transaksi pada kolom yang disediakan.</p>
+    <button onclick="hideHelpModal()" class="btn" style="margin-top: 12px;">Tutup</button>
+  </div>
+</div>
 
 <script>
   let isLoginMode = true;
@@ -218,6 +279,8 @@
     if(!localStorage.getItem('db_topups')) localStorage.setItem('db_topups', JSON.stringify([]));
     if(!localStorage.getItem('db_bot_orders')) localStorage.setItem('db_bot_orders', JSON.stringify([]));
     if(!localStorage.getItem('db_promos')) localStorage.setItem('db_promos', JSON.stringify([]));
+    if(!localStorage.getItem('db_history')) localStorage.setItem('db_history', JSON.stringify([]));
+    if(!localStorage.getItem('db_reports')) localStorage.setItem('db_reports', JSON.stringify([]));
   }
   initDB();
 
@@ -244,6 +307,7 @@
     if(btn) btn.classList.add('active');
     if(tabId === 'admin') { renderAdminTopups(); renderAdminBotOrders(); }
     if(tabId === 'promo') { renderPromos(); }
+    if(tabId === 'dash') { renderHistory(); }
   }
 
   function toggleAuthMode() {
@@ -274,6 +338,7 @@
       if(!users[email] || users[email].password !== pass) return showToast('Email atau password salah!', true);
       currentUser = email;
       localStorage.setItem('currentUser', currentUser);
+      addHistory('Berhasil masuk ke dalam sistem.');
       showToast('Login berhasil!');
       loadApp();
     }
@@ -294,7 +359,29 @@
     if(userData.role === 'admin') adminMenu.classList.remove('hidden');
     else adminMenu.classList.add('hidden');
     
+    renderHistory();
     showPage('app');
+  }
+
+  function addHistory(text) {
+    const history = getDB('db_history');
+    history.unshift({ email: currentUser, text: text, time: new Date().toLocaleTimeString() });
+    if(history.length > 20) history.pop();
+    saveDB('db_history', history);
+  }
+
+  function renderHistory() {
+    const history = getDB('db_history');
+    const container = document.getElementById('activity-history');
+    const userHistory = history.filter(h => h.email === currentUser);
+    if(userHistory.length === 0) {
+      container.innerHTML = '<div class="text-xs">Belum ada riwayat aktivitas.</div>';
+      return;
+    }
+    container.innerHTML = '';
+    userHistory.forEach(h => {
+      container.innerHTML += `<div class="text-xs" style="background: #020617; padding: 6px 10px; border-radius: 6px; border: 1px solid #1e293b; display: flex; justify-content: space-between;"><span>${h.text}</span><span style="color: #64748b;">${h.time}</span></div>`;
+    });
   }
 
   function chargeToken(amount = 1) {
@@ -320,6 +407,7 @@
     if(users[currentUser].role === 'admin') return showToast('Admin unlimited!');
     users[currentUser].tokens += 2;
     saveDB('db_users', users);
+    addHistory('Klaim 2 Token Harian Berhasil.');
     loadApp();
     showToast('Berhasil klaim 2 Token harian!');
   }
@@ -331,6 +419,7 @@
     const out = document.getElementById('output-url');
     out.value = finalLink;
     out.classList.remove('hidden');
+    addHistory('Membuat tautan subscribe.');
     showToast('Tautan berhasil dibuat!');
   }
 
@@ -344,6 +433,7 @@
     orders.push({ id: Date.now(), email: currentUser, url: url, type: type, status: 'pending' });
     saveDB('db_bot_orders', orders);
     document.getElementById('bot-url').value = '';
+    addHistory(`Memesan bot: ${type}`);
     showToast('Pesanan bot berhasil masuk antrean!');
   }
 
@@ -358,6 +448,7 @@
     saveDB('db_promos', promos);
     document.getElementById('promo-title').value = '';
     document.getElementById('promo-url').value = '';
+    addHistory('Membuat promosi komunitas.');
     showToast('Promosi berhasil ditayangkan!');
     renderPromos();
   }
@@ -395,19 +486,54 @@
     window.open(url, '_blank');
   }
 
+  function claimVoucher() {
+    const code = document.getElementById('voucher-code').value.trim().toUpperCase();
+    if(code === 'AUTOSUBS2026') {
+      const users = getDB('db_users');
+      users[currentUser].tokens += 10;
+      saveDB('db_users', users);
+      addHistory('Klaim Voucher 10 Token Berhasil.');
+      loadApp();
+      showToast('Selamat! Voucher berhasil diklaim (+10 Token).');
+      document.getElementById('voucher-code').value = '';
+    } else {
+      showToast('Kode voucher tidak valid atau sudah kedaluwarsa!', true);
+    }
+  }
+
   let selectedPackage = { token: 0, price: 0 };
   function selectTopup(token, price) {
     selectedPackage = { token, price };
-    document.getElementById('topup-desc').innerText = `Paket: ${token} Token (Rp ${price.toLocaleString()}). \nSilakan transfer ke DANA 082336939662.`;
+    document.querySelectorAll('.topup-pkg').forEach(el => el.style.borderColor = '#334155');
+    event.currentTarget.style.borderColor = '#dc2626';
+    document.getElementById('topup-desc').innerText = `Paket Dipilih: ${token} Token (Rp ${price.toLocaleString()})`;
     document.getElementById('topup-form').classList.remove('hidden');
   }
 
   function submitTopup() {
+    const proof = document.getElementById('topup-proof').value.trim();
+    if(!proof) return showToast('Masukkan bukti pembayaran / nama pengirim!', true);
+
     const topups = getDB('db_topups');
-    topups.push({ id: Date.now(), email: currentUser, token: selectedPackage.token, price: selectedPackage.price, status: 'pending' });
+    topups.push({ id: Date.now(), email: currentUser, token: selectedPackage.token, price: selectedPackage.price, proof: proof, status: 'pending' });
     saveDB('db_topups', topups);
     document.getElementById('topup-form').classList.add('hidden');
-    showToast('Pesanan topup terkirim! Menunggu Admin.');
+    document.getElementById('topup-proof').value = '';
+    addHistory(`Mengirim pesanan topup Rp ${selectedPackage.price.toLocaleString()}`);
+    showToast('Bukti terkirim! Menunggu verifikasi Admin.');
+  }
+
+  function showHelpModal() { document.getElementById('help-modal').classList.remove('hidden'); }
+  function hideHelpModal() { document.getElementById('help-modal').classList.add('hidden'); }
+
+  function submitReport() {
+    const text = document.getElementById('report-text').value.trim();
+    if(!text) return showToast('Tuliskan kendala Anda!', true);
+    const reports = getDB('db_reports');
+    reports.push({ email: currentUser, text: text, time: new Date().toLocaleString() });
+    saveDB('db_reports', reports);
+    document.getElementById('report-text').value = '';
+    showToast('Laporan berhasil dikirim ke Admin.');
   }
 
   function renderAdminBotOrders() {
@@ -446,9 +572,10 @@
     queueDiv.innerHTML = '';
     pendings.forEach(t => {
       queueDiv.innerHTML += `
-        <div style="background: #020617; padding: 10px; border-radius: 8px; border: 1px solid #334155; display: flex; justify-content: space-between; align-items: center;">
-          <div style="font-size: 11px; color: white;"><b>${t.email}</b><br><span style="color: #facc15;">${t.token} Token</span></div>
-          <button onclick="approveTopup(${t.id})" style="background: #d97706; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer;">Setujui</button>
+        <div style="background: #020617; padding: 10px; border-radius: 8px; border: 1px solid #334155; display: flex; flex-direction: column; gap: 4px;">
+          <div style="font-size: 11px; color: white;"><b>${t.email}</b> — <span style="color: #facc15;">${t.token} Token (Rp ${t.price.toLocaleString()})</span></div>
+          <div style="font-size: 10px; color: #34d399;">Bukti: <b>${t.proof}</b></div>
+          <button onclick="approveTopup(${t.id})" style="background: #d97706; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; margin-top: 4px;">Setujui Topup</button>
         </div>
       `;
     });
